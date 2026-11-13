@@ -1,0 +1,548 @@
+@import "tailwindcss";
+
+@import "../shared/components/ui/spacing/spacing.css";
+
+@source "../app/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../shared/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../features/**/*.{js,ts,jsx,tsx,mdx}";
+
+/* Mother Bhojan — AreaDoc design tokens (@theme = Tailwind utilities) */
+
+@theme {
+  --font-jakarta: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-antonio: var(--font-antonio), ui-sans-serif, system-ui, sans-serif;
+  --font-aguafina: var(--font-aguafina), cursive;
+  --font-pacifico: var(--font-pacifico), cursive;
+  --font-kalam: var(--font-pacifico), cursive;
+
+  /* Breakpoints — mobile <640 · tablet 640–1024 · desktop >1024 */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 64rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  /* Spacing scale — 4px base */
+  --spacing-s0: 0;
+  --spacing-s1: 4px;
+  --spacing-s2: 8px;
+  --spacing-s3: 12px;
+  --spacing-s4: 16px;
+  --spacing-s5: 24px;
+  --spacing-s6: 32px;
+  --spacing-s7: 48px;
+  --spacing-s8: 64px;
+  --spacing-s9: 96px;
+  --spacing-s10: 128px;
+  --spacing-s11: 160px;
+  --spacing-s12: 200px;
+
+  /* Layout max-widths */
+  --max-width-wide: 75rem;
+  --max-width-reading: 42.5rem;
+  --max-width-form: 30rem;
+  --max-width-content: var(--max-width-wide);
+  --max-width-prose: var(--max-width-reading);
+
+  /* Type scale (clamp, responsive) */
+  --text-hero: clamp(2.5rem, 5vw, 3.5rem);
+  --text-h2: clamp(1.75rem, 3.5vw, 2.25rem);
+  --text-h3: clamp(1.25rem, 2vw, 1.5rem);
+  --text-body: clamp(1rem, 1.05vw, 1.125rem);
+  --text-caption: clamp(0.8125rem, 1vw, 0.875rem);
+  --text-button: clamp(1rem, 1.05vw, 1.125rem);
+  --text-card-title: clamp(0.9375rem, 0.875rem + 0.25vw, 1.25rem);
+
+  --leading-body: 1.4;
+  --leading-heading: 1.2;
+
+  --color-partner: #DB1A1A;
+  --color-partner-hover: #b81616;
+  --color-customer: #E1574C;
+  --color-customer-hover: #c94a40;
+  --color-verified: #8DA552;
+  --color-verified-dark: #6f8a3e;
+  --color-verified-text: #5f7a33;
+  --color-olive: #6B7F3B;
+  --color-yellow: #F6C238;
+
+  --color-customer-muted: #FBE9E7;
+  --color-customer-muted-border: #F2CFC9;
+  --color-partner-muted: #FBE0E0;
+  --color-partner-muted-border: #F0C4C0;
+  --color-partner-hero: #FFF6F6;
+  --color-partner-tag: #FFF1F1;
+
+  --color-verified-pill: #EEF2E3;
+  --color-verified-pill-border: #DDE6C9;
+  --color-verified-band-border: #E1E7D2;
+
+  --color-ink: #2A1F18;
+  --color-ink-soft: #503D31;
+  --color-body: #29323A;
+  --color-text-900: #1a2026;
+  --color-text-700: #29323A;
+  --color-text-500: #5a6570;
+  --color-text-400: #858A8E;
+  --color-muted: #858A8E;
+  --color-muted-light: #B9B2A6;
+  --color-footer-text: #EFE7DC;
+  --color-paper: #FFFAF2;
+  --color-canvas: #E7E3DB;
+  --color-surface: #F4F1EA;
+  --color-white: #ffffff;
+
+  --color-border: #DCD6CC;
+  --color-border-subtle: #ECE6DC;
+  --color-border-card: #E7E1D6;
+  --color-footer-border: #6b5f52;
+  --color-chrome-border: #E4DECF;
+
+  --color-placeholder: #9C948A;
+  --color-placeholder-bg: #E6E1D7;
+  --color-placeholder-stripe: #DDD7CC;
+  --color-placeholder-dashed: #BDB5A8;
+  --color-skeleton: #D8D3CA;
+
+  --color-nonveg: #aa2233;
+  --color-annotation: #3D5A80;
+  --color-annotation-muted: #EAF0F6;
+  --color-annotation-border: #CFDDEB;
+
+  --color-background: #ffffff;
+  --color-foreground: #2A1F18;
+
+  --radius-sm: 10px;
+  --radius: 12px;
+  --radius-default: 12px;
+  --radius-card: 16px;
+  --radius-section: 22px;
+  --radius-panel: 26px;
+
+  --background-image-mb-verified-bar: linear-gradient(94.92deg, #8DA552 -3.94%, #6f8a3e 115.56%);
+  --background-image-mb-verified-text: linear-gradient(135.14deg, #5f7a33 39.03%, #8DA552 91.47%);
+  --background-image-mb-verified-section: linear-gradient(90deg, #8DA552 0%, #6f8a3e 100%);
+  --background-image-mb-verified-panel: linear-gradient(180deg, #8DA552 0%, #6f8a3e 100%);
+  --background-image-mb-partner-panel: linear-gradient(180deg, #DB1A1A 0%, #b81616 100%);
+  --background-image-mb-ink-panel: linear-gradient(180deg, var(--color-ink) 0%, var(--color-ink-soft) 100%);
+  --background-image-mb-customer-panel: linear-gradient(180deg, #E1574C 0%, #c94a40 100%);
+  --background-image-mb-yellow-panel: linear-gradient(180deg, #F6C238 0%, #E1574C 100%);
+  --background-image-mb-placeholder: repeating-linear-gradient(135deg,
+      #E6E1D7,
+      #E6E1D7 9px,
+      #DDD7CC 9px,
+      #DDD7CC 18px);
+  --background-image-mb-hero-video-scrim: linear-gradient(105deg,
+      color-mix(in srgb, var(--color-text-900) 90%, transparent) 0%,
+      color-mix(in srgb, var(--color-text-900) 72%, transparent) 40%,
+      color-mix(in srgb, var(--color-text-900) 42%, transparent) 68%,
+      color-mix(in srgb, var(--color-text-900) 20%, transparent) 100%);
+  --background-image-mb-hero-video-vignette: linear-gradient(to top,
+      color-mix(in srgb, var(--color-text-900) 75%, transparent) 0%,
+      color-mix(in srgb, var(--color-text-900) 15%, transparent) 35%,
+      color-mix(in srgb, var(--color-text-900) 35%, transparent) 100%);
+
+  --shadow-solution-card: 0px 0px 10px 0px color-mix(in srgb, var(--color-ink) 10%, transparent);
+  --shadow-device-frame: 0 5px 15px color-mix(in srgb, var(--color-ink) 28%, transparent);
+  --shadow-surface-md-soft: 0 20px 45px color-mix(in srgb, var(--color-ink) 8%, transparent);
+  --shadow-surface-md: 0 20px 45px color-mix(in srgb, var(--color-ink) 12%, transparent);
+  --shadow-surface-lg: 0 24px 55px color-mix(in srgb, var(--color-ink) 18%, transparent);
+  --shadow-soft-lg: 0px 12px 44px 0px color-mix(in srgb, var(--color-ink) 4%, transparent);
+  --drop-shadow-text-glow: 0 10px 20px color-mix(in srgb, var(--color-ink) 25%, transparent);
+
+  /* Buttons — warm brand glow + soft top highlight */
+  --shadow-btn-customer:
+    0 10px 28px -8px color-mix(in srgb, var(--color-customer) 42%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+  --shadow-btn-customer-hover:
+    0 16px 36px -10px color-mix(in srgb, var(--color-customer) 52%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 28%, transparent);
+  --shadow-btn-customer-sm:
+    0 6px 18px -6px color-mix(in srgb, var(--color-customer) 36%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 20%, transparent);
+  --shadow-btn-partner:
+    0 10px 28px -8px color-mix(in srgb, var(--color-partner) 42%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+  --shadow-btn-partner-hover:
+    0 16px 36px -10px color-mix(in srgb, var(--color-partner) 52%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 28%, transparent);
+  --shadow-btn-partner-sm:
+    0 6px 18px -6px color-mix(in srgb, var(--color-partner) 36%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 20%, transparent);
+  --shadow-btn-verified:
+    0 10px 28px -8px color-mix(in srgb, var(--color-verified) 40%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+  --shadow-btn-verified-hover:
+    0 16px 36px -10px color-mix(in srgb, var(--color-verified) 50%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 28%, transparent);
+  --shadow-btn-outline-hover: 0 8px 22px -10px color-mix(in srgb, var(--color-ink) 14%, transparent);
+
+  --animate-heading-accent: headingAccentFloat 3.8s ease-in-out infinite;
+  --animate-mb-loader-root: mbInlineLoaderRoot 3.2s ease-in-out infinite;
+  --animate-mb-loader-orbit: mbInlineLoaderOrbit 9s linear infinite;
+  --animate-mb-loader-orbit-reverse: mbInlineLoaderOrbitReverse 14s linear infinite;
+  --animate-mb-loader-glow: mbInlineLoaderGlow 2.2s ease-in-out infinite;
+  --animate-mb-loader-shine: mbInlineLoaderShine 2.8s ease-in-out infinite;
+  --animate-mb-loader-mark: mbInlineLoaderMark 1.5s ease-in-out infinite;
+  --animate-mb-loader-label: mbInlineLoaderLabel 2s ease-in-out infinite;
+  --animate-mb-loader-dot: mbInlineLoaderDot 0.85s ease-in-out infinite;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-color: var(--color-verified) var(--color-border-subtle);
+  scrollbar-width: thin;
+}
+
+html::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html::-webkit-scrollbar-track {
+  background: var(--color-border-subtle);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--color-verified);
+  border-radius: 9999px;
+  border: 2px solid var(--color-border-subtle);
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--color-verified-dark);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body,
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* Typography: Jakarta everywhere by default · Antonio / Aguafina / Instrument Serif only where opted in */
+body {
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  color: var(--color-text-700);
+  background-color: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* AreaDoc typography — weights: 700 headings · 600 subheads/buttons · 400 body */
+.text-hero {
+  font-size: var(--text-hero);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+}
+
+.text-h2 {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+}
+
+.text-h3 {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+}
+
+.body-copy {
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--color-body);
+}
+
+.body-copy-muted {
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  color: var(--color-muted);
+}
+
+.body-copy-on-dark {
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-body);
+  color: color-mix(in srgb, var(--color-white) 95%, transparent);
+}
+
+.body-copy-inverse {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-body);
+  color: color-mix(in srgb, var(--color-footer-text) 85%, transparent);
+}
+
+.body-copy-compact {
+  font-size: var(--text-caption);
+  font-weight: 400;
+  line-height: var(--leading-body);
+}
+
+.body-copy-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-body);
+}
+
+.body-copy-compact-on-dark {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: var(--leading-body);
+}
+
+/* Card / step titles — 15px mobile · 20px desktop */
+.card-title {
+  font-size: var(--text-card-title);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* Large stat numbers inside UI mocks (not display section headings) */
+.stat-value {
+  font-size: 2.625rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Opt-in font families — class name matches the loaded Google Font */
+.font-jakarta {
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-antonio {
+  font-family: var(--font-antonio), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-aguafina {
+  font-family: var(--font-aguafina), cursive;
+}
+
+.font-hand,
+.font-pacifico {
+  font-family: var(--font-pacifico), cursive;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Focus — visible ring on keyboard navigation */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-customer);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-customer);
+  outline-offset: 2px;
+}
+
+/* Featured kitchen card — beats `a { color: inherit }` (wireframe --olive) */
+a.kitchen-card-order,
+a.kitchen-card-order:visited {
+  color: var(--color-olive);
+}
+
+a.kitchen-card-order svg {
+  color: var(--color-olive);
+}
+
+::selection {
+  background: var(--color-yellow);
+  color: var(--color-ink);
+}
+
+@keyframes headingAccentFloat {
+
+  0%,
+  100% {
+    transform: translateY(1.5rem) rotate(-6deg);
+  }
+
+  50% {
+    transform: translateY(1.35rem) rotate(-4deg);
+  }
+}
+
+@keyframes mbInlineLoaderRoot {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes mbInlineLoaderOrbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mbInlineLoaderOrbitReverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes mbInlineLoaderGlow {
+
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 0.95;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes mbInlineLoaderShine {
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    opacity: 0.75;
+    transform: rotate(180deg) scale(1.08);
+  }
+}
+
+@keyframes mbInlineLoaderMark {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-verified) 35%, transparent));
+  }
+
+  50% {
+    transform: scale(1.07);
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--color-verified) 58%, transparent));
+  }
+}
+
+@keyframes mbInlineLoaderLabel {
+
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateY(2px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mbInlineLoaderDot {
+
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .animate-heading-accent,
+  .animate-mb-loader-root,
+  .animate-mb-loader-orbit,
+  .animate-mb-loader-orbit-reverse,
+  .animate-mb-loader-glow,
+  .animate-mb-loader-shine,
+  .animate-mb-loader-mark,
+  .animate-mb-loader-label,
+  .animate-mb-loader-dot {
+    animation: none !important;
+  }
+}
+
+/* Custom background transition spine from Cream to Peach to Partner Red */
+.bg-blend-spine {
+  background: linear-gradient(to bottom,
+      var(--color-surface) 0%,
+      /* Daughter's Promise cream #F4F1EA */
+      var(--color-surface) 25%,
+      /* Keep cream at the top for seam 1 */
+      #F5DCD1 55%,
+      /* Slowly warming to peach */
+      #E8A295 72%,
+      /* Warming to coral / red-orange hinge zone */
+      var(--color-partner) 90%,
+      /* Deepens to partner red #DB1A1A */
+      var(--color-partner) 100%
+      /* Solid red at the bottom for seam 2 */
+    );
+}
+
+@keyframes spin-clockwise {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-clockwise 25s linear infinite;
+}
+
+@keyframes mbInfiniteMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-mb-marquee {
+  animation: mbInfiniteMarquee 80s linear infinite;
+}
+
+.animate-mb-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-mb-marquee {
+    animation: none !important;
+  }
+}

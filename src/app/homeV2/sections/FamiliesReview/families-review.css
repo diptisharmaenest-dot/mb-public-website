@@ -1,0 +1,130 @@
+/* Breaks out of content max-width to full screen width */
+.families-carousel-bleed {
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow: hidden;
+}
+
+.families-marquee-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-block: 2.2rem;
+  position: relative;
+}
+
+/* Edge fading gradients using section background color (#F4F1EA / --color-surface) */
+.families-marquee-container::before,
+.families-marquee-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(20vw, 250px);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.families-marquee-container::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    var(--color-surface) 0%,
+    color-mix(in srgb, var(--color-surface) 80%, transparent) 25%,
+    transparent 100%
+  );
+}
+
+.families-marquee-container::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    var(--color-surface) 0%,
+    color-mix(in srgb, var(--color-surface) 80%, transparent) 25%,
+    transparent 100%
+  );
+}
+
+.families-marquee-row {
+  display: flex;
+  width: max-content;
+  overflow: visible;
+  position: relative;
+}
+
+.families-marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  padding-inline: 0.75rem;
+}
+
+/* Animations */
+.families-marquee-track-left {
+  animation: marquee-scroll-left 45s linear infinite;
+}
+
+.families-marquee-track-left-slow {
+  animation: marquee-scroll-left 54s linear infinite;
+}
+
+/* Pause scroll on hover or focus */
+.families-marquee-row:hover .families-marquee-track,
+.families-marquee-row:focus-within .families-marquee-track,
+.families-marquee-track:hover {
+  animation-play-state: paused !important;
+}
+
+/* Duplicated 3 times, scroll exactly by 33.3333% for seamless wrap-around */
+@keyframes marquee-scroll-left {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-33.33333%, 0, 0);
+  }
+}
+
+/* Accessible reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .families-marquee-track-left,
+  .families-marquee-track-left-slow {
+    animation-duration: 140s;
+  }
+}
+
+/* Sizing of the review card within the scrolling tracks */
+.families-review-card {
+  width: 310px;
+  height: 310px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+              border-color 0.3s ease;
+}
+
+.families-review-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 16px 36px rgba(20, 14, 10, 0.28) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+@media (min-width: 640px) {
+  .families-review-card {
+    width: 360px;
+    height: 330px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .families-review-card {
+    width: 400px;
+    height: 350px;
+  }
+}

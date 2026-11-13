@@ -1,0 +1,96 @@
+/* Layout spacing — pairs with spacing/*.ts tokens */
+
+:root {
+  --gutter: 24px;
+  --section-generous: 64px;
+  --section-standard: 48px;
+  --section-compact: 32px;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: 48px;
+    --section-generous: 80px;
+    --section-standard: 64px;
+    --section-compact: 40px;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --gutter: 64px;
+    --section-generous: 120px;
+    --section-standard: 80px;
+    --section-compact: 48px;
+  }
+}
+
+.section--generous {
+  padding-block: var(--section-generous);
+}
+
+.section--standard {
+  padding-block: var(--section-standard);
+}
+
+.section--compact {
+  padding-block: var(--section-compact);
+}
+
+.pt-section-generous {
+  padding-top: var(--section-generous);
+}
+
+.pb-section-generous {
+  padding-bottom: var(--section-generous);
+}
+
+.pt-section-standard {
+  padding-top: var(--section-standard);
+}
+
+.pb-section-standard {
+  padding-bottom: var(--section-standard);
+}
+
+.pt-section-compact {
+  padding-top: var(--section-compact);
+}
+
+.pb-section-compact {
+  padding-bottom: var(--section-compact);
+}
+
+.gutter-x {
+  padding-inline: var(--gutter);
+}
+
+/*
+  Content track is a true `--max-width-wide` (1200px).
+  When paired with `.gutter-x` on the same shell, expand max-width by the
+  responsive gutter (24 / 48 / 64) so padding sits outside the content width
+  instead of eating into it.
+*/
+.track-wide {
+  width: 100%;
+  max-width: var(--max-width-wide);
+  margin-inline: auto;
+}
+
+.track-wide.gutter-x {
+  max-width: calc(var(--max-width-wide) + 2 * var(--gutter));
+}
+
+.track-reading,
+.prose-width {
+  max-width: var(--max-width-reading);
+}
+
+.track-reading {
+  margin-inline: auto;
+}
+
+.track-form {
+  max-width: var(--max-width-form);
+  margin-inline: auto;
+}

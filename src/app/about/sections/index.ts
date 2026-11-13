@@ -1,0 +1,7 @@
+export { default as AboutHero } from './Hero'
+export { default as FoundersPortraits } from './FoundersPortraits'
+export { default as WomenWhoCook } from './WomenWhoCook'
+export { default as WhatWeBelieve } from './WhatWeBelieve'
+export { default as TheTeam } from './TheTeam'
+export { default as CompanyClosing } from './CompanyClosing'
+export { default as EndCta } from './EndCta'

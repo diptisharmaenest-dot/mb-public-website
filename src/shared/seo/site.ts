@@ -1,0 +1,41 @@
+/** Public marketing site configuration for metadata, sitemap, and JSON-LD. */
+export const SITE_NAME = 'Mother Bhojan'
+
+export const SITE_TAGLINE = 'The easiest way to sell home-cooked food online'
+
+/** Cities where Mother Bhojan currently delivers. */
+export const SERVICE_CITIES = ['Mohali'] as const
+
+export const DEFAULT_DESCRIPTION =
+  'Mother Bhojan helps independent chefs and home cooks launch online stores, manage menus, accept orders, and grow their food business with tools built for home-cooked food.'
+
+/** Default OG/Twitter image (absolute URL resolved via metadataBase). */
+export const DEFAULT_OG_IMAGE_PATH = '/assets/images/logo-red.png'
+
+export const ROUTES = {
+  home: '/',
+  homev2: '/homeV2',
+  homev3: '/homeV3',
+  about: '/about',
+  kitchens: '/kitchens',
+  partners: '/partners',
+  join: '/join',
+  faq: '/faq',
+  contact: '/contact',
+  privacy: '/privacy',
+  terms: '/terms',
+  refunds: '/refunds',
+} as const
+
+/** Production canonical origin — set in `.env.production` as `NEXT_PUBLIC_SITE_URL`. */
+export function getSiteUrl(): URL {
+  const raw = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').trim()
+  const normalized = raw.replace(/\/+$/, '')
+  return new URL(normalized)
+}
+
+export function absoluteUrl(path: string): string {
+  const base = getSiteUrl()
+  if (!path || path === '/') return base.origin
+  return new URL(path.startsWith('/') ? path : `/${path}`, base).toString()
+}
