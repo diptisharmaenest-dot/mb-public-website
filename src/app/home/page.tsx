@@ -3,7 +3,6 @@ import {
   Hero,
   HowItWorks,
   DaughtersPromise,
-  EveryOrderChangesLives,
   WeHandleEverythingElse,
   BuildsTrustAndIndependence,
 } from './sections'
@@ -25,10 +24,10 @@ export default function HomePage() {
           <KitchenAudit />           ("Sunita's kitchen passed the audit")
           <FeaturedKitchens />       ("Cooking near you this week")
           <YourNameOnTheDoor />      ("Your kitchen, your name on the door")
-          <FamiliesReview />         ("Dinner tonight, from kitchen you can trust") */}
+          <FamiliesReview />         ("Dinner tonight, from kitchen you can trust")
+          <EveryOrderChangesLives /> ("Every order has two sides") */}
       <HowItWorks />
       <DaughtersPromise />
-      <EveryOrderChangesLives />
       <WeHandleEverythingElse />
       <BuildsTrustAndIndependence />
     </>

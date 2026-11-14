@@ -287,7 +287,6 @@ const WeHandleEverythingElse = () => {
     <Section
       id="we-handle-everything"
       aria-labelledby="we-handle-everything-heading"
-      flushTop
     >
       <SectionHeader
         id="we-handle-everything-heading"
