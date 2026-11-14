@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useState, type ComponentType } from 'react'
+import { useRef, useState } from 'react'
+import Image, { type StaticImageData } from 'next/image'
 import clsx from 'clsx'
 import {
   AnimatePresence,
@@ -10,8 +11,8 @@ import {
   useScroll,
   useSpring,
 } from 'framer-motion'
-import { FiCamera, FiCheck, FiCheckSquare, FiChevronDown, FiCreditCard, FiMapPin } from 'react-icons/fi'
-import { LuBike, LuChefHat, LuShieldCheck, LuStore, LuUtensils } from 'react-icons/lu'
+import { FiCheck, FiChevronDown } from 'react-icons/fi'
+import { LuChefHat, LuStore } from 'react-icons/lu'
 import {
   compactAccentLine,
   DownloadAppButton,
@@ -28,19 +29,32 @@ import { FAMILY_JOURNEY, KITCHEN_JOURNEY } from '@/app/home/data/how-it-works'
  * Home cooks: tap a step to open it; the tracker shows how far that gets you.
  */
 
-type IconType = ComponentType<{ className?: string }>
-const FAMILY_ICONS: IconType[] = [FiMapPin, LuUtensils, FiCreditCard, LuBike]
-const KITCHEN_ICONS: IconType[] = [FiCheckSquare, FiCamera, LuShieldCheck, LuStore]
+// Realistic step photos (no people), cropped from our own kitchen videos.
+import f1Kitchen from '@/assets/images/how-it-works/f1-kitchen.jpg'
+import f2Curry from '@/assets/images/how-it-works/f2-curry.jpg'
+import f3Phone from '@/assets/images/how-it-works/f3-phone.jpg'
+import f4Packed from '@/assets/images/how-it-works/f4-packed.jpg'
+import k1Spices from '@/assets/images/how-it-works/k1-spices.jpg'
+import k2Stove from '@/assets/images/how-it-works/k2-stove.jpg'
+import k3Veg from '@/assets/images/how-it-works/k3-veg.jpg'
+import k4Jar from '@/assets/images/how-it-works/k4-jar.jpg'
+
+type StepPhoto = { src: StaticImageData; alt: string }
+const FAMILY_PHOTOS: StepPhoto[] = [
+  { src: f1Kitchen, alt: 'A clean home kitchen with a stove, spices and fresh vegetables' },
+  { src: f2Curry, alt: 'Kofta curry simmering in a pan' },
+  { src: f3Phone, alt: 'The Mother Bhojan app showing order received and meal packed' },
+  { src: f4Packed, alt: 'Meals packed in Mother Bhojan containers with fresh rotis' },
+]
+const KITCHEN_PHOTOS: StepPhoto[] = [
+  { src: k1Spices, alt: 'A masala dabba spice box and rolled-out roti dough' },
+  { src: k2Stove, alt: 'A home kitchen stove with a pressure cooker' },
+  { src: k3Veg, alt: 'Fresh tomatoes, onions and greens ready to cook' },
+  { src: k4Jar, alt: 'A Mother Bhojan branded jar on a kitchen table' },
+]
 
 /** Alternating brand tones: soft (not reached yet) and solid (lit). */
-const TILE_SOFT = [
-  'bg-gradient-to-br from-[#FDEBE8] to-[#F9D8D3] text-partner',
-  'bg-gradient-to-br from-[#EEF2E3] to-[#DCE5C6] text-verified-text',
-] as const
-const TILE_LIT = [
-  'bg-gradient-to-br from-customer to-partner text-white',
-  'bg-gradient-to-br from-verified to-verified-dark text-white',
-] as const
+const RING_LIT = ['ring-customer', 'ring-verified'] as const
 const CHIP_TONE = ['bg-partner-tag text-partner', 'bg-verified-pill text-verified-text'] as const
 
 /* ------------------------- Families: main row ------------------------ */
@@ -61,23 +75,23 @@ function FamilySteps() {
   return (
     <div ref={ref} className="relative">
       {/* Connector — desktop: horizontal, fills with scroll */}
-      <span aria-hidden className="absolute left-[12.5%] right-[12.5%] top-12 hidden h-0 border-t-2 border-dashed border-ink/15 lg:block" />
+      <span aria-hidden className="absolute left-[12.5%] right-[12.5%] top-[64px] hidden h-0 border-t-2 border-dashed border-ink/15 lg:block" />
       <motion.span
         aria-hidden
-        className="absolute left-[12.5%] right-[12.5%] top-[47px] hidden h-[3px] origin-left rounded-full bg-gradient-to-r from-customer via-verified to-partner lg:block"
+        className="absolute left-[12.5%] right-[12.5%] top-[63px] hidden h-[3px] origin-left rounded-full bg-gradient-to-r from-customer via-verified to-partner lg:block"
         style={{ scaleX: reduceMotion ? 1 : progress }}
       />
       {/* Connector — phones/tablets: vertical */}
-      <span aria-hidden className="absolute bottom-16 left-12 top-12 border-l-2 border-dashed border-ink/15 sm:hidden" />
+      <span aria-hidden className="absolute bottom-16 left-[64px] top-14 border-l-2 border-dashed border-ink/15 sm:hidden" />
       <motion.span
         aria-hidden
-        className="absolute bottom-16 left-[47px] top-12 w-[3px] origin-top rounded-full bg-gradient-to-b from-customer via-verified to-partner sm:hidden"
+        className="absolute bottom-16 left-[63px] top-14 w-[3px] origin-top rounded-full bg-gradient-to-b from-customer via-verified to-partner sm:hidden"
         style={{ scaleY: reduceMotion ? 1 : progress }}
       />
 
       <ol className="relative grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-4 lg:gap-6">
         {FAMILY_JOURNEY.steps.map((step, i) => {
-          const Icon = FAMILY_ICONS[i]
+          const photo = FAMILY_PHOTOS[i]
           const isLit = i < lit
           const isFocus = focus === i
           return (
@@ -99,20 +113,24 @@ function FamilySteps() {
                 >
                   <span
                     className={clsx(
-                      'flex h-24 w-24 items-center justify-center rounded-[28px] ring-[6px] ring-white transition-all duration-500',
-                      isLit ? TILE_LIT[i % 2] : TILE_SOFT[i % 2],
+                      'relative block h-28 w-28 overflow-hidden rounded-[30px] ring-4 ring-offset-4 ring-offset-white transition-all duration-500',
+                      isLit ? RING_LIT[i % 2] : 'ring-transparent',
                       isLit || isFocus
-                        ? 'shadow-[0_20px_36px_-16px_rgba(42,31,24,0.55)]'
+                        ? 'shadow-[0_22px_40px_-16px_rgba(42,31,24,0.55)]'
                         : 'shadow-[0_12px_26px_-18px_rgba(42,31,24,0.4)]',
                     )}
                   >
-                    <motion.span
-                      animate={isFocus ? { rotate: [0, -12, 10, -6, 0] } : { rotate: 0 }}
-                      transition={{ duration: 0.6 }}
-                      className="inline-flex"
-                    >
-                      <Icon className="h-9 w-9" />
-                    </motion.span>
+                    <Image
+                      src={photo.src}
+                      alt={photo.alt}
+                      fill
+                      sizes="112px"
+                      className={clsx(
+                        'object-cover transition-all duration-700',
+                        isLit ? 'grayscale-0' : 'opacity-75 grayscale-[70%]',
+                        isFocus ? 'scale-110' : 'scale-100',
+                      )}
+                    />
                   </span>
                   <span
                     className={clsx(
@@ -197,7 +215,7 @@ function KitchenJourney() {
 
           <ol className="mt-7 space-y-2.5">
             {steps.map((s, i) => {
-              const Icon = KITCHEN_ICONS[i]
+              const photo = KITCHEN_PHOTOS[i]
               const isOpen = open === i
               const done = i < open
               return (
@@ -216,15 +234,22 @@ function KitchenJourney() {
                     <div className="flex items-center gap-3.5">
                       <span
                         className={clsx(
-                          'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all duration-300',
-                          isOpen
-                            ? 'bg-gradient-to-br from-verified to-verified-dark text-white'
-                            : done
-                              ? 'bg-verified-pill text-verified-text'
-                              : 'bg-white text-ink/45 ring-1 ring-ink/10',
+                          'relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl ring-2 transition-all duration-300',
+                          isOpen ? 'ring-verified' : 'ring-white',
                         )}
                       >
-                        {done ? <FiCheck className="h-4.5 w-4.5" strokeWidth={3} /> : <Icon className="h-5 w-5" />}
+                        <Image
+                          src={photo.src}
+                          alt={photo.alt}
+                          fill
+                          sizes="56px"
+                          className={clsx('object-cover transition-all duration-500', !isOpen && !done && 'opacity-80 grayscale-[60%]')}
+                        />
+                        {done ? (
+                          <span className="absolute inset-0 flex items-center justify-center bg-verified/70 text-white">
+                            <FiCheck className="h-5 w-5" strokeWidth={3} aria-hidden />
+                          </span>
+                        ) : null}
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-ink/40">Step {i + 1}</span>
@@ -247,7 +272,7 @@ function KitchenJourney() {
                           transition={{ duration: 0.35, ease: EASE }}
                           className="overflow-hidden"
                         >
-                          <p className="pl-[54px] pt-2 text-[14.5px] leading-[1.55] text-ink/65">{s.body}</p>
+                          <p className="pl-[70px] pt-2 text-[14.5px] leading-[1.55] text-ink/65">{s.body}</p>
                         </motion.div>
                       ) : null}
                     </AnimatePresence>
