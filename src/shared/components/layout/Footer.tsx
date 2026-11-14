@@ -1,12 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import {
-  FaFacebook,
-  FaInstagram,
-} from "react-icons/fa";
 import { FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
-import { DownloadAppButton, RADIUS_BTN, Section } from "@/components";
+import { DownloadAppButton, Section } from "@/components";
 import { mbLogoRed } from "@/assets";
 import { ROUTES } from "@/shared/seo";
 import { VERIFIED_TRUST_SECTION_PROPS } from "@/shared/data/verified-kitchen";
@@ -26,10 +22,12 @@ const infoLinks = [
   { label: "Contact Us", href: ROUTES.contact },
 ] as const;
 
+/* Social links hidden (were "#"). To restore: re-import FaFacebook/FaInstagram + RADIUS_BTN and un-comment.
 const socialLinks = [
   { label: "Facebook", href: "#", Icon: FaFacebook },
   { label: "Instagram", href: "#", Icon: FaInstagram },
 ] as const;
+*/
 
 function FooterTitle({
   title,
@@ -119,8 +117,8 @@ const Footer = () => {
               </span>
               {" — verified home kitchens and real home cooks, delivered warm across Mohali."}
             </p>
-            {/* Social icons under tagline */}
-            <div className="mt-5 flex gap-3">
+            {/* Social icons hidden until the real Facebook / Instagram pages are set (links were "#").
+                        <div className="mt-5 flex gap-3">
               {socialLinks.map(({ label, href, Icon }) => (
                 <a
                   key={label}
@@ -135,6 +133,7 @@ const Footer = () => {
                 </a>
               ))}
             </div>
+            */}
           </div>
 
           {/* Nav columns centered */}
@@ -172,12 +171,7 @@ const Footer = () => {
             >
               Privacy Policy
             </Link>
-            <Link
-              href={ROUTES.privacy}
-              className="transition duration-200 hover:text-yellow"
-            >
-              Cookie Policy
-            </Link>
+            {/* "Cookie Policy" hidden — it pointed to the Privacy page; re-add when a cookie policy exists. */}
           </div>
         </div>
       </Section>

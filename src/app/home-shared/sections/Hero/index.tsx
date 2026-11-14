@@ -151,6 +151,16 @@ const Hero = () => {
               </Button>
               */}
             </div>
+
+            <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-white/90 ring-1 ring-white/20 backdrop-blur-sm">
+              <span className="relative flex h-2 w-2" aria-hidden>
+                <span className="absolute inset-0 animate-ping rounded-full bg-verified/70" />
+                <span className="relative h-2 w-2 rounded-full bg-verified" />
+              </span>
+              Now serving Mohali
+              <span className="text-white/50" aria-hidden>·</span>
+              <span className="text-white/70">Tricity next</span>
+            </p>
           </div>
         </div>
       </div>

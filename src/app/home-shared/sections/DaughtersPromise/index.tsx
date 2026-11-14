@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { FiCheck } from "react-icons/fi";
+import { LuHeadset } from "react-icons/lu";
 import {
   compactAccentLine,
   Section,
@@ -10,11 +10,10 @@ import {
 } from "@/components";
 import { VERIFIED_TRUST_SECTION_PROPS } from "@/shared/data/verified-kitchen";
 import { EASE } from "@/shared/lib/motion";
-import youngMotherImg from "@/assets/images/young-indian-mother.png";
 
 function RefundProofCard() {
   return (
-    <div className="-rotate-3 absolute bottom-6 left-6 z-[2] sm:bottom-16 sm:left-15 w-[calc(100%-48px)] max-w-[360px] rounded-2xl bg-white p-5 sm:p-6 shadow-[0_20px_45px_rgba(0,0,0,0.25)]">
+    <div className="-rotate-2 w-full max-w-[360px] rounded-2xl bg-white p-5 sm:p-6 shadow-[0_24px_50px_-18px_rgba(42,31,24,0.45)] ring-1 ring-ink/5">
       <div className="flex items-center gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#6B8E3D] text-white">
           <FiCheck className="h-5 w-5 stroke-[2.5]" aria-hidden />
@@ -45,6 +44,35 @@ function RefundProofCard() {
           Resolved by <b className="font-bold text-ink">our support team</b>
         </span>
       </div>
+    </div>
+  );
+}
+
+/** A short support conversation — no photos of people. */
+function SupportStory() {
+  const item = (delay: number) => ({
+    initial: { opacity: 0, y: 14 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.5 },
+    transition: { duration: 0.5, ease: EASE, delay },
+  });
+  return (
+    <div className="relative flex w-full max-w-[380px] flex-col gap-3">
+      <motion.div {...item(0.15)} className="ml-auto max-w-[80%] rounded-2xl rounded-br-md bg-ink px-4 py-3 text-[14px] leading-snug text-white shadow-md">
+        My order arrived cold today.
+      </motion.div>
+      <motion.div {...item(0.55)} className="max-w-[88%] rounded-2xl rounded-bl-md bg-white px-4 py-3 shadow-md ring-1 ring-ink/5">
+        <p className="flex items-center gap-1.5 text-[11.5px] font-semibold text-verified-text">
+          <LuHeadset className="h-3.5 w-3.5" aria-hidden />
+          Mother Bhojan support
+        </p>
+        <p className="mt-1 text-[14px] leading-snug text-ink">
+          Sorry about that. We&apos;re making it right — your refund is on its way.
+        </p>
+      </motion.div>
+      <motion.div {...item(0.95)} className="mt-3 self-center">
+        <RefundProofCard />
+      </motion.div>
     </div>
   );
 }
@@ -110,16 +138,14 @@ const DaughtersPromise = () => {
             </div>
           </div>
 
-          <div className="relative min-h-[420px] lg:min-h-[560px] w-full overflow-hidden bg-stone-900">
-            <Image
-              src={youngMotherImg}
-              alt="Young Indian mother looking at phone and smiling"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover object-top"
+          <div className="relative flex w-full items-center justify-center overflow-hidden bg-[#FBF3E8] px-6 py-12 sm:py-16 lg:min-h-[560px]">
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[radial-gradient(rgba(42,31,24,0.12)_1px,transparent_1.2px)] [background-size:18px_18px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_78%)]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            <RefundProofCard />
+            <div aria-hidden className="absolute -left-10 top-10 h-56 w-56 rounded-full bg-customer/15 blur-3xl" />
+            <div aria-hidden className="absolute -right-10 bottom-6 h-64 w-64 rounded-full bg-verified/20 blur-3xl" />
+            <SupportStory />
           </div>
         </div>
       </motion.div>

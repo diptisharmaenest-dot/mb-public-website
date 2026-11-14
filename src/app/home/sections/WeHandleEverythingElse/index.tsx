@@ -1,7 +1,6 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
@@ -18,11 +17,10 @@ import {
 import { ROUTES } from '@/shared/seo'
 import { EASE } from '@/shared/lib/motion'
 import { FiCheck } from 'react-icons/fi'
-import { LuLandmark } from 'react-icons/lu'
+import { LuHeadset, LuLandmark, LuPhone } from 'react-icons/lu'
 
 import ImageCompareSlider from '@/shared/components/ui/ImageCompareSlider'
 import { AI_PHOTO_COMPARE } from '../../data/ai-photo-compare'
-import humanSupportFrame from '@/assets/images/human-support-frame.png'
 
 const FEATURES = [
   {
@@ -52,18 +50,9 @@ const FEATURES = [
   },
 ] as const
 
+// "Delivery areas" (hidden Kitchens page) and "Refunds" (page not live) hidden for now.
 const FOOTER_LINKS = [
-  { label: 'FSSAI compliance', href: ROUTES.faq },
-  { label: 'Delivery areas', href: ROUTES.kitchens },
-  { label: 'Refunds', href: ROUTES.refunds },
-] as const
-
-const RATING_BARS = [
-  { stars: 5, width: '92%' },
-  { stars: 4, width: '55%' },
-  { stars: 3, width: '22%' },
-  { stars: 2, width: '11%' },
-  { stars: 1, width: '5%' },
+  { label: 'Read our FAQ', href: ROUTES.faq },
 ] as const
 
 const VISUAL_BG = {
@@ -178,66 +167,89 @@ function AiPhotoCardVisual() {
   )
 }
 
+/** The review flow a family sees after a meal — no names or made-up ratings. */
 function ReviewsCardVisual() {
   return (
     <VisualStage tone="reviews">
-      <div className="absolute inset-1 flex flex-col justify-center gap-2">
-        <div className={`${FEATURE_CARD} px-3 py-2.5`}>
-          <p className="m-0 text-[10px] text-muted-light">Overall Rating</p>
-          <div className="mt-1 flex items-start gap-2.5">
-            <div className="shrink-0">
-              <div className="flex items-center gap-1">
-                <span className="text-[26px] font-extrabold leading-none text-ink">
-                  4.7
-                </span>
-                <span className="text-lg leading-none text-partner">★</span>
-              </div>
-              <p className="m-0 mt-1 text-[9.5px] text-muted-light">104 reviews</p>
-            </div>
-            <div className="flex flex-1 flex-col gap-1 pt-0.5">
-              {RATING_BARS.map((row) => (
-                <div key={row.stars} className="flex items-center gap-1.5">
-                  <span className="w-2 text-[9px] text-muted-light">
-                    {row.stars}
-                  </span>
-                  <span className="text-[8px] text-partner">★</span>
-                  <div className="h-1 flex-1 overflow-hidden rounded-full bg-border">
-                    <div
-                      className="h-full bg-partner"
-                      style={{ width: row.width }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+      <div className="absolute inset-1 flex flex-col justify-center">
+        <div className={`${FEATURE_CARD} px-3.5 py-3`}>
+          <p className="m-0 text-[12.5px] font-bold text-ink">How was your meal?</p>
+          <p className="m-0 mt-0.5 text-[10px] text-muted">Your words help her kitchen grow</p>
+          <div className="mt-2.5 flex gap-1" aria-hidden>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0.25, scale: 0.7 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ delay: 0.3 + i * 0.12, type: 'spring', stiffness: 420, damping: 14 }}
+                className="text-[22px] leading-none text-partner"
+              >
+                ★
+              </motion.span>
+            ))}
           </div>
-        </div>
-
-        <div className="rounded-xl bg-[#7B9945] px-3 py-2.5 text-white shadow-sm">
-          <div className="mb-1 flex items-center justify-between text-[10.5px]">
-            <b className="font-bold text-white">Manoj Kumar</b>
-            <span className="text-[9px] text-white/90">★★★★★ · 1 day ago</span>
+          <div className="mt-2.5 flex flex-wrap gap-1">
+            {['Tasted like home', 'Fresh', 'Warm', 'On time'].map((tag, i) => (
+              <span
+                key={tag}
+                className={clsx(
+                  'rounded-full px-2 py-[3px] text-[9.5px] font-semibold',
+                  i < 2 ? 'bg-verified text-white' : 'bg-verified-pill text-verified-text',
+                )}
+              >
+                {tag}
+              </span>
+            ))}
           </div>
-          <p className="m-0 text-[10px] leading-[1.35] text-white/95">
-            Just like maa ke haath ka khana! Warm, fresh and so delicious. Reminded me of home.
-          </p>
+          <div className={`mt-2.5 flex h-8 items-center border border-border px-2 ${RADIUS_DEFAULT}`}>
+            <span className="text-[9.5px] text-muted">Tell her what you loved…</span>
+          </div>
+          <div
+            className={`mt-2 flex h-7 items-center justify-center ${RADIUS_BTN} bg-[#7B9945] text-[11px] font-bold text-white`}
+          >
+            Send review
+          </div>
         </div>
       </div>
     </VisualStage>
   )
 }
 
+/** Support chat — real people, shown without photos of people. */
 function SupportCardVisual() {
   return (
     <VisualStage tone="support">
-      <div className="relative h-full w-full overflow-hidden rounded-[14px]">
-        <Image
-          src={humanSupportFrame}
-          alt="Real Human Support video call representative"
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 250px"
-          className="object-cover object-top"
-        />
+      <div className="absolute inset-1 flex flex-col justify-center">
+        <div className={`${FEATURE_CARD} overflow-hidden`}>
+          <div className="flex items-center gap-2 border-b border-border px-3 py-2.5">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-verified text-white">
+              <LuHeadset className="h-4 w-4" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <p className="m-0 text-[11.5px] font-bold text-ink">Mother Bhojan support</p>
+              <p className="m-0 flex items-center gap-1 text-[9.5px] text-verified-text">
+                <span className="h-1.5 w-1.5 rounded-full bg-verified" /> Real people, not bots
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5 px-3 py-2.5">
+            <span className="ml-auto max-w-[85%] rounded-xl rounded-br-sm bg-ink px-2.5 py-1.5 text-[10px] leading-snug text-white">
+              How do I add a new dish to my menu?
+            </span>
+            <span className="max-w-[88%] rounded-xl rounded-bl-sm bg-verified-pill px-2.5 py-1.5 text-[10px] leading-snug text-ink">
+              Happy to help! I&apos;ll walk you through it on a quick call now.
+            </span>
+          </div>
+          <div className="flex gap-1.5 px-3 pb-3">
+            <span className={`flex h-7 flex-1 items-center justify-center gap-1 ${RADIUS_BTN} bg-[#D9534F] text-[10.5px] font-bold text-white`}>
+              <LuPhone className="h-3 w-3" aria-hidden /> Call us
+            </span>
+            <span className={`flex h-7 flex-1 items-center justify-center ${RADIUS_BTN} border border-border text-[10.5px] font-bold text-ink`}>
+              Chat
+            </span>
+          </div>
+        </div>
       </div>
     </VisualStage>
   )
