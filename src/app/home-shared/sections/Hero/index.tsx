@@ -1,7 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import heroBg from '@/assets/videos/hero_bg.mp4'
+import heroVideo from '@/assets/videos/hero_kitchen_loop.mp4'
+import heroPoster from '@/assets/images/hero-kitchen-poster.jpg'
 import { DownloadAppButton, Section } from '@/components'
 import { VERIFIED_TRUST_SECTION_PROPS } from '@/shared/data/verified-kitchen'
 import { mLogo } from '@/assets/images'
@@ -71,19 +72,23 @@ const Hero = () => {
       decorations={
         <>
           <video
-            key={heroBg}
+            key={heroVideo}
             autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="auto"
+            poster={heroPoster.src}
             className="absolute inset-0 h-full w-full object-cover"
             aria-hidden
           >
-            <source src={heroBg} type="video/mp4" />
+            <source src={heroVideo} type="video/mp4" />
           </video>
-
-          <div className="absolute inset-0 bg-black/40" aria-hidden />
+          {/* Light footage: darker on the text side, food stays visible on the right. */}
+          <div
+            className="absolute inset-0 bg-black/55 lg:bg-transparent lg:bg-gradient-to-r lg:from-black/75 lg:via-black/45 lg:to-black/10"
+            aria-hidden
+          />
         </>
       }
       {...VERIFIED_TRUST_SECTION_PROPS}
