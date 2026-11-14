@@ -89,7 +89,7 @@ const ApplicationForm = ({ onNext, onBack }: ApplicationFormProps) => {
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <TextField label="Orders you can comfortably prep at once" placeholder="e.g. 10–15" required />
-            <TextField label="Monthly earning you hope for" placeholder="e.g. ₹30,000" required />
+            <TextField label="Monthly earning you hope for" placeholder="Amount in ₹" required />
           </div>
 
           <TextField label="Speciality cuisine" placeholder="e.g. North Indian vegetarian" required />

@@ -51,7 +51,7 @@ export default function BuildsTrustAndIndependence() {
         </div>
 
         <p className="mt-6 text-[14px] font-normal  tracking-tight">
-          Local customers · full support · cook at your own pace · typical partners earn ~₹30,000 a month (earnings vary)
+          Local customers · full support · cook at your own pace
         </p>
       </motion.div>
     </Section>

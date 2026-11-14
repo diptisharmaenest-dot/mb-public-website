@@ -180,9 +180,6 @@ const SolutionsHero = () => {
             Apply now
             <FiArrowRight className="h-4 w-4" aria-hidden />
           </Button>
-          <p className="text-center text-[13px] font-semibold text-muted">
-            Typical partners earn around ₹30,000 a month — earnings vary.
-          </p>
         </motion.div>
       </SectionContainer>
     </Section>

@@ -51,7 +51,6 @@ const FEATURES = [
 ] as const
 
 const FOOTER_LINKS = [
-  { label: 'How we verify', href: '#kitchen-audit' },
   { label: 'FSSAI compliance', href: ROUTES.faq },
   { label: 'Delivery areas', href: ROUTES.kitchens },
   { label: 'Refunds', href: ROUTES.refunds },

@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import heroBg from '@/assets/videos/hero_bg.mp4'
-import { Button, DownloadAppButton, Section } from '@/components'
+import { DownloadAppButton, Section } from '@/components'
 import { VERIFIED_TRUST_SECTION_PROPS } from '@/shared/data/verified-kitchen'
 import { mLogo } from '@/assets/images'
 
@@ -134,15 +134,17 @@ const Hero = () => {
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-4 sm:mt-8">
-              <DownloadAppButton source="home-hero" variant="customer" size="lg" className="px-7 sm:px-8">
-                Download app
+              <DownloadAppButton source="home-hero" openLabel="Order now" variant="customer" size="lg" className="px-7 sm:px-8">
+                Order now
               </DownloadAppButton>
+              {/* Hidden for now — #mothers anchor has no target on the page.
               <Button href="#mothers" variant="partnerSoft" size="lg" className="px-7 sm:px-8">
                 Meet our cooks
                 <span className="text-[1.1em] leading-none" aria-hidden>
                   ↓
                 </span>
               </Button>
+              */}
             </div>
           </div>
         </div>

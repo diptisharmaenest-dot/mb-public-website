@@ -46,8 +46,8 @@ export default function FamiliesReview() {
           ]}
         />
 
-        <DownloadAppButton source="home-families-review" variant="customer">
-          Download app
+        <DownloadAppButton source="home-families-review" openLabel="Order now" variant="customer">
+          Order now
         </DownloadAppButton>
       </motion.div>
     </Section>

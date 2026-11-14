@@ -8,6 +8,7 @@ import EveryOrderChangesLives from './EveryOrderChangesLives'
 import YourNameOnTheDoor from './YourNameOnTheDoor'
 import WeHandleEverythingElse from './WeHandleEverythingElse'
 import BuildsTrustAndIndependence from './BuildsTrustAndIndependence'
+import HowItWorks from './HowItWorks'
 
 export {
   Hero,
@@ -20,4 +21,5 @@ export {
   YourNameOnTheDoor,
   WeHandleEverythingElse,
   BuildsTrustAndIndependence,
+  HowItWorks,
 }

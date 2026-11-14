@@ -25,7 +25,7 @@ const PartnerBanner = () => {
             accent="text-yellow"
           />
           <p className="text-[14.5px] sm:text-[15.5px] leading-relaxed text-[#FFFAF2]/90 font-medium mt-4 max-w-[680px]">
-            Local customers, full support, and cook at your own pace. Typical partners earn around ₹30,000 a month — earnings vary.
+            Local customers, full support, and cook at your own pace.
           </p>
         </div>
 

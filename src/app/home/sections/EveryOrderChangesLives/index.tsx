@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FaArrowDownLong, FaArrowRightLong } from "react-icons/fa6";
+import { FaArrowRightLong } from "react-icons/fa6";
 import {
   compactAccentLine,
   HEADER_TO_SUBROW_GAP,
@@ -125,13 +125,6 @@ export default function EveryOrderChangesLives() {
           ))}
         </div>
 
-        <p className="mt-10 flex items-center justify-center gap-2 text-center font-hand text-2xl font-normal text-partner sm:mt-12 sm:text-[28px]">
-          <span>Could that be your kitchen?</span>
-          <FaArrowDownLong
-            className="h-6 w-4 shrink-0 text-partner"
-            aria-hidden
-          />
-        </p>
       </motion.div>
     </Section>
   );

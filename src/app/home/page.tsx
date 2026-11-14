@@ -1,13 +1,10 @@
 import { createPageMetadata, ROUTES, SITE_NAME } from '@/shared/seo'
 import {
   Hero,
-  WhyMotherBhojanExists,
-  KitchenAudit,
-  FeaturedKitchens,
+  HowItWorks,
   DaughtersPromise,
   FamiliesReview,
   EveryOrderChangesLives,
-  YourNameOnTheDoor,
   WeHandleEverythingElse,
   BuildsTrustAndIndependence,
 } from './sections'
@@ -24,13 +21,15 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <WhyMotherBhojanExists />
-      <KitchenAudit />
-      <FeaturedKitchens />
+      {/* Hidden for now — re-add the import and uncomment to show again:
+          <WhyMotherBhojanExists />  (Sunita — "The hands behind your meal")
+          <KitchenAudit />           ("Sunita's kitchen passed the audit")
+          <FeaturedKitchens />       ("Cooking near you this week")
+          <YourNameOnTheDoor />      ("Your kitchen, your name on the door") */}
+      <HowItWorks />
       <DaughtersPromise />
       <FamiliesReview />
       <EveryOrderChangesLives />
-      <YourNameOnTheDoor />
       <WeHandleEverythingElse />
       <BuildsTrustAndIndependence />
     </>
