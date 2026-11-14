@@ -116,7 +116,7 @@ const Header = () => {
               src={mbLogoRed}
               alt="Mother Bhojan"
               priority
-              className="h-11 w-auto object-contain md:h-12"
+              className="h-12 w-auto object-contain drop-shadow-[0_2px_6px_rgba(219,26,26,0.18)] md:h-[60px]"
             />
           </Link>
 

@@ -2,10 +2,7 @@
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { FiCheck } from 'react-icons/fi'
-// Light, people-free kitchen loop (compressed from homeV3.mp4). Previous: hero_kitchen_loop.mp4 / hero_bg.mp4.
-import heroVideo from '@/assets/videos/hero_light_kitchen.mp4'
-import heroPoster from '@/assets/images/hero-light-kitchen-poster.jpg'
+// Background video removed (plain light hero). Videos kept in assets: hero_light_kitchen.mp4, hero_kitchen_loop.mp4, hero_bg.mp4.
 import { EASE } from '@/shared/lib/motion'
 import { DownloadAppButton, Section } from '@/components'
 import { VERIFIED_TRUST_SECTION_PROPS } from '@/shared/data/verified-kitchen'
@@ -64,8 +61,6 @@ function ForYoursBrush() {
   )
 }
 
-const TRUST_CHIPS = ['80-point hygiene audit', 'Cooked fresh at home', 'Delivered warm'] as const
-
 /** Staggered fade-up for hero content. */
 const rise = (i: number) => ({
   initial: { opacity: 0, y: 18 },
@@ -81,28 +76,18 @@ const Hero = () => {
       aria-labelledby="hero-heading"
       flushTop
       flushBottom
-      className="relative min-h-svh overflow-hidden bg-[#F4EEE6]"
-      innerClassName="relative z-10 flex min-h-svh flex-col items-center pb-48 pt-28 sm:pb-56 md:pt-32 lg:pb-44"
+      className="relative overflow-hidden bg-[#FBF7F1]"
+      innerClassName="relative z-10 flex min-h-[88svh] flex-col items-center justify-center pb-20 pt-32 md:pt-36"
       decorations={
         <>
-          <video
-            key={heroVideo}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster={heroPoster.src}
-            className="absolute inset-0 h-full w-full object-cover object-bottom"
-            aria-hidden
-          >
-            <source src={heroVideo} type="video/mp4" />
-          </video>
-          {/* Soft cream wash so dark text reads on the wall; fades out over the food. */}
+          {/* Soft brand glows + faint dot texture — no photo or video. */}
           <div
-            className="absolute inset-0 bg-gradient-to-b from-[#FBF7F1]/90 via-[#FBF7F1]/60 to-transparent sm:via-[#FBF7F1]/45"
+            className="absolute inset-0 bg-[radial-gradient(rgba(42,31,24,0.09)_1px,transparent_1.2px)] [background-size:22px_22px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]"
             aria-hidden
           />
+          <div className="absolute -left-24 top-24 h-80 w-80 rounded-full bg-customer/15 blur-3xl" aria-hidden />
+          <div className="absolute -right-24 bottom-10 h-96 w-96 rounded-full bg-verified/20 blur-3xl" aria-hidden />
+          <div className="absolute left-1/2 top-1/3 h-72 w-[36rem] -translate-x-1/2 rounded-full bg-yellow/15 blur-3xl" aria-hidden />
         </>
       }
       {...VERIFIED_TRUST_SECTION_PROPS}
@@ -174,19 +159,6 @@ const Hero = () => {
           </p>
         </motion.div>
 
-        <motion.ul {...rise(5)} className="mt-8 flex flex-wrap justify-center gap-2 sm:gap-2.5">
-          {TRUST_CHIPS.map((chip) => (
-            <li
-              key={chip}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3.5 py-2 text-[13px] font-semibold text-ink shadow-[0_6px_18px_-10px_rgba(42,31,24,0.35)] ring-1 ring-ink/5 backdrop-blur-sm"
-            >
-              <span className="inline-flex h-4.5 w-4.5 items-center justify-center rounded-full bg-verified text-white">
-                <FiCheck className="h-3 w-3" strokeWidth={3.5} aria-hidden />
-              </span>
-              {chip}
-            </li>
-          ))}
-        </motion.ul>
       </div>
     </Section>
   )
