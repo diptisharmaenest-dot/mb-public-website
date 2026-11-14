@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiCheck } from "react-icons/fi";
 import {
@@ -9,7 +8,6 @@ import {
   Section,
   SectionHeader,
 } from "@/components";
-import { ROUTES } from "@/shared/seo";
 import { VERIFIED_TRUST_SECTION_PROPS } from "@/shared/data/verified-kitchen";
 import { EASE } from "@/shared/lib/motion";
 import youngMotherImg from "@/assets/images/young-indian-mother.png";
@@ -44,7 +42,7 @@ function RefundProofCard() {
       <div className="mt-4 flex items-center gap-2 border-t border-ink/10 pt-3.5 text-[11.5px] text-ink/60">
         <span className="h-2 w-2 shrink-0 rounded-full bg-[#6B8E3D]" aria-hidden />
         <span>
-          Settled in <b className="font-bold text-ink">4 minutes</b> · no questions asked
+          Resolved by <b className="font-bold text-ink">our support team</b>
         </span>
       </div>
     </div>
@@ -84,7 +82,7 @@ const DaughtersPromise = () => {
                   eyebrow: "text-white/80",
                   description: "!max-w-[480px] !text-white/90",
                 }}
-                description="Full refund, no questions. If a meal ever arrives cold, late, or not as it should be — we make it right, instantly. No forms, no arguments."
+                description="If a meal arrives cold, late or not as it should be, just tell us. A real person from our team will look into it and make it right — quickly and fairly."
                 lines={[
                   compactAccentLine({
                     text: "Anything Wrong With Your",
@@ -99,6 +97,7 @@ const DaughtersPromise = () => {
                 </p>
               </blockquote>
 
+              {/* "Read the promise" hidden for now — /refunds page not live yet (re-add Link + ROUTES imports).
               <div className="mt-8">
                 <Link
                   href={ROUTES.refunds}
@@ -107,6 +106,7 @@ const DaughtersPromise = () => {
                   Read the promise
                 </Link>
               </div>
+              */}
             </div>
           </div>
 

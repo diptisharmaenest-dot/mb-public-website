@@ -18,7 +18,7 @@ import {
 const BENEFITS = [
   'Order from verified home cooks near you',
   'Track every meal from her kitchen to your door',
-  "Full refund under the Daughter's Promise",
+  'A real person to help if anything goes wrong',
 ] as const
 
 type StoreKey = 'ios' | 'android'

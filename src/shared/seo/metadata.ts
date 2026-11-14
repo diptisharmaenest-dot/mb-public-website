@@ -80,11 +80,11 @@ export function createRootMetadata(): Metadata {
     applicationName: SITE_NAME,
     keywords: [
       'home cooked food',
-      'sell food online',
-      'chef platform',
-      'food business',
-      'meal prep',
-      'independent chefs',
+      'ghar ka khana',
+      'home food delivery Mohali',
+      'verified home kitchens',
+      'women home cooks',
+      'Tricity home food',
       'Mother Bhojan',
     ],
     alternates: {

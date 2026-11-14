@@ -1,13 +1,13 @@
 /** Public marketing site configuration for metadata, sitemap, and JSON-LD. */
 export const SITE_NAME = 'Mother Bhojan'
 
-export const SITE_TAGLINE = 'The easiest way to sell home-cooked food online'
+export const SITE_TAGLINE = 'Verified home food from women home cooks near you'
 
 /** Cities where Mother Bhojan currently delivers. */
 export const SERVICE_CITIES = ['Mohali'] as const
 
 export const DEFAULT_DESCRIPTION =
-  'Mother Bhojan helps independent chefs and home cooks launch online stores, manage menus, accept orders, and grow their food business with tools built for home-cooked food.'
+  'Mother Bhojan is a verified home-kitchen marketplace: women cook in their own kitchens and families nearby order real ghar ka khaana — starting in Mohali.'
 
 /** Default OG/Twitter image (absolute URL resolved via metadataBase). */
 export const DEFAULT_OG_IMAGE_PATH = '/assets/images/logo-red.png'

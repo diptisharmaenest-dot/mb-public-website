@@ -24,7 +24,7 @@ export default function BuildsTrustAndIndependence() {
           solid="ink"
           marginBottom={HEADER_TO_SUBROW_GAP}
           lines={[
-            { text: 'Every Order Builds Trust In Home Food' },
+            { text: 'Every order builds trust in home food.' },
             compactAccentLine({
               text: 'Every kitchen builds',
               accent: 'her independence.',
@@ -53,7 +53,7 @@ export default function BuildsTrustAndIndependence() {
         </div>
 
         <p className="mt-6 text-[14px] font-normal  tracking-tight">
-          Local customers · full support · cook at your own pace
+          Verified home kitchens · cooked fresh · delivered warm in Mohali
         </p>
       </motion.div>
     </Section>

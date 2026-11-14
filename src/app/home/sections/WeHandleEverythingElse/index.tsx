@@ -25,22 +25,22 @@ import humanSupportFrame from '@/assets/images/human-support-frame.png'
 const FEATURES = [
   {
     id: 'payments',
-    titleLine1: 'Guaranteed',
+    titleLine1: 'Weekly',
     titleLine2: 'payments',
     description:
-      'Earnings deposited straight to her bank — UPI, cards, net banking.',
+      'Her earnings are paid straight into her bank account, every week.',
   },
   {
     id: 'ai-photo',
     titleLine1: 'AI Photo',
     titleLine2: 'enhancer',
-    description: 'Studio-look dish photos from a phone camera snap.',
+    description: 'Simple phone photos of her dishes, made to look their best.',
   },
   {
     id: 'reviews',
     titleLine1: 'Customer',
-    titleLine2: 'review',
-    description: 'Good reviews bring more orders and build her reputation.',
+    titleLine2: 'reviews',
+    description: 'Kind words from families bring more orders and build her name.',
   },
   {
     id: 'support',

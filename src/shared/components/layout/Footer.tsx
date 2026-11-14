@@ -7,7 +7,7 @@ import {
 } from "react-icons/fa";
 import { FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
-import { RADIUS_BTN, Section } from "@/components";
+import { DownloadAppButton, RADIUS_BTN, Section } from "@/components";
 import { mbLogoRed } from "@/assets";
 import { ROUTES } from "@/shared/seo";
 import { VERIFIED_TRUST_SECTION_PROPS } from "@/shared/data/verified-kitchen";
@@ -148,13 +148,15 @@ const Footer = () => {
               <p className="max-w-[20ch] text-sm leading-relaxed text-footer-text/75">
                 Mobile app coming soon.
               </p>
-              <Link
-                href={ROUTES.contact}
-                className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-yellow transition duration-200 hover:text-white"
+              <DownloadAppButton
+                source="footer-waitlist"
+                openLabel="Open the app"
+                variant="none"
+                className="inline-flex w-fit cursor-pointer items-center gap-1 text-sm font-semibold text-yellow transition duration-200 hover:text-white"
               >
                 Join the waitlist
                 <FiArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-              </Link>
+              </DownloadAppButton>
             </div>
           </div>
 
