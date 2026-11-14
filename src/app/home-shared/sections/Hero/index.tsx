@@ -1,8 +1,12 @@
 'use client'
 
 import Image from 'next/image'
-import heroVideo from '@/assets/videos/hero_kitchen_loop.mp4'
-import heroPoster from '@/assets/images/hero-kitchen-poster.jpg'
+import { motion } from 'framer-motion'
+import { FiCheck } from 'react-icons/fi'
+// Light, people-free kitchen loop (compressed from homeV3.mp4). Previous: hero_kitchen_loop.mp4 / hero_bg.mp4.
+import heroVideo from '@/assets/videos/hero_light_kitchen.mp4'
+import heroPoster from '@/assets/images/hero-light-kitchen-poster.jpg'
+import { EASE } from '@/shared/lib/motion'
 import { DownloadAppButton, Section } from '@/components'
 import { VERIFIED_TRUST_SECTION_PROPS } from '@/shared/data/verified-kitchen'
 import { mLogo } from '@/assets/images'
@@ -60,6 +64,16 @@ function ForYoursBrush() {
   )
 }
 
+const TRUST_CHIPS = ['80-point hygiene audit', 'Cooked fresh at home', 'Delivered warm'] as const
+
+/** Staggered fade-up for hero content. */
+const rise = (i: number) => ({
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.7, ease: EASE, delay: 0.1 + i * 0.1 },
+})
+
+/** Light, centred hero (Cookin-inspired): copy sits on the bright wall, food along the bottom. */
 const Hero = () => {
   return (
     <Section
@@ -67,8 +81,8 @@ const Hero = () => {
       aria-labelledby="hero-heading"
       flushTop
       flushBottom
-      className="relative min-h-svh overflow-hidden bg-text-900"
-      innerClassName="relative z-10 flex min-h-svh items-center py-24 md:py-28"
+      className="relative min-h-svh overflow-hidden bg-[#F4EEE6]"
+      innerClassName="relative z-10 flex min-h-svh flex-col items-center pb-48 pt-28 sm:pb-56 md:pt-32 lg:pb-44"
       decorations={
         <>
           <video
@@ -79,90 +93,100 @@ const Hero = () => {
             playsInline
             preload="auto"
             poster={heroPoster.src}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover object-bottom"
             aria-hidden
           >
             <source src={heroVideo} type="video/mp4" />
           </video>
-          {/* Light footage: darker on the text side, food stays visible on the right. */}
+          {/* Soft cream wash so dark text reads on the wall; fades out over the food. */}
           <div
-            className="absolute inset-0 bg-black/55 lg:bg-transparent lg:bg-gradient-to-r lg:from-black/75 lg:via-black/45 lg:to-black/10"
+            className="absolute inset-0 bg-gradient-to-b from-[#FBF7F1]/90 via-[#FBF7F1]/60 to-transparent sm:via-[#FBF7F1]/45"
             aria-hidden
           />
         </>
       }
       {...VERIFIED_TRUST_SECTION_PROPS}
     >
-      <div className="w-full" id="hero-heading">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8 xl:gap-12">
-          <div className="flex w-full max-w-[542px] flex-col items-start text-left lg:col-span-7">
-            <div className="mb-4 inline-flex flex-wrap items-center gap-2.5 text-white sm:mb-5">
-              <span className="text-base font-normal leading-[30px]">
-                माँ के हाथ का खाना
-              </span>
-              <span
-                className="inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-verified shadow-[0_2px_6px_rgba(111,138,62,0.35)]"
-                aria-hidden
-              >
-                <Image
-                  src={mLogo}
-                  alt=""
-                  width={12}
-                  height={12}
-                  className="object-contain"
-                />
-              </span>
-              <span className="text-[12px] font-semibold uppercase leading-none tracking-[1px] text-white/90">
-                Verified Home Food
-              </span>
-            </div>
+      <div className="flex w-full max-w-[860px] flex-col items-center text-center">
+        <motion.div {...rise(0)} className="mb-5 inline-flex flex-wrap items-center justify-center gap-2.5 rounded-full bg-white/70 px-4 py-1.5 ring-1 ring-ink/5 backdrop-blur-sm">
+          <span className="text-[15px] font-normal leading-none text-ink-soft">माँ के हाथ का खाना</span>
+          <span
+            className="inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-verified shadow-[0_2px_6px_rgba(111,138,62,0.35)]"
+            aria-hidden
+          >
+            <Image src={mLogo} alt="" width={12} height={12} className="object-contain" />
+          </span>
+          <span className="text-[11.5px] font-semibold uppercase leading-none tracking-[1px] text-verified-text">
+            Verified Home Food
+          </span>
+        </motion.div>
 
-            <h1 className="text-[2.25rem] font-semibold leading-[1.2] tracking-[-1px] text-white sm:text-[2.75rem] lg:text-[58px]">
-              The Way She Cooks
-              <br />
-              For Her Family
-            </h1>
+        <motion.h1
+          {...rise(1)}
+          id="hero-heading"
+          className="text-[2.35rem] font-semibold leading-[1.08] tracking-[-1.5px] text-ink sm:text-[3.25rem] lg:text-[68px]"
+        >
+          The Way She Cooks
+          <br />
+          For Her Family
+        </motion.h1>
 
-            <p className="mt-3 flex flex-wrap items-baseline gap-x-2.5 text-[1.25rem] font-semibold leading-none tracking-normal text-white sm:mt-4 sm:text-[1.5rem] lg:text-[28px]">
-              <span>Is How She Cooks</span>
-              <span className="relative inline-block -rotate-[4deg] px-1">
-                <ForYoursBrush />
-                <span className="relative z-10 inline-block font-hand text-[1.45em] font-extrabold leading-none text-partner">
-                  For Yours.
-                </span>
+        <motion.p
+          {...rise(2)}
+          className="mt-3 flex flex-wrap items-baseline justify-center gap-x-2.5 text-[1.35rem] font-semibold leading-none text-ink sm:mt-4 sm:text-[1.7rem] lg:text-[32px]"
+        >
+          <span>Is How She Cooks</span>
+          <span className="relative inline-block -rotate-[4deg] px-1">
+            <ForYoursBrush />
+            <span className="relative z-10 inline-block font-hand text-[1.45em] font-extrabold leading-none text-partner">
+              For Yours.
+            </span>
+          </span>
+        </motion.p>
+
+        <motion.p
+          {...rise(3)}
+          className="mt-6 max-w-[560px] text-[16px] leading-[1.5] text-ink/75 sm:text-[18px]"
+        >
+          Every meal on Mother Bhojan comes from a named, verified home cook near you. Real kitchens, real
+          women, checked one by one.
+        </motion.p>
+
+        <motion.div {...rise(4)} className="mt-8 flex w-full flex-col items-center">
+          <DownloadAppButton
+            source="home-hero"
+            openLabel="Order now"
+            variant="customer"
+            size="lg"
+            className="w-full max-w-[340px] justify-center !rounded-full py-4 text-[18px] shadow-[0_18px_36px_-14px_rgba(219,26,26,0.6)]"
+          >
+            Order now
+          </DownloadAppButton>
+          {/* "Meet our cooks" hidden — #mothers anchor has no target on the page. */}
+          <p className="mt-4 inline-flex items-center gap-2 text-[14px] font-medium text-ink/70">
+            <span className="relative flex h-2 w-2" aria-hidden>
+              <span className="absolute inset-0 animate-ping rounded-full bg-verified/70" />
+              <span className="relative h-2 w-2 rounded-full bg-verified" />
+            </span>
+            Now serving Mohali
+            <span className="text-ink/30" aria-hidden>·</span>
+            <span className="text-ink/55">Tricity next</span>
+          </p>
+        </motion.div>
+
+        <motion.ul {...rise(5)} className="mt-8 flex flex-wrap justify-center gap-2 sm:gap-2.5">
+          {TRUST_CHIPS.map((chip) => (
+            <li
+              key={chip}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3.5 py-2 text-[13px] font-semibold text-ink shadow-[0_6px_18px_-10px_rgba(42,31,24,0.35)] ring-1 ring-ink/5 backdrop-blur-sm"
+            >
+              <span className="inline-flex h-4.5 w-4.5 items-center justify-center rounded-full bg-verified text-white">
+                <FiCheck className="h-3 w-3" strokeWidth={3.5} aria-hidden />
               </span>
-            </p>
-
-            <p className="mt-5 max-w-[542px] text-base font-normal leading-[1.4] tracking-normal text-white/90 sm:mt-6 sm:text-[18px]">
-              Every meal on Mother Bhojan comes from a named, verified home cook
-              near you. Real kitchens, real women, checked one by one.
-            </p>
-
-            <div className="mt-7 flex flex-wrap items-center gap-4 sm:mt-8">
-              <DownloadAppButton source="home-hero" openLabel="Order now" variant="customer" size="lg" className="px-7 sm:px-8">
-                Order now
-              </DownloadAppButton>
-              {/* Hidden for now — #mothers anchor has no target on the page.
-              <Button href="#mothers" variant="partnerSoft" size="lg" className="px-7 sm:px-8">
-                Meet our cooks
-                <span className="text-[1.1em] leading-none" aria-hidden>
-                  ↓
-                </span>
-              </Button>
-              */}
-            </div>
-
-            <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-white/90 ring-1 ring-white/20 backdrop-blur-sm">
-              <span className="relative flex h-2 w-2" aria-hidden>
-                <span className="absolute inset-0 animate-ping rounded-full bg-verified/70" />
-                <span className="relative h-2 w-2 rounded-full bg-verified" />
-              </span>
-              Now serving Mohali
-              <span className="text-white/50" aria-hidden>·</span>
-              <span className="text-white/70">Tricity next</span>
-            </p>
-          </div>
-        </div>
+              {chip}
+            </li>
+          ))}
+        </motion.ul>
       </div>
     </Section>
   )
