@@ -3,7 +3,6 @@ import Image from "next/image";
 import {
   FaFacebook,
   FaInstagram,
-  FaLinkedin,
 } from "react-icons/fa";
 import { FiArrowUpRight } from "react-icons/fi";
 import clsx from "clsx";
@@ -29,7 +28,6 @@ const infoLinks = [
 
 const socialLinks = [
   { label: "Facebook", href: "#", Icon: FaFacebook },
-  { label: "LinkedIn", href: "#", Icon: FaLinkedin },
   { label: "Instagram", href: "#", Icon: FaInstagram },
 ] as const;
 
