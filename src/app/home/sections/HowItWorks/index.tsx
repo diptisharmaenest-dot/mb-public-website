@@ -42,14 +42,18 @@ const SOFT_TONE = { verified: 'bg-verified-pill', partner: 'bg-partner-tag' } as
 const RING_STROKE = { verified: '#6f8a3e', partner: '#DB1A1A' } as const
 
 /* ------------------------------------------------------------------ */
-/* Autoplay: advances while in view; hover pauses; a click/tap stops.  */
+/* Autoplay: advances while in view. A click jumps to that step, holds */
+/* it for HOLD_MS, then auto-play carries on from there.              */
 /* ------------------------------------------------------------------ */
+const HOLD_MS = 10000
+
 function useStepper(inView: boolean) {
   const reduceMotion = useReducedMotion()
   const [active, setActive] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const [stopped, setStopped] = useState(false)
-  const playing = !reduceMotion && !stopped && !paused && inView
+  /** Changes on every click so the hold timer restarts. */
+  const [hold, setHold] = useState(0)
+  const [holding, setHolding] = useState(false)
+  const playing = !reduceMotion && !holding && inView
 
   useEffect(() => {
     if (!playing) return
@@ -57,12 +61,19 @@ function useStepper(inView: boolean) {
     return () => window.clearTimeout(id)
   }, [playing, active])
 
+  useEffect(() => {
+    if (!hold) return
+    const id = window.setTimeout(() => setHolding(false), HOLD_MS)
+    return () => window.clearTimeout(id)
+  }, [hold])
+
   const select = useCallback((i: number) => {
-    setStopped(true)
     setActive(i)
+    setHolding(true)
+    setHold((h) => h + 1)
   }, [])
 
-  return { active, select, playing, setPaused }
+  return { active, select, playing }
 }
 
 /* --------------------------- Step marker --------------------------- */
@@ -246,7 +257,7 @@ const COLS = 'grid grid-cols-[minmax(0,1fr)_180px_minmax(0,1fr)]'
 function ParallelTimeline() {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.35 })
-  const { active, select, playing, setPaused } = useStepper(inView)
+  const { active, select, playing } = useStepper(inView)
   const left = FAMILY_JOURNEY
   const right = KITCHEN_JOURNEY
 
@@ -254,8 +265,6 @@ function ParallelTimeline() {
     <div
       ref={ref}
       className="relative hidden lg:block"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
     >
       {/* Spine — fills down to the active step */}
       <span aria-hidden className="absolute bottom-0 left-1/2 top-[6px] w-[2px] -translate-x-1/2 bg-ink/10">
