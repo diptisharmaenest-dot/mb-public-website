@@ -2,8 +2,7 @@
 
 import Image from 'next/image'
 import heroBg from '@/assets/videos/hero_bg.mp4'
-import { Button, Section } from '@/components'
-import { ROUTES } from '@/shared/seo'
+import { Button, DownloadAppButton, Section } from '@/components'
 import { VERIFIED_TRUST_SECTION_PROPS } from '@/shared/data/verified-kitchen'
 import { mLogo } from '@/assets/images'
 
@@ -135,9 +134,9 @@ const Hero = () => {
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-4 sm:mt-8">
-              <Button href={ROUTES.kitchens} variant="customer" size="lg" className="px-7 sm:px-8">
-                Order home food
-              </Button>
+              <DownloadAppButton source="home-hero" variant="customer" size="lg" className="px-7 sm:px-8">
+                Download app
+              </DownloadAppButton>
               <Button href="#mothers" variant="partnerSoft" size="lg" className="px-7 sm:px-8">
                 Meet our cooks
                 <span className="text-[1.1em] leading-none" aria-hidden>

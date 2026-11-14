@@ -2,13 +2,12 @@
 
 import { motion } from 'framer-motion'
 import {
-  Button,
+  DownloadAppButton,
   compactAccentLine,
   HEADER_TO_SUBROW_GAP,
   Section,
   SectionHeader,
 } from '@/components'
-import { ROUTES } from '@/shared/seo'
 import { EASE } from '@/shared/lib/motion'
 
 export default function FamiliesReview() {
@@ -47,9 +46,9 @@ export default function FamiliesReview() {
           ]}
         />
 
-        <Button href={ROUTES.kitchens} variant="customer">
-          Order home food near you
-        </Button>
+        <DownloadAppButton source="home-families-review" variant="customer">
+          Download app
+        </DownloadAppButton>
       </motion.div>
     </Section>
   )

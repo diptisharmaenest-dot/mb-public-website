@@ -1,6 +1,7 @@
 'use client'
 
 import { ThemeProvider } from './ThemeProvider'
+import { AppDownloadProvider } from './AppDownloadProvider'
 
 export default function AppProviders({
   children,
@@ -9,7 +10,7 @@ export default function AppProviders({
 }) {
   return (
     <ThemeProvider>
-      {children}
+      <AppDownloadProvider>{children}</AppDownloadProvider>
     </ThemeProvider>
   )
 }

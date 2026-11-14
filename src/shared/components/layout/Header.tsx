@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import clsx from "clsx";
-import { Button, SECTION_PX, SectionContainer } from "@/components";
+import { DownloadAppButton, SECTION_PX, SectionContainer } from "@/components";
 import { mbLogoRed } from "@/assets";
 import { ROUTES } from "@/shared/seo";
 
@@ -139,14 +139,15 @@ const Header = () => {
                 />
               ))}
             </nav>
-            <Button
-              href={ROUTES.kitchens}
+            <DownloadAppButton
+              source="header"
+              openLabel="Order now"
               variant="customer"
               size="sm"
               className="ml-3 !min-h-10 rounded-[12px] px-5 text-[13px] font-bold"
             >
               Order now
-            </Button>
+            </DownloadAppButton>
           </div>
 
           <button
@@ -178,8 +179,9 @@ const Header = () => {
                 onClick={() => setOpen(false)}
               />
             ))}
-            <Button
-              href={ROUTES.kitchens}
+            <DownloadAppButton
+              source="header-mobile-menu"
+              openLabel="Order now"
               variant="customer"
               size="sm"
               fullWidth
@@ -187,7 +189,7 @@ const Header = () => {
               onClick={() => setOpen(false)}
             >
               Order now
-            </Button>
+            </DownloadAppButton>
           </div>
         </div>
       ) : null}

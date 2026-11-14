@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Button, Section } from '@/components'
+import { Button, DownloadAppButton, Section } from '@/components'
 import { family, mother } from '@/assets/images'
 import { ROUTES } from '@/shared/seo'
 import { EASE } from '@/shared/lib/motion'
@@ -15,6 +15,8 @@ export type PortalCtaItem = {
   ctaLabel: string
   href: string
   variant?: 'customer' | 'partner'
+  /** Open the customer-app download popup instead of navigating to `href`. */
+  appDownload?: boolean
 }
 
 type DualPortalCtaProps = {
@@ -117,13 +119,24 @@ const DualPortalCta = ({
               </div>
 
               <div className="relative mt-4 sm:mt-5">
-                <Button
-                  href={item.href}
-                  variant={item.variant ?? (i === 0 ? 'customer' : 'partner')}
-                  size="sm"
-                >
-                  {item.ctaLabel}
-                </Button>
+                {item.appDownload ? (
+                  <DownloadAppButton
+                    source={`${id}-${item.id ?? i}`}
+                    openLabel={item.ctaLabel}
+                    variant={item.variant ?? (i === 0 ? 'customer' : 'partner')}
+                    size="sm"
+                  >
+                    {item.ctaLabel}
+                  </DownloadAppButton>
+                ) : (
+                  <Button
+                    href={item.href}
+                    variant={item.variant ?? (i === 0 ? 'customer' : 'partner')}
+                    size="sm"
+                  >
+                    {item.ctaLabel}
+                  </Button>
+                )}
               </div>
             </motion.article>
           )
@@ -142,6 +155,7 @@ export const ABOUT_PORTAL_CTAS: [PortalCtaItem, PortalCtaItem] = [
     ctaLabel: 'Order now',
     href: ROUTES.kitchens,
     variant: 'customer',
+    appDownload: true,
   },
   {
     eyebrow: 'For cooks',
@@ -161,6 +175,7 @@ export const FAQ_PORTAL_CTAS: [PortalCtaItem, PortalCtaItem] = [
     ctaLabel: 'Order now',
     href: ROUTES.kitchens,
     variant: 'customer',
+    appDownload: true,
   },
   {
     eyebrow: 'For cooks',

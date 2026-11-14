@@ -38,7 +38,7 @@ const WhyMotherBhojanExists = () => {
             animated={false}
             classNames={{
               eyebrow: 'text-verified-text !mb-0',
-              header: 'sr-only',
+              header: '!sr-only',
             }}
             lines={[{ text: 'Why Mother Bhojan exists' }]}
           />

@@ -19,7 +19,7 @@ const WomenWhoCook = () => {
       {/* Soft warm background radial glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[280px] w-[500px] rounded-full bg-customer/5 blur-[80px]"
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[280px] w-[min(500px,100%)] rounded-full bg-customer/5 blur-[80px]"
       />
 
       <SectionHeader

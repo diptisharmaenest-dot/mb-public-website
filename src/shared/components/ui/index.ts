@@ -1,5 +1,6 @@
 export { default as Button } from './Button';
 export type { ButtonProps, ButtonVariant } from './Button';
+export { default as DownloadAppButton } from './DownloadAppButton';
 export { default as CustomDropdown } from './CustomDropdown';
 export type { CustomDropdownProps, DropdownOption } from './CustomDropdown';
 export { default as VerifiedSeal } from './VerifiedSeal';

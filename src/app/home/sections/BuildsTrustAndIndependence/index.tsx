@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Section, SectionHeader, compactAccentLine, HEADER_TO_SUBROW_GAP } from '@/components'
+import { DownloadAppButton, Section, SectionHeader, compactAccentLine, HEADER_TO_SUBROW_GAP } from '@/components'
 import { ROUTES } from '@/shared/seo'
 import { EASE } from '@/shared/lib/motion'
 
@@ -35,12 +35,13 @@ export default function BuildsTrustAndIndependence() {
         />
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href={ROUTES.kitchens}
-            className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-b from-[#F04444] to-[#CB1C1C] px-7 py-3 text-[15.5px] font-bold !text-white visited:!text-white shadow-[0_4px_14px_rgba(219,26,26,0.22)] transition-all hover:brightness-105 active:scale-95 no-underline"
+          <DownloadAppButton
+            source="home-bottom-banner"
+            variant="none"
+            className="inline-flex cursor-pointer items-center justify-center rounded-2xl bg-gradient-to-b from-[#F04444] to-[#CB1C1C] px-7 py-3 text-[15.5px] font-bold !text-white shadow-[0_4px_14px_rgba(219,26,26,0.22)] transition-all hover:brightness-105 active:scale-95"
           >
-            Order home food
-          </Link>
+            Download app
+          </DownloadAppButton>
 
           <Link
             href={ROUTES.partners}

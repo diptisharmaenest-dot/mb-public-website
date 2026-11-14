@@ -10,6 +10,7 @@ import aiFeatureEnhanced from "./ai_feature_enhanced.png";
 import mother from "./mother.png";
 import family from "./family.png";
 import kitchenStorefrontPreview from "./kitchen-storefront-preview.png";
+import appQr from "./app-qr.svg";
 
 export {
   differenceLeftPlant,
@@ -20,4 +21,5 @@ export {
   mother,
   family,
   kitchenStorefrontPreview,
+  appQr,
 };

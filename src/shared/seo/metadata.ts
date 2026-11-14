@@ -7,6 +7,7 @@ import {
   absoluteUrl,
   getSiteUrl,
 } from './site'
+import { APP_DOWNLOAD } from '@/shared/data/app-download'
 
 export type PageMetadataInput = {
   /** Page title without site suffix (root layout template adds `| Mother Bhojan`). */
@@ -112,5 +113,7 @@ export function createRootMetadata(): Metadata {
     icons: {
       icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
     },
+    // iOS Smart App Banner (Safari shows "Open" when the app is installed) — on once iosAppId is set.
+    ...(APP_DOWNLOAD.iosAppId ? { itunes: { appId: APP_DOWNLOAD.iosAppId } } : {}),
   }
 }
