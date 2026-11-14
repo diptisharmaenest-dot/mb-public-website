@@ -17,6 +17,8 @@ import {
 } from '@/components'
 import { ROUTES } from '@/shared/seo'
 import { EASE } from '@/shared/lib/motion'
+import { FiCheck } from 'react-icons/fi'
+import { LuLandmark } from 'react-icons/lu'
 
 import ImageCompareSlider from '@/shared/components/ui/ImageCompareSlider'
 import { AI_PHOTO_COMPARE } from '../../data/ai-photo-compare'
@@ -92,76 +94,48 @@ function VisualStage({
   )
 }
 
-function MastercardIcon() {
-  return (
-    <span className="relative inline-flex h-4 w-7 shrink-0" aria-hidden>
-      <span className="absolute left-0 top-0 h-4 w-4 rounded-full bg-partner" />
-      <span className="absolute right-0 top-0 h-4 w-4 rounded-full bg-yellow opacity-85" />
-    </span>
-  )
-}
-
+/** Payouts are sent manually to the bank account the cook adds — no cards involved. */
 function PaymentsCardVisual() {
   return (
     <VisualStage tone="payments">
-      <div className="absolute inset-x-1 top-2">
-        <div className={`${FEATURE_CARD} p-3.5`}>
-          <p className="m-0 mb-2.5 text-[13px] font-bold text-ink">
-            Payment Methods
-          </p>
-          <div className="flex flex-col gap-2">
-            <div
-              className={`flex items-center justify-between border border-border px-2.5 py-2 ${RADIUS_DEFAULT}`}
-            >
-              <span className="flex items-center gap-2">
-                <MastercardIcon />
-                <span className="text-[12px] font-semibold text-ink">
-                  •••• 3876
-                </span>
+      <div className="absolute inset-x-1 top-1 bottom-1 flex flex-col gap-2">
+        {/* Saved bank account + weekly payout status (no amounts shown) */}
+        <div className={`${FEATURE_CARD} px-3 py-2.5`}>
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex min-w-0 items-center gap-2">
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-verified/10 text-verified-text">
+                <LuLandmark className="h-3.5 w-3.5" aria-hidden />
               </span>
-              <span className="text-[10px] font-bold text-verified">Default</span>
-            </div>
-            <div
-              className={`flex items-center gap-2 border border-border px-2.5 py-2 ${RADIUS_DEFAULT}`}
-            >
-              <span className="w-7 text-[11px] font-extrabold italic text-annotation">
-                VISA
-              </span>
-              <span className="text-[12px] font-semibold text-ink">•••• 1404</span>
-            </div>
+              <span className="truncate whitespace-nowrap text-[12px] font-semibold text-ink">••4521</span>
+            </span>
+            <span className="shrink-0 text-[10px] font-bold text-verified">Verified</span>
+          </div>
+          <div className="mt-1.5 flex items-center justify-between border-t border-border pt-1.5">
+            <span className="text-[10.5px] text-muted">Weekly payout</span>
+            <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-verified">
+              <FiCheck className="h-3 w-3" strokeWidth={3.5} aria-hidden />
+              Paid
+            </span>
           </div>
         </div>
-      </div>
 
-      <div
-        className={`${FEATURE_CARD} absolute bottom-1.5 right-1.5 w-[78%] p-3 shadow-surface-lg`}
-      >
-        <p className="m-0 mb-2 text-[11px] font-bold text-ink">
-          Add New Credit Card
-        </p>
-        <div className="flex flex-col gap-1.5">
-          {['Card number', 'Name on card'].map((placeholder) => (
-            <div
-              key={placeholder}
-              className={`flex h-6.5 items-center border border-border px-2 ${RADIUS_DEFAULT}`}
-            >
-              <span className="text-[9.5px] text-muted">{placeholder}</span>
-            </div>
-          ))}
-          <div className="flex gap-1.5">
-            {['MM/YY', 'CVV'].map((placeholder) => (
+        {/* Bank details are added manually */}
+        <div className={`${FEATURE_CARD} flex-1 px-3 py-2.5 shadow-surface-lg`}>
+          <p className="m-0 mb-1.5 text-[11px] font-bold text-ink">Add bank account</p>
+          <div className="flex flex-col gap-1">
+            {['Account holder name', 'Account number', 'IFSC code'].map((placeholder) => (
               <div
                 key={placeholder}
-                className={`flex h-6.5 flex-1 items-center border border-border px-2 ${RADIUS_DEFAULT}`}
+                className={`flex h-6.5 items-center border border-border px-2 ${RADIUS_DEFAULT}`}
               >
                 <span className="text-[9.5px] text-muted">{placeholder}</span>
               </div>
             ))}
-          </div>
-          <div
-            className={`mt-1 flex h-7.5 items-center justify-center ${RADIUS_BTN} bg-[#D9534F] text-[11.5px] font-bold text-white shadow-sm`}
-          >
-            Add Card
+            <div
+              className={`mt-0.5 flex h-7 items-center justify-center ${RADIUS_BTN} bg-[#D9534F] text-[11.5px] font-bold text-white shadow-sm`}
+            >
+              Save bank account
+            </div>
           </div>
         </div>
       </div>
