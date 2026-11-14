@@ -13,15 +13,12 @@ import {
   SectionHeader,
 } from '@/components'
 import { EASE } from '@/shared/lib/motion'
-import {
-  FAMILY_JOURNEY,
-  HOW_IT_WORKS_JOURNEYS,
-  KITCHEN_JOURNEY,
-  type HowItWorksJourney,
-} from '@/app/home/data/how-it-works'
+import { HOW_IT_WORKS_JOURNEYS, type HowItWorksJourney } from '@/app/home/data/how-it-works'
 
 /** Time each step stays highlighted while auto-playing. */
 const STEP_MS = 4500
+/** After a click, hold that step this long before auto-play carries on. */
+const HOLD_MS = 10000
 const STEPS = 4
 
 type IconType = ComponentType<{ className?: string }>
@@ -30,36 +27,32 @@ const ICONS: Record<HowItWorksJourney['id'], IconType[]> = {
   kitchen: [FiCheckSquare, FiCamera, LuShieldCheck, LuStore],
 }
 
-/** Steps alternate brand green / brand red, like the step markers on the spine. */
+/** Steps alternate brand green / brand red. */
 const tone = (i: number) => (i % 2 === 0 ? 'verified' : 'partner')
 const CIRCLE_TONE = {
   verified: 'bg-gradient-to-br from-verified to-verified-dark',
   partner: 'bg-gradient-to-br from-customer to-partner',
 } as const
-const LINE_TONE = { verified: 'bg-verified', partner: 'bg-partner' } as const
 const TEXT_TONE = { verified: 'text-verified-text', partner: 'text-partner' } as const
 const SOFT_TONE = { verified: 'bg-verified-pill', partner: 'bg-partner-tag' } as const
 const RING_STROKE = { verified: '#6f8a3e', partner: '#DB1A1A' } as const
 
 /* ------------------------------------------------------------------ */
-/* Autoplay: advances while in view. A click jumps to that step, holds */
-/* it for HOLD_MS, then auto-play carries on from there.              */
+/* Autoplay over `count` positions while in view. A click jumps there, */
+/* holds for HOLD_MS, then auto-play carries on.                       */
 /* ------------------------------------------------------------------ */
-const HOLD_MS = 10000
-
-function useStepper(inView: boolean) {
+function useStepper(inView: boolean, count: number) {
   const reduceMotion = useReducedMotion()
-  const [active, setActive] = useState(0)
-  /** Changes on every click so the hold timer restarts. */
+  const [pos, setPos] = useState(0)
   const [hold, setHold] = useState(0)
   const [holding, setHolding] = useState(false)
   const playing = !reduceMotion && !holding && inView
 
   useEffect(() => {
     if (!playing) return
-    const id = window.setTimeout(() => setActive((i) => (i + 1) % STEPS), STEP_MS)
+    const id = window.setTimeout(() => setPos((p) => (p + 1) % count), STEP_MS)
     return () => window.clearTimeout(id)
-  }, [playing, active])
+  }, [playing, pos, count])
 
   useEffect(() => {
     if (!hold) return
@@ -67,13 +60,13 @@ function useStepper(inView: boolean) {
     return () => window.clearTimeout(id)
   }, [hold])
 
-  const select = useCallback((i: number) => {
-    setActive(i)
+  const select = useCallback((p: number) => {
+    setPos(p)
     setHolding(true)
     setHold((h) => h + 1)
   }, [])
 
-  return { active, select, playing }
+  return { pos, select, playing }
 }
 
 /* --------------------------- Step marker --------------------------- */
@@ -83,31 +76,30 @@ function StepCircle({
   done,
   playing,
   onClick,
-  size = 'lg',
+  dim,
 }: {
   index: number
   active: boolean
   done: boolean
   playing: boolean
   onClick: () => void
-  size?: 'lg' | 'sm'
+  dim: number
 }) {
   const t = tone(index)
   const lit = active || done
-  const dim = size === 'lg' ? 84 : 52
   const r = dim / 2 - 3
   const c = 2 * Math.PI * r
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={`Step ${index + 1}`}
-      aria-current={active ? 'step' : undefined}
-      className="group relative z-10 flex shrink-0 cursor-pointer items-center justify-center rounded-full"
+      tabIndex={-1}
+      aria-hidden
+      className="relative z-10 flex shrink-0 cursor-pointer items-center justify-center rounded-full"
       style={{ width: dim, height: dim }}
     >
       {/* Timer ring — fills while this step is on screen */}
-      <svg className="absolute inset-0 -rotate-90" viewBox={`0 0 ${dim} ${dim}`} aria-hidden>
+      <svg className="absolute inset-0 -rotate-90" viewBox={`0 0 ${dim} ${dim}`}>
         <circle cx={dim / 2} cy={dim / 2} r={r} fill="#FFFBF5" stroke="rgba(42,31,24,0.08)" strokeWidth="3" />
         {active ? (
           <motion.circle
@@ -131,12 +123,12 @@ function StepCircle({
           'relative flex flex-col items-center justify-center rounded-full transition-colors duration-500',
           lit ? clsx(CIRCLE_TONE[t], 'text-white shadow-[0_10px_24px_-10px_rgba(42,31,24,0.55)]') : 'bg-[#E9E1D5] text-ink/45',
         )}
-        style={{ width: dim - 14, height: dim - 14 }}
+        style={{ width: dim - 12, height: dim - 12 }}
         animate={{ scale: active ? 1.06 : 1 }}
         transition={{ type: 'spring', stiffness: 320, damping: 20 }}
       >
-        <span className={clsx('font-hand leading-none', size === 'lg' ? '-mt-0.5 mb-1.5 text-[14px]' : 'mb-0.5 text-[10px]')}>step</span>
-        <span className={clsx('font-extrabold leading-none', size === 'lg' ? 'text-[24px]' : 'text-[16px]')}>{index + 1}</span>
+        <span className="mb-0.5 font-hand text-[10px] leading-none">step</span>
+        <span className="text-[17px] font-extrabold leading-none">{index + 1}</span>
       </motion.span>
     </button>
   )
@@ -147,36 +139,32 @@ function StepCard({
   journey,
   index,
   active,
-  side,
   onClick,
 }: {
   journey: HowItWorksJourney
   index: number
   active: boolean
-  side: 'left' | 'right' | 'mobile'
   onClick: () => void
 }) {
   const step = journey.steps[index]
   const Icon = ICONS[journey.id][index]
   const t = tone(index)
-  const alignRight = side === 'right'
   return (
     <button
       type="button"
       onClick={onClick}
       aria-current={active ? 'step' : undefined}
       className={clsx(
-        'group relative w-full cursor-pointer rounded-[20px] border p-5 text-left transition-all duration-500 sm:p-6',
-        alignRight && 'text-right',
+        'group relative w-full cursor-pointer rounded-[20px] border p-4 text-left transition-all duration-500 sm:p-5',
         active
           ? 'border-border-card bg-white shadow-[0_22px_44px_-26px_rgba(42,31,24,0.45)]'
           : 'border-transparent bg-transparent hover:bg-white/55',
       )}
     >
-      <div className={clsx('flex items-start gap-4', alignRight && 'flex-row-reverse')}>
+      <div className="flex items-start gap-3.5">
         <span
           className={clsx(
-            'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-all duration-500',
+            'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all duration-500',
             active ? clsx(SOFT_TONE[t], TEXT_TONE[t]) : 'bg-[#EFE8DD] text-ink/40 group-hover:text-ink/60',
           )}
         >
@@ -185,7 +173,7 @@ function StepCard({
         <div className="min-w-0 flex-1">
           <h4
             className={clsx(
-              'text-[17px] font-bold leading-snug tracking-tight transition-colors duration-500 sm:text-[19px]',
+              'text-[17px] font-bold leading-snug tracking-tight transition-colors duration-500 sm:text-[18px]',
               active ? 'text-ink' : 'text-ink/60 group-hover:text-ink/80',
             )}
           >
@@ -193,7 +181,7 @@ function StepCard({
           </h4>
           <p
             className={clsx(
-              'mt-1.5 text-[14.5px] leading-[1.55] transition-colors duration-500 sm:text-[15px]',
+              'mt-1 text-[14.5px] leading-[1.55] transition-colors duration-500',
               active ? 'text-ink/70' : 'text-ink/45',
             )}
           >
@@ -228,74 +216,104 @@ function StepCard({
   )
 }
 
-/** Short connector between a card and the spine; draws in when active. */
-function Connector({ index, active, from }: { index: number; active: boolean; from: 'left' | 'right' }) {
+/* -------------------- One journey as a vertical timeline ------------ */
+function JourneyTimeline({
+  journey,
+  activeStep,
+  playing,
+  onSelect,
+  circle = 56,
+}: {
+  journey: HowItWorksJourney
+  /** null = this journey is waiting its turn. */
+  activeStep: number | null
+  playing: boolean
+  onSelect: (i: number) => void
+  circle?: number
+}) {
+  const half = circle / 2
   return (
-    <span aria-hidden className="relative h-[2px] flex-1 bg-ink/10">
-      <motion.span
-        className={clsx('absolute inset-0', LINE_TONE[tone(index)], from === 'left' ? 'origin-left' : 'origin-right')}
-        initial={false}
-        animate={{ scaleX: active ? 1 : 0 }}
-        transition={{ duration: 0.5, ease: EASE }}
-      />
-    </span>
-  )
-}
-
-function ColumnTitle({ journey, align }: { journey: HowItWorksJourney; align: 'left' | 'right' }) {
-  return (
-    <div className={clsx(align === 'right' ? 'text-right' : 'text-left', 'px-6')}>
-      <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/45">How to</p>
-      <h3 className="mt-1 font-hand text-[30px] leading-tight text-ink">{journey.title}</h3>
-    </div>
-  )
-}
-
-/* ----------------------- Desktop: side by side ---------------------- */
-const COLS = 'grid grid-cols-[minmax(0,1fr)_180px_minmax(0,1fr)]'
-
-function ParallelTimeline() {
-  const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { amount: 0.35 })
-  const { active, select, playing } = useStepper(inView)
-  const left = FAMILY_JOURNEY
-  const right = KITCHEN_JOURNEY
-
-  return (
-    <div
-      ref={ref}
-      className="relative hidden lg:block"
-    >
-      {/* Spine — fills down to the active step */}
-      <span aria-hidden className="absolute bottom-0 left-1/2 top-[6px] w-[2px] -translate-x-1/2 bg-ink/10">
+    <ol className="relative">
+      <span aria-hidden className="absolute w-[2px] bg-ink/10" style={{ left: half - 1, top: half + 16, bottom: 72 }}>
         <motion.span
           className="block w-full bg-gradient-to-b from-verified via-customer to-partner"
           initial={false}
-          animate={{ height: `${((active + 0.6) / STEPS) * 100}%` }}
+          animate={{ height: `${((activeStep ?? 0) / (STEPS - 1)) * 100}%` }}
           transition={{ duration: 0.7, ease: EASE }}
         />
       </span>
-      <span aria-hidden className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 rounded-full border-[3px] border-paper bg-verified" />
+      {journey.steps.map((s, i) => (
+        <li key={s.title} className="relative flex items-start gap-2 pb-2">
+          <div className="pt-4">
+            <StepCircle
+              dim={circle}
+              index={i}
+              active={activeStep === i}
+              done={activeStep !== null && i < activeStep}
+              playing={playing}
+              onClick={() => onSelect(i)}
+            />
+          </div>
+          <StepCard journey={journey} index={i} active={activeStep === i} onClick={() => onSelect(i)} />
+        </li>
+      ))}
+    </ol>
+  )
+}
 
-      <div className={clsx(COLS, 'items-end pb-8 pt-6')}>
-        <ColumnTitle journey={left} align="left" />
-        <span />
-        <ColumnTitle journey={right} align="right" />
-      </div>
+/* -------- Desktop: both journeys side by side, played one at a time -------- */
+function SideBySide() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { amount: 0.3 })
+  const { pos, select, playing } = useStepper(inView, STEPS * HOW_IT_WORKS_JOURNEYS.length)
+  const current = Math.floor(pos / STEPS)
+  const step = pos % STEPS
 
-      <ol className="space-y-5">
-        {left.steps.map((s, i) => (
-          <li key={s.title} className={clsx(COLS, 'items-center')}>
-            <StepCard journey={left} index={i} active={active === i} side="left" onClick={() => select(i)} />
-            <div className="flex items-center">
-              <Connector index={i} active={active === i} from="right" />
-              <StepCircle index={i} active={active === i} done={i < active} playing={playing} onClick={() => select(i)} />
-              <Connector index={i} active={active === i} from="left" />
-            </div>
-            <StepCard journey={right} index={i} active={active === i} side="right" onClick={() => select(i)} />
-          </li>
-        ))}
-      </ol>
+  return (
+    <div ref={ref} className="relative hidden grid-cols-2 gap-10 lg:grid xl:gap-16">
+      <span aria-hidden className="absolute bottom-6 left-1/2 top-6 w-px -translate-x-1/2 bg-ink/10" />
+      {HOW_IT_WORKS_JOURNEYS.map((j, ji) => {
+        const isCurrent = ji === current
+        return (
+          <section
+            key={j.id}
+            aria-labelledby={`hiw-col-${j.id}`}
+            className={clsx('transition-opacity duration-700', isCurrent ? 'opacity-100' : 'opacity-45 hover:opacity-80')}
+          >
+            <header className="mb-5 flex items-end justify-between gap-4 pl-2">
+              <div>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/45">How to</p>
+                <h3 id={`hiw-col-${j.id}`} className="mt-1 font-hand text-[30px] leading-tight text-ink">
+                  {j.title}
+                </h3>
+              </div>
+              {isCurrent ? (
+                <span className="mb-2 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[12px] font-semibold text-ink/70 shadow-[0_6px_16px_-8px_rgba(42,31,24,0.35)] ring-1 ring-ink/5">
+                  <span className="relative flex h-2 w-2">
+                    {playing ? <span className="absolute inset-0 animate-ping rounded-full bg-customer/60" /> : null}
+                    <span className="relative h-2 w-2 rounded-full bg-customer" />
+                  </span>
+                  Step {step + 1} of 4
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => select(ji * STEPS)}
+                  className="mb-2 cursor-pointer rounded-full px-3 py-1.5 text-[12.5px] font-semibold text-ink/60 ring-1 ring-ink/15 transition-colors hover:bg-white hover:text-ink"
+                >
+                  See these steps →
+                </button>
+              )}
+            </header>
+            <JourneyTimeline
+              journey={j}
+              activeStep={isCurrent ? step : null}
+              playing={playing}
+              onSelect={(i) => select(ji * STEPS + i)}
+            />
+          </section>
+        )
+      })}
     </div>
   )
 }
@@ -341,28 +359,13 @@ function JourneyTabs({ value, onChange }: { value: number; onChange: (i: number)
 }
 
 function MobileJourney({ journey }: { journey: HowItWorksJourney }) {
-  const ref = useRef<HTMLOListElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { amount: 0.3 })
-  const { active, select, playing } = useStepper(inView)
+  const { pos, select, playing } = useStepper(inView, STEPS)
   return (
-    <ol ref={ref} className="relative mt-8">
-      <span aria-hidden className="absolute bottom-24 left-[25px] top-10 w-[2px] bg-ink/10">
-        <motion.span
-          className="block w-full bg-gradient-to-b from-verified via-customer to-partner"
-          initial={false}
-          animate={{ height: `${(active / (STEPS - 1)) * 100}%` }}
-          transition={{ duration: 0.7, ease: EASE }}
-        />
-      </span>
-      {journey.steps.map((s, i) => (
-        <li key={s.title} className="relative flex items-start gap-1 pb-2">
-          <div className="pt-4">
-            <StepCircle size="sm" index={i} active={active === i} done={i < active} playing={playing} onClick={() => select(i)} />
-          </div>
-          <StepCard journey={journey} index={i} active={active === i} side="mobile" onClick={() => select(i)} />
-        </li>
-      ))}
-    </ol>
+    <div ref={ref} className="mt-8">
+      <JourneyTimeline journey={journey} activeStep={pos} playing={playing} onSelect={select} circle={52} />
+    </div>
   )
 }
 
@@ -383,7 +386,7 @@ export default function HowItWorks() {
         lines={[compactAccentLine({ text: 'How Mother Bhojan', accent: 'works.' })]}
       />
 
-      <ParallelTimeline />
+      <SideBySide />
 
       <div className="lg:hidden">
         <JourneyTabs value={journeyIndex} onChange={setJourneyIndex} />
