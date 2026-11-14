@@ -3,7 +3,6 @@ import {
   Hero,
   HowItWorks,
   DaughtersPromise,
-  FamiliesReview,
   EveryOrderChangesLives,
   WeHandleEverythingElse,
   BuildsTrustAndIndependence,
@@ -25,10 +24,10 @@ export default function HomePage() {
           <WhyMotherBhojanExists />  (Sunita — "The hands behind your meal")
           <KitchenAudit />           ("Sunita's kitchen passed the audit")
           <FeaturedKitchens />       ("Cooking near you this week")
-          <YourNameOnTheDoor />      ("Your kitchen, your name on the door") */}
+          <YourNameOnTheDoor />      ("Your kitchen, your name on the door")
+          <FamiliesReview />         ("Dinner tonight, from kitchen you can trust") */}
       <HowItWorks />
       <DaughtersPromise />
-      <FamiliesReview />
       <EveryOrderChangesLives />
       <WeHandleEverythingElse />
       <BuildsTrustAndIndependence />
