@@ -22,6 +22,7 @@ import {
 } from 'react-icons/lu'
 import { MdDeliveryDining, MdVerified } from 'react-icons/md'
 import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
+import { mbLogoRed } from '@/assets'
 
 /**
  * Kitchen store front (v2 design) — used by real kitchen pages (/kitchens/…)
@@ -52,7 +53,15 @@ export type StoreFrontProps = {
   backHref?: string
   /** Where the page is shared from (page mode). */
   shareUrl?: string
+  /**
+   * Page layout variation: 1 = Mother Bhojan logo in the top bar;
+   * 2 = cook's brand first, "Powered by Mother Bhojan" logo at the bottom (Cookin-style).
+   */
+  variant?: 1 | 2
 }
+
+const ROUND_BTN =
+  'flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white shadow-[0_6px_18px_-8px_rgba(42,31,24,0.35)] transition hover:-translate-y-0.5 sm:h-12 sm:w-12'
 
 /** Page mode → opens the app popup; preview mode → plain element. */
 function AppAction({
@@ -79,7 +88,7 @@ function AppAction({
 
 function Avatar({ src, mode }: { src?: Img | null; mode: StoreFrontProps['mode'] }) {
   return (
-    <span className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FBF3E8] ring-4 ring-white sm:h-[150px] sm:w-[150px]">
+    <span className="relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#FBF3E8] ring-4 ring-white sm:h-[150px] sm:w-[150px]">
       {src ? (
         <Image src={src} alt="" fill sizes="150px" className="object-cover" unoptimized={mode === 'page' && typeof src === 'string'} />
       ) : (
@@ -90,8 +99,10 @@ function Avatar({ src, mode }: { src?: Img | null; mode: StoreFrontProps['mode']
 }
 
 export default function StoreFront(props: StoreFrontProps) {
-  const { mode, name, cuisine, avatar, cover, rating, city, deliveryLabel, preorderLabel, categories, nameCaret, backHref, shareUrl } =
-    props
+  const {
+    mode, name, cuisine, avatar, cover, rating, city, deliveryLabel, preorderLabel, categories, nameCaret, backHref, shareUrl,
+    variant = 1,
+  } = props
   const cats = useMemo(() => categories.filter((c) => c.dishes.length > 0), [categories])
   const [active, setActive] = useState(0)
   const current = cats[Math.min(active, Math.max(cats.length - 1, 0))]
@@ -113,22 +124,18 @@ export default function StoreFront(props: StoreFrontProps) {
 
   return (
     <div className="font-jakarta text-ink">
-      {/* Top bar */}
+      {/* Top bar — back · (variation 1: Mother Bhojan logo) · share */}
       {mode === 'page' ? (
-        <div className="mb-4 flex items-center justify-between">
-          <Link
-            href={backHref || '/'}
-            aria-label="Back"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_6px_18px_-8px_rgba(42,31,24,0.35)] transition hover:-translate-y-0.5"
-          >
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <Link href={backHref || '/'} aria-label="Back" className={ROUND_BTN}>
             <LuArrowLeft className="h-5 w-5" />
           </Link>
-          <button
-            type="button"
-            onClick={share}
-            aria-label="Share this kitchen"
-            className="relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-white shadow-[0_6px_18px_-8px_rgba(42,31,24,0.35)] transition hover:-translate-y-0.5"
-          >
+          {variant === 1 ? (
+            <Link href="/" aria-label="Mother Bhojan home" className="transition hover:opacity-85">
+              <Image src={mbLogoRed} alt="Mother Bhojan" priority className="h-10 w-auto sm:h-12" />
+            </Link>
+          ) : null}
+          <button type="button" onClick={share} aria-label="Share this kitchen" className={clsx(ROUND_BTN, 'relative')}>
             <LuShare2 className="h-5 w-5" />
             {copied ? (
               <span className="absolute -bottom-8 right-0 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] text-white">Link copied</span>
@@ -151,7 +158,7 @@ export default function StoreFront(props: StoreFrontProps) {
           <Avatar src={avatar} mode={mode} />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <h1 className="max-w-full truncate text-[26px] font-bold leading-tight text-white sm:text-[40px]">
+              <h1 className="max-w-full break-words text-[24px] font-bold leading-tight text-white sm:truncate sm:text-[40px]">
                 {name}
                 {nameCaret ? <span className="ml-1 inline-block h-[0.8em] w-[3px] animate-pulse bg-white align-middle" /> : null}
               </h1>
@@ -298,6 +305,29 @@ export default function StoreFront(props: StoreFrontProps) {
           </AppAction>
         </div>
       </div>
+
+      {/* Bottom — variation 1: small legal line; variation 2: "Powered by Mother Bhojan" */}
+      {mode === 'page' ? (
+        variant === 2 ? (
+          <div className="mt-10 flex flex-col items-center gap-2 border-t border-ink/10 pt-7 text-center">
+            <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink/45">Powered by</span>
+            <Link href="/" aria-label="Mother Bhojan home" className="transition hover:opacity-85">
+              <Image src={mbLogoRed} alt="Mother Bhojan" className="h-10 w-auto sm:h-11" />
+            </Link>
+            <p className="mt-1 text-[12.5px] text-ink/50">
+              Verified home kitchens ·{' '}
+              <Link href="/terms" className="hover:text-ink">Terms</Link> ·{' '}
+              <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+            </p>
+          </div>
+        ) : (
+          <p className="mt-10 border-t border-ink/10 pt-6 text-center text-[12.5px] text-ink/50">
+            © {new Date().getFullYear()} Mother Bhojan ·{' '}
+            <Link href="/terms" className="hover:text-ink">Terms</Link> ·{' '}
+            <Link href="/privacy" className="hover:text-ink">Privacy</Link>
+          </p>
+        )
+      ) : null}
     </div>
   )
 }

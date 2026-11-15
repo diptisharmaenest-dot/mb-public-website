@@ -2,6 +2,7 @@
 
 import type { ChefStoreDetail } from '@/features'
 import StoreFront, { type StoreFrontCategory } from '@/shared/components/sections/StoreFront/StoreFront'
+import VariantSwitch from './VariantSwitch'
 
 /** "…, Sahibzada Ajit Singh Nagar" → "Mohali"; otherwise the last part of the address. */
 function cityFromAddress(address: string): string {
@@ -13,7 +14,7 @@ function cityFromAddress(address: string): string {
 }
 
 /** Real kitchen page (v2 store design) — every value comes from the back-end. */
-export default function KitchenDetailLayout({ store }: { store: ChefStoreDetail }) {
+export default function KitchenDetailLayout({ store, variant = 1 }: { store: ChefStoreDetail; variant?: 1 | 2 }) {
   const categories: StoreFrontCategory[] = store.menuCategories.map((c) => ({
     name: c.categoryName,
     dishes: c.dishes.map((d) => ({
@@ -34,7 +35,7 @@ export default function KitchenDetailLayout({ store }: { store: ChefStoreDetail 
 
   return (
     <section id="kitchen-detail-page" className="min-h-screen w-full bg-[#FBF6F0]">
-      <div className="mx-auto w-full max-w-[1240px] px-4 pb-16 pt-28 sm:px-6 md:pt-32 lg:px-10">
+      <div className="mx-auto w-full max-w-[1240px] px-4 pb-10 pt-5 sm:px-6 sm:pt-7 lg:px-10">
         <StoreFront
           mode="page"
           name={store.name}
@@ -47,7 +48,9 @@ export default function KitchenDetailLayout({ store }: { store: ChefStoreDetail 
           preorderLabel="Freshly cooked to order"
           categories={categories}
           backHref="/"
+          variant={variant}
         />
+        <VariantSwitch variant={variant} />
       </div>
     </section>
   )

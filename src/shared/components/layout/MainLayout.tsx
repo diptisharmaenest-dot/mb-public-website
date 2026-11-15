@@ -1,5 +1,6 @@
 import Header from './Header'
 import Footer from './Footer'
+import SiteChrome from './SiteChrome'
 
 const MainLayout = ({
   children,
@@ -7,11 +8,9 @@ const MainLayout = ({
   children: React.ReactNode
 }) => {
   return (
-    <>
-      <Header />
-      <main>{children}</main>
-      <Footer />
-    </>
+    <SiteChrome header={<Header />} footer={<Footer />}>
+      {children}
+    </SiteChrome>
   )
 }
 
