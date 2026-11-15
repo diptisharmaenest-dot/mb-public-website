@@ -18,11 +18,12 @@ import { FAMILY_JOURNEY, KITCHEN_JOURNEY, type HowItWorksJourney } from '@/app/h
 // Realistic step photos (no people), cropped from our own kitchen videos.
 import f1Kitchen from '@/assets/images/how-it-works/f1-kitchen.jpg'
 import f2Curry from '@/assets/images/how-it-works/f2-curry.jpg'
-import f3Phone from '@/assets/images/how-it-works/f3-phone.jpg'
-import f4Packed from '@/assets/images/how-it-works/f4-packed.jpg'
-import k1Spices from '@/assets/images/how-it-works/k1-spices.jpg'
-import k2Stove from '@/assets/images/how-it-works/k2-stove.jpg'
-import k3Veg from '@/assets/images/how-it-works/k3-veg.jpg'
+import f3Dal from '@/assets/images/how-it-works/f3-dal.jpg'
+// Bag rendered with the real Mother Bhojan logo file (no people, no tiffin).
+import f4Bag from '@/assets/images/how-it-works/f4-bag.jpg'
+import k1App from '@/assets/images/how-it-works/k1-app.jpg'
+import k2Verified from '@/assets/images/how-it-works/k2-verified.jpg'
+import k3Spices from '@/assets/images/how-it-works/k1-spices.jpg'
 import k4Jar from '@/assets/images/how-it-works/k4-jar.jpg'
 
 /**
@@ -34,16 +35,16 @@ import k4Jar from '@/assets/images/how-it-works/k4-jar.jpg'
 type StepPhoto = { src: StaticImageData; alt: string }
 const PHOTOS: Record<HowItWorksJourney['id'], StepPhoto[]> = {
   kitchen: [
-    { src: k1Spices, alt: 'A masala dabba spice box and rolled-out roti dough' },
-    { src: k2Stove, alt: 'A home kitchen stove with a pressure cooker' },
-    { src: k3Veg, alt: 'Fresh tomatoes, onions and greens ready to cook' },
+    { src: k1App, alt: 'The Mother Bhojan app open on a phone' },
+    { src: k2Verified, alt: 'The Mother Bhojan app showing green check marks' },
+    { src: k3Spices, alt: 'A masala dabba spice box and rolled-out roti dough' },
     { src: k4Jar, alt: 'A Mother Bhojan branded jar on a kitchen table' },
   ],
   family: [
     { src: f1Kitchen, alt: 'A clean home kitchen with a stove, spices and fresh vegetables' },
     { src: f2Curry, alt: 'Kofta curry simmering in a pan' },
-    { src: f3Phone, alt: 'The Mother Bhojan app showing order received and meal packed' },
-    { src: f4Packed, alt: 'Meals packed in Mother Bhojan containers with fresh rotis' },
+    { src: f3Dal, alt: 'Fresh dal steaming in a brass pot' },
+    { src: f4Bag, alt: 'A kraft paper delivery bag with the Mother Bhojan logo' },
   ],
 }
 

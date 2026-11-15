@@ -54,24 +54,24 @@ export const KITCHEN_JOURNEY: HowItWorksJourney = {
   title: 'Open your kitchen',
   steps: [
     {
-      title: "Check if you're eligible",
-      body: 'Answer a few quick questions and verify your mobile number with an OTP.',
-      chip: 'OTP verified',
+      title: 'Download the app',
+      body: 'Get the Mother Bhojan app on your phone to start your kitchen.',
+      chip: 'App installed',
     },
     {
-      title: 'Tell us about your kitchen',
-      body: 'Share basic details and a few photos or a short video, and pick a visit time that suits you.',
-      chip: 'Visit time booked',
+      title: 'Verify your contact',
+      body: 'Confirm your mobile number with a quick OTP.',
+      chip: 'Number verified',
     },
     {
-      title: 'Hygiene audit & cook test',
-      body: 'Our team visits your home for an 80-point hygiene check, then tastes a meal you cook.',
-      chip: '80-point hygiene check',
+      title: 'Add your details & dishes',
+      body: 'Tell us about yourself and your kitchen, and add the dishes you love to cook.',
+      chip: 'Menu added',
     },
     {
-      title: 'Get verified & go live',
-      body: 'Complete FSSAI and KYC, join a short welcome session, and your kitchen goes live in your own name.',
-      chip: 'Verified · live in her name',
+      title: 'Mother Bhojan will connect with you',
+      body: 'Our team will call you to guide you through the next steps.',
+      chip: 'We’ll be in touch',
     },
   ],
 }
