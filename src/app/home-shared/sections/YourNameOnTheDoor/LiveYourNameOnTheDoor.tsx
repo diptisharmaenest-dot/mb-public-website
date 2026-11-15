@@ -8,9 +8,11 @@ import YourNameOnTheDoor from './index'
  * kitchens). Re-checked every 10 minutes (see STORES_REVALIDATE_SECONDS), so
  * the section appears on its own once the first real kitchen goes live.
  */
-export default async function LiveYourNameOnTheDoor() {
+export default async function LiveYourNameOnTheDoor({ design = 'classic' }: { design?: 'classic' | 'v2' }) {
   const stores = await fetchChefsStores()
   const first = stores.find((s) => s.storeId.trim())
   if (!first) return null
-  return <YourNameOnTheDoor exampleStoreHref={`${ROUTES.kitchens}/${encodeURIComponent(first.storeId.trim())}`} />
+  const href = `${ROUTES.kitchens}/${encodeURIComponent(first.storeId.trim())}${design === 'v2' ? '?design=v2' : ''}`
+  // The kitchen page opens in the same design as the home version it came from.
+  return <YourNameOnTheDoor design={design} exampleStoreHref={href} />
 }

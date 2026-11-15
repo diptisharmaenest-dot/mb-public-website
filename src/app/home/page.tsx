@@ -32,7 +32,7 @@ export default function HomePage() {
           <EveryOrderChangesLives /> ("Every order has two sides") */}
       <HowItWorks />
       {/* Appears automatically once the back-end has a real kitchen. */}
-      <LiveYourNameOnTheDoor />
+      <LiveYourNameOnTheDoor design="classic" />
       <DaughtersPromise />
       <WeHandleEverythingElse />
       <BuildsTrustAndIndependence />

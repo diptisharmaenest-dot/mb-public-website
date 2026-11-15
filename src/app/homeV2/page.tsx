@@ -29,7 +29,7 @@ export default function HomeV2() {
       <HeroV2 />
       <HowItWorksV2 />
       {/* Appears automatically once the back-end has a real kitchen. */}
-      <LiveYourNameOnTheDoor />
+      <LiveYourNameOnTheDoor design="v2" />
       <DaughtersPromise />
       <WeHandleEverythingElse />
       <BuildsTrustAndIndependence />

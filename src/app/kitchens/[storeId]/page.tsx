@@ -110,11 +110,14 @@ export default async function StoreDetail({
   searchParams,
 }: {
   params: Promise<{ storeId: string }>
-  searchParams: Promise<{ v?: string }>
+  searchParams: Promise<{ v?: string; design?: string }>
 }) {
   const { storeId } = await params
-  // Layout variation: ?v=2 → logo at the bottom (Cookin-style); default 1 → logo on top.
-  const variant: 1 | 2 = (await searchParams).v === '2' ? 2 : 1
+  const sp = await searchParams
+  // Design: default 'classic' (main Home); ?design=v2 → new store design (Home v2).
+  const design: 'classic' | 'v2' = sp.design === 'v2' ? 'v2' : 'classic'
+  // New design only — ?v=2 → logo at the bottom (Cookin-style); default 1 → logo on top.
+  const variant: 1 | 2 = sp.v === '2' ? 2 : 1
   const id = decodeURIComponent(storeId).trim()
   if (!id) notFound()
 
@@ -156,7 +159,7 @@ export default async function StoreDetail({
   return (
     <div>
       <JsonLd data={[breadcrumbJsonLd, restaurantJsonLd]} />
-      <KitchenDetailLayout store={store} variant={variant} />
+      <KitchenDetailLayout store={store} design={design} variant={variant} />
     </div>
   )
 }

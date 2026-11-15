@@ -12,6 +12,7 @@ import {
   SectionHeader,
 } from '@/components'
 import StorePreview from './StorePreview'
+import ClassicPreview from './ClassicPreview'
 import { ROUTES } from '@/shared/seo'
 
 const DEFAULT_KITCHEN_NAME = "Sunita's Rasoi"
@@ -20,7 +21,14 @@ const DEFAULT_KITCHEN_NAME = "Sunita's Rasoi"
  * Shown only once a real kitchen is live (the page passes `exampleStoreHref`,
  * the first real kitchen's page). "See your store" opens that real store.
  */
-const YourNameOnTheDoor = ({ exampleStoreHref = ROUTES.join }: { exampleStoreHref?: string }) => {
+const YourNameOnTheDoor = ({
+  exampleStoreHref = ROUTES.join,
+  design = 'classic',
+}: {
+  exampleStoreHref?: string
+  /** 'classic' = main Home (profile-left card); 'v2' = Home v2 (new store design). */
+  design?: 'classic' | 'v2'
+}) => {
   const inputId = useId()
   const [kitchenName, setKitchenName] = useState(DEFAULT_KITCHEN_NAME)
   const displayName = kitchenName.trim() || DEFAULT_KITCHEN_NAME
@@ -98,7 +106,7 @@ const YourNameOnTheDoor = ({ exampleStoreHref = ROUTES.join }: { exampleStoreHre
           <div
             className={`mx-auto w-full max-w-[520px] overflow-hidden bg-white shadow-device-frame lg:mx-0 lg:ml-auto lg:max-w-[560px] border-1 border-partner ${RADIUS_CARD}`}
           >
-            <StorePreview kitchenName={displayName} />
+            {design === 'v2' ? <StorePreview kitchenName={displayName} /> : <ClassicPreview kitchenName={displayName} />}
           </div>
         </div>
       </div>
