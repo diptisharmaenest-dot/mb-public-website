@@ -1,4 +1,5 @@
 import type { ChefStoreDetail, StoreDish } from '@/features'
+import type { StoreFrontCategory } from '@/shared/components/sections/StoreFront/StoreFront'
 // Sample photos only (no people). Swap Ananya's profile photo in when the real one arrives.
 import cover from '@/assets/images/home-v2/hero-thali.jpg'
 import thali from '@/assets/images/home-v2/hero-thali.jpg'
@@ -18,7 +19,7 @@ import salad from '@/assets/images/demo-store/salad.jpg'
  * "Your name on the door" section. Not a real kitchen: the page shows an
  * "Example store" label and is not indexed. Real kitchens use back-end data only.
  */
-export const DEMO_STORE_SLUG = 'ananya-kitchen'
+export const DEMO_STORE_SLUG = 'ananyas-kitchen'
 
 const dish = (dishName: string, price: number, description: string, img: { src: string }, available = true): StoreDish => ({
   dishName,
@@ -33,7 +34,7 @@ const dish = (dishName: string, price: number, description: string, img: { src: 
 
 export const demoStoreDetail: ChefStoreDetail = {
   storeGuid: 'demo-ananya-kitchen',
-  name: 'Ananya Kitchen',
+  name: "Ananya's Kitchen",
   coverImageUrl: cover.src,
   logoUrl: '',
   description:
@@ -72,3 +73,15 @@ export const demoStoreDetail: ChefStoreDetail = {
     },
   ],
 }
+
+/** The same menu in the store components' shape — used by the Home previews so they match the page. */
+export const demoStoreCategories: StoreFrontCategory[] = demoStoreDetail.menuCategories.map((c) => ({
+  name: c.categoryName,
+  dishes: c.dishes.map((d) => ({
+    name: d.dishName,
+    description: d.description,
+    price: d.price,
+    image: d.dishImageUrl,
+    available: d.inventoryAvailable,
+  })),
+}))

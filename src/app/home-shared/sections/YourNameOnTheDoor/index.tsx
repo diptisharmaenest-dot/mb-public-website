@@ -15,7 +15,7 @@ import StorePreview from './StorePreview'
 import ClassicPreview from './ClassicPreview'
 import { ROUTES } from '@/shared/seo'
 
-const DEFAULT_KITCHEN_NAME = 'Ananya Kitchen'
+const DEFAULT_KITCHEN_NAME = "Ananya's Kitchen"
 
 /**
  * Shown only once a real kitchen is live (the page passes `exampleStoreHref`,

@@ -11,7 +11,7 @@ import clsx from 'clsx'
  * New·2 = new design with "Powered by" logo at the bottom (Home v2).
  * Hidden on the real motherbhojan.com domain.
  */
-export default function VariantSwitch({ design, variant }: { design: 'classic' | 'v2'; variant: 1 | 2 }) {
+export default function VariantSwitch({ design }: { design: 'classic' | 'v2'; variant?: 1 | 2 }) {
   const pathname = usePathname()
   const [show, setShow] = useState(false)
   useEffect(() => {
@@ -20,9 +20,8 @@ export default function VariantSwitch({ design, variant }: { design: 'classic' |
   if (!show) return null
 
   const options = [
-    { key: 'classic', label: 'Home', href: pathname, on: design === 'classic' },
-    { key: 'v2-1', label: 'v2 · logo top', href: `${pathname}?design=v2`, on: design === 'v2' && variant === 1 },
-    { key: 'v2-2', label: 'v2 · logo bottom', href: `${pathname}?design=v2&v=2`, on: design === 'v2' && variant === 2 },
+    { key: 'classic', label: 'Home version', href: pathname, on: design === 'classic' },
+    { key: 'v2', label: 'Home v2 version', href: `${pathname}?design=v2`, on: design === 'v2' },
   ]
 
   return (

@@ -161,14 +161,12 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
               <br />
               home kitchen?
             </p>
-            <DownloadAppButton
-              source="store-cookin-start-kitchen"
-              openLabel="Open the app"
-              variant="none"
-              className="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-gradient-to-b from-customer to-partner px-4 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_20px_-10px_rgba(219,26,26,0.7)] transition hover:-translate-y-0.5"
+            <Link
+              href="/"
+              className="mt-2 inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-b from-customer to-partner px-4 py-2.5 text-[13px] font-semibold !text-white shadow-[0_10px_20px_-10px_rgba(219,26,26,0.7)] transition hover:-translate-y-0.5"
             >
               Let&apos;s get <span className="font-hand text-[17px] font-normal leading-none">Mother Bhojan</span>
-            </DownloadAppButton>
+            </Link>
           </div>
         </aside>
 

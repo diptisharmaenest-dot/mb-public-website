@@ -2,51 +2,24 @@
 
 import { useEffect, useRef, useState } from 'react'
 import StoreClassic from '@/shared/components/sections/StoreFront/StoreClassic'
-import type { StoreFrontCategory } from '@/shared/components/sections/StoreFront/StoreFront'
-import cover from '@/assets/images/store-preview/cover.jpg'
-import samosa from '@/assets/images/store-preview/samosa.jpg'
-import pakora from '@/assets/images/store-preview/pakora.jpg'
-import curry from '@/assets/images/store-preview/curry.jpg'
-import dalRice from '@/assets/images/store-preview/dal-rice.jpg'
-import riceCurry from '@/assets/images/store-preview/rice-curry.jpg'
-import bhature from '@/assets/images/store-preview/bhature.jpg'
+import { demoStoreCategories, demoStoreDetail } from '@/app/kitchens/demo-store'
 
 /**
- * Main Home "Your name on the door" preview — classic store card (profile left,
- * menu right) inside a browser frame; the kitchen name + URL update as you type.
- * Sample content only; no person photo, no made-up rating, no Pickup.
+ * Main Home "Your name on the door" preview — classic store card inside a
+ * browser frame. Same content as the Ananya's Kitchen example page it opens
+ * (cover, description, dishes); the kitchen name + URL update as you type.
  */
 const W = 855
 const H = 680
 
-const MENU: StoreFrontCategory[] = [
-  {
-    name: 'Starters',
-    dishes: [
-      { name: 'Aloo samosa', price: 80, description: 'Crispy pastry filled with spiced potato and peas.', image: samosa },
-      { name: 'Mixed pakora', price: 120, description: 'Assorted vegetable fritters.', image: pakora },
-    ],
-  },
-  {
-    name: 'Thalis',
-    dishes: [
-      { name: 'Paneer butter masala', price: 220, description: 'Soft paneer in a rich tomato gravy.', image: curry },
-      { name: 'Dal makhani thali', price: 180, description: 'Slow-cooked black dal with rice.', image: dalRice },
-    ],
-  },
-  {
-    name: 'Curries',
-    dishes: [
-      { name: 'Rajma chawal', price: 150, description: 'Home-style rajma with steamed rice.', image: riceCurry },
-      { name: 'Chole bhature', price: 160, description: 'Spiced chickpeas served with bhature.', image: bhature },
-    ],
-  },
-]
+/** Preview shows the first three categories, two dishes each. */
+const PREVIEW_MENU = demoStoreCategories.slice(0, 3).map((c) => ({ ...c, dishes: c.dishes.slice(0, 2) }))
 
-function slugify(name: string) {
+export function slugify(name: string) {
   return (
     name
       .toLowerCase()
+      .replace(/['’]/g, '')
       .normalize('NFKD')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')
@@ -89,13 +62,13 @@ export default function ClassicPreview({ kitchenName }: { kitchenName: string })
           mode="preview"
           name={kitchenName}
           nameCaret
-          byLine="By you"
-          description="Home-cooked North Indian meals made fresh to order — the kind of food you would wait for at home."
+          byLine={`By ${demoStoreDetail.storeOwnerName}`}
+          description={demoStoreDetail.description}
           avatar={null}
-          cover={cover}
+          cover={demoStoreDetail.coverImageUrl}
           rating={null}
           city="Mohali"
-          categories={MENU}
+          categories={PREVIEW_MENU}
         />
       </div>
     </div>

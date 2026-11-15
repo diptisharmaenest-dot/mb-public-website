@@ -85,6 +85,8 @@ export default function StoreClassic({
 }: StoreClassicProps) {
   const page = mode === 'page'
   const cats = categories.filter((c) => c.dishes.length > 0)
+  // Preview cart = the first two dishes shown, so the sample adds up.
+  const previewCartTotal = (cats[0]?.dishes ?? []).slice(0, 2).reduce((t, d) => t + d.price, 0)
   const [active, setActive] = useState(0)
   const [copied, setCopied] = useState(false)
 
@@ -188,7 +190,7 @@ export default function StoreClassic({
           source="store-classic-cart"
           className="flex items-center gap-2 rounded-full bg-customer px-5 py-2.5 text-[15px] font-medium text-white transition hover:bg-customer-hover"
         >
-          <LuShoppingBag className="h-4 w-4" aria-hidden /> {page ? 'Order in the app' : '2 Items  ₹400'}
+          <LuShoppingBag className="h-4 w-4" aria-hidden /> {page ? 'Order in the app' : `2 items · ₹${previewCartTotal}`}
         </AppAction>
       </div>
       {cats.length > 0 ? (

@@ -111,7 +111,6 @@ function Avatar({ src, mode }: { src?: Img | null; mode: StoreFrontProps['mode']
 export default function StoreFront(props: StoreFrontProps) {
   const {
     mode, name, cuisine, avatar, cover, rating, city, deliveryLabel, preorderLabel, categories, nameCaret, backHref, shareUrl,
-    variant = 1,
     isDemo = false,
   } = props
   const cats = useMemo(() => categories.filter((c) => c.dishes.length > 0), [categories])
@@ -136,17 +135,12 @@ export default function StoreFront(props: StoreFrontProps) {
 
   return (
     <div className="font-jakarta text-ink">
-      {/* Top bar — back · (variation 1: Mother Bhojan logo) · share */}
+      {/* Top bar — back · cart · share (no Mother Bhojan logo: the cook's store comes first) */}
       {mode === 'page' ? (
         <div className="sticky top-3 z-30 mb-5 flex items-center justify-between gap-3">
           <Link href={backHref || '/'} aria-label="Back" className={ROUND_BTN}>
             <LuArrowLeft className="h-5 w-5" />
           </Link>
-          {variant === 1 ? (
-            <Link href="/" aria-label="Mother Bhojan home" className="transition hover:opacity-85">
-              <Image src={mbLogoRed} alt="Mother Bhojan" priority className="h-10 w-auto sm:h-12" />
-            </Link>
-          ) : null}
           <div className="flex items-center gap-2.5">
             <CartPill cart={cart} />
             <button type="button" onClick={share} aria-label="Share this kitchen" className={clsx(ROUND_BTN, 'relative')}>
@@ -326,27 +320,19 @@ export default function StoreFront(props: StoreFrontProps) {
         </div>
       </div>
 
-      {/* Bottom — variation 1: small legal line; variation 2: "Powered by Mother Bhojan" */}
+      {/* Bottom — "Powered by Mother Bhojan" (Cookin-style); no logo on top */}
       {mode === 'page' ? (
-        variant === 2 ? (
-          <div className="mt-10 flex flex-col items-center gap-2 border-t border-ink/10 pt-7 text-center">
-            <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink/45">Powered by</span>
-            <Link href="/" aria-label="Mother Bhojan home" className="transition hover:opacity-85">
-              <Image src={mbLogoRed} alt="Mother Bhojan" className="h-10 w-auto sm:h-11" />
-            </Link>
-            <p className="mt-1 text-[12.5px] text-ink/50">
-              Verified home kitchens ·{' '}
-              <Link href="/terms" className="hover:text-ink">Terms</Link> ·{' '}
-              <Link href="/privacy" className="hover:text-ink">Privacy</Link>
-            </p>
-          </div>
-        ) : (
-          <p className="mt-10 border-t border-ink/10 pt-6 text-center text-[12.5px] text-ink/50">
-            © {new Date().getFullYear()} Mother Bhojan ·{' '}
+        <div className="mt-10 flex flex-col items-center gap-2 border-t border-ink/10 pt-7 text-center">
+          <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-ink/45">Powered by</span>
+          <Link href="/" aria-label="Mother Bhojan home" className="transition hover:opacity-85">
+            <Image src={mbLogoRed} alt="Mother Bhojan" className="h-10 w-auto sm:h-11" />
+          </Link>
+          <p className="mt-1 text-[12.5px] text-ink/50">
+            Verified home kitchens ·{' '}
             <Link href="/terms" className="hover:text-ink">Terms</Link> ·{' '}
             <Link href="/privacy" className="hover:text-ink">Privacy</Link>
           </p>
-        )
+        </div>
       ) : null}
     </div>
   )
