@@ -22,7 +22,7 @@ import {
 } from 'react-icons/lu'
 import { MdDeliveryDining, MdVerified } from 'react-icons/md'
 import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
-import { mbLogoRed } from '@/assets'
+import { mbLogoRed, mLogo } from '@/assets'
 import { CartPill, QtyControl, useStoreCart } from './cart'
 
 /**
@@ -285,42 +285,42 @@ export default function StoreFront(props: StoreFrontProps) {
         <p className="mt-6 rounded-[18px] bg-white p-6 text-[15px] text-ink/60 ring-1 ring-ink/5">The menu is being prepared — check back soon.</p>
       )}
 
-      {/* App strip */}
-      <div className="mt-8 flex flex-col gap-5 rounded-[22px] bg-[#EEF2E3] px-5 py-5 sm:px-7 lg:flex-row lg:items-center lg:gap-0 lg:divide-x lg:divide-verified/25">
-        <div className="flex items-center gap-4 lg:pr-8">
-          <span className="flex h-16 w-12 shrink-0 items-center justify-center rounded-xl border-[3px] border-ink bg-white">
-            <LuChefHat className="h-6 w-6 text-partner" aria-hidden />
+      {/* App strip — who to order from · why · how */}
+      <div className="mt-8 grid grid-cols-1 items-center gap-6 rounded-[22px] bg-[#EEF2E3] p-5 ring-1 ring-verified/15 sm:p-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_auto] xl:gap-0 xl:divide-x xl:divide-verified/25 xl:px-7 xl:py-6">
+        <div className="flex items-center gap-4 sm:justify-center xl:justify-start xl:pr-8">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-verified shadow-[0_10px_20px_-12px_rgba(111,138,62,0.9)]">
+            <Image src={mLogo} alt="" width={30} height={30} />
           </span>
-          <p className="text-[17px] font-semibold leading-snug sm:text-[20px]">
-            Order from {name} on the
-            <br />
-            <span className="font-hand text-[24px] font-normal sm:text-[28px]">Mother Bhojan app</span>
+          <p className="min-w-0 text-[16px] font-semibold leading-snug sm:text-[18px]">
+            Order from <span className="text-ink">{name}</span>
+            <span className="block text-[14.5px] font-medium text-ink/65 sm:text-[15.5px]">
+              on the <span className="font-hand text-[22px] font-normal leading-none text-partner sm:text-[24px]">Mother Bhojan app</span>
+            </span>
           </p>
         </div>
-        <ul className="flex flex-wrap gap-x-6 gap-y-3 lg:flex-1 lg:justify-center lg:px-6">
+        <ul className="mx-auto grid w-full max-w-[520px] grid-cols-3 gap-2 xl:px-6">
           {[
-            { Icon: LuShieldCheck, l1: 'Verified', l2: 'Home Kitchens' },
-            { Icon: LuCookingPot, l1: 'Freshly', l2: 'Prepared' },
-            { Icon: LuLeaf, l1: 'Home-style', l2: 'Meals' },
-          ].map(({ Icon, l1, l2 }) => (
-            <li key={l1} className="flex items-center gap-2.5 text-[13.5px] leading-tight text-ink/80">
-              <Icon className="h-8 w-8 text-verified-dark" strokeWidth={1.6} aria-hidden />
-              <span>
-                {l1}
-                <br />
-                {l2}
+            { Icon: LuShieldCheck, label: 'Verified kitchens' },
+            { Icon: LuCookingPot, label: 'Freshly prepared' },
+            { Icon: LuLeaf, label: 'Home-style meals' },
+          ].map(({ Icon, label }) => (
+            <li key={label} className="flex flex-col items-center gap-2 text-center">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-verified-dark shadow-sm ring-1 ring-verified/15">
+                <Icon className="h-5 w-5" strokeWidth={1.8} aria-hidden />
               </span>
+              <span className="text-[12.5px] font-medium leading-tight text-ink/75 sm:text-[13px]">{label}</span>
             </li>
           ))}
         </ul>
-        <div className="flex flex-col items-start gap-1.5 lg:items-center lg:pl-8">
+        <div className="flex flex-col items-center gap-1.5 xl:pl-8">
           <AppAction
             mode={mode}
             source="store-download-app"
-            className="inline-flex items-center gap-2.5 rounded-full bg-gradient-to-b from-customer to-partner px-7 py-3.5 text-[17px] font-semibold text-white shadow-[0_12px_24px_-12px_rgba(219,26,26,0.7)] transition hover:-translate-y-0.5"
+            className="inline-flex w-full items-center justify-center gap-2.5 whitespace-nowrap rounded-full bg-gradient-to-b from-customer to-partner px-7 py-3.5 text-[16px] font-semibold text-white shadow-[0_12px_24px_-12px_rgba(219,26,26,0.7)] transition hover:-translate-y-0.5 sm:w-auto sm:min-w-[260px] xl:min-w-0"
           >
             <LuDownload className="h-5 w-5" aria-hidden /> Download App
           </AppAction>
+          <span className="text-[11.5px] text-ink/55">Coming soon on Android &amp; iPhone</span>
         </div>
       </div>
 
