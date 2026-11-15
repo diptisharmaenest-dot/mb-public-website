@@ -3,16 +3,8 @@
 import { useRef, useState } from 'react'
 import Image, { type StaticImageData } from 'next/image'
 import clsx from 'clsx'
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-} from 'framer-motion'
-import { FiCheck, FiChevronDown } from 'react-icons/fi'
-import { LuChefHat, LuStore } from 'react-icons/lu'
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'framer-motion'
+import { FiCheck } from 'react-icons/fi'
 import {
   compactAccentLine,
   DownloadAppButton,
@@ -21,13 +13,7 @@ import {
   SectionHeader,
 } from '@/components'
 import { EASE } from '@/shared/lib/motion'
-import { FAMILY_JOURNEY, KITCHEN_JOURNEY } from '@/app/home/data/how-it-works'
-
-/**
- * "How Mother Bhojan works" — no auto-play; the visitor drives it.
- * Families: steps light up as you scroll; hover/tap a step for its result.
- * Home cooks: tap a step to open it; the tracker shows how far that gets you.
- */
+import { FAMILY_JOURNEY, KITCHEN_JOURNEY, type HowItWorksJourney } from '@/app/home/data/how-it-works'
 
 // Realistic step photos (no people), cropped from our own kitchen videos.
 import f1Kitchen from '@/assets/images/how-it-works/f1-kitchen.jpg'
@@ -39,146 +25,187 @@ import k2Stove from '@/assets/images/how-it-works/k2-stove.jpg'
 import k3Veg from '@/assets/images/how-it-works/k3-veg.jpg'
 import k4Jar from '@/assets/images/how-it-works/k4-jar.jpg'
 
+/**
+ * "How Mother Bhojan works" — both journeys in parallel (as in the original
+ * reference): home cooks on the left, families on the right, steps on a centre
+ * spine. No auto-play: the spine fills and rows light up as you scroll.
+ */
+
 type StepPhoto = { src: StaticImageData; alt: string }
-const FAMILY_PHOTOS: StepPhoto[] = [
-  { src: f1Kitchen, alt: 'A clean home kitchen with a stove, spices and fresh vegetables' },
-  { src: f2Curry, alt: 'Kofta curry simmering in a pan' },
-  { src: f3Phone, alt: 'The Mother Bhojan app showing order received and meal packed' },
-  { src: f4Packed, alt: 'Meals packed in Mother Bhojan containers with fresh rotis' },
-]
-const KITCHEN_PHOTOS: StepPhoto[] = [
-  { src: k1Spices, alt: 'A masala dabba spice box and rolled-out roti dough' },
-  { src: k2Stove, alt: 'A home kitchen stove with a pressure cooker' },
-  { src: k3Veg, alt: 'Fresh tomatoes, onions and greens ready to cook' },
-  { src: k4Jar, alt: 'A Mother Bhojan branded jar on a kitchen table' },
-]
+const PHOTOS: Record<HowItWorksJourney['id'], StepPhoto[]> = {
+  kitchen: [
+    { src: k1Spices, alt: 'A masala dabba spice box and rolled-out roti dough' },
+    { src: k2Stove, alt: 'A home kitchen stove with a pressure cooker' },
+    { src: k3Veg, alt: 'Fresh tomatoes, onions and greens ready to cook' },
+    { src: k4Jar, alt: 'A Mother Bhojan branded jar on a kitchen table' },
+  ],
+  family: [
+    { src: f1Kitchen, alt: 'A clean home kitchen with a stove, spices and fresh vegetables' },
+    { src: f2Curry, alt: 'Kofta curry simmering in a pan' },
+    { src: f3Phone, alt: 'The Mother Bhojan app showing order received and meal packed' },
+    { src: f4Packed, alt: 'Meals packed in Mother Bhojan containers with fresh rotis' },
+  ],
+}
 
-/** Alternating brand tones: soft (not reached yet) and solid (lit). */
-const RING_LIT = ['ring-customer', 'ring-verified'] as const
-const CHIP_TONE = ['bg-partner-tag text-partner', 'bg-verified-pill text-verified-text'] as const
+const STEPS = 4
+/** Steps alternate brand green / brand red, like the reference markers. */
+const tone = (i: number) => (i % 2 === 0 ? 'verified' : 'partner')
+const CIRCLE = {
+  verified: 'bg-gradient-to-br from-verified to-verified-dark',
+  partner: 'bg-gradient-to-br from-customer to-partner',
+} as const
+const LINE = { verified: 'bg-verified', partner: 'bg-partner' } as const
+const CHIP = { verified: 'bg-verified-pill text-verified-text', partner: 'bg-partner-tag text-partner' } as const
 
-/* ------------------------- Families: main row ------------------------ */
-function FamilySteps() {
+/** Lit-row count driven by scroll (all lit when reduced motion). */
+function useScrollSteps() {
   const ref = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 55%'] })
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.4 })
-  const [lit, setLit] = useState(reduceMotion ? 4 : 0)
-  const [focus, setFocus] = useState<number | null>(null)
-
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 75%', 'end 60%'] })
+  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.4 })
+  const [lit, setLit] = useState(reduceMotion ? STEPS : 0)
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    if (reduceMotion) return
-    // Step i lights once the line reaches it (i / 3 of the way).
-    setLit(Math.min(4, Math.floor(v * 3 + 1.05)))
+    if (!reduceMotion) setLit(Math.min(STEPS, Math.floor(v * (STEPS - 1) + 1.05)))
   })
+  return { ref, fill: reduceMotion ? null : fill, lit }
+}
 
+/* ------------------------------ Step card --------------------------- */
+function StepCard({
+  journey,
+  index,
+  lit,
+  side,
+}: {
+  journey: HowItWorksJourney
+  index: number
+  lit: boolean
+  /** 'left' mirrors the card so its text faces the spine. */
+  side: 'left' | 'right'
+}) {
+  const step = journey.steps[index]
+  const photo = PHOTOS[journey.id][index]
+  const t = tone(index)
+  const mirrored = side === 'left'
   return (
-    <div ref={ref} className="relative">
-      {/* Connector — desktop: horizontal, fills with scroll */}
-      <span aria-hidden className="absolute left-[12.5%] right-[12.5%] top-[64px] hidden h-0 border-t-2 border-dashed border-ink/15 lg:block" />
-      <motion.span
-        aria-hidden
-        className="absolute left-[12.5%] right-[12.5%] top-[63px] hidden h-[3px] origin-left rounded-full bg-gradient-to-r from-customer via-verified to-partner lg:block"
-        style={{ scaleX: reduceMotion ? 1 : progress }}
-      />
-      {/* Connector — phones/tablets: vertical */}
-      <span aria-hidden className="absolute bottom-16 left-[64px] top-14 border-l-2 border-dashed border-ink/15 sm:hidden" />
-      <motion.span
-        aria-hidden
-        className="absolute bottom-16 left-[63px] top-14 w-[3px] origin-top rounded-full bg-gradient-to-b from-customer via-verified to-partner sm:hidden"
-        style={{ scaleY: reduceMotion ? 1 : progress }}
-      />
+    <article
+      className={clsx(
+        'group relative flex items-start gap-3.5 rounded-[22px] border bg-white p-4 sm:items-center sm:gap-5 transition-all duration-500 hover:-translate-y-1 sm:p-5',
+        mirrored && 'lg:flex-row-reverse lg:text-right',
+        lit
+          ? 'border-border-card shadow-[0_22px_44px_-28px_rgba(42,31,24,0.5)]'
+          : 'border-ink/5 opacity-60 shadow-none',
+      )}
+    >
+      <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[14px] sm:h-28 sm:w-28 sm:rounded-[18px]">
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          fill
+          sizes="112px"
+          className={clsx(
+            'object-cover transition-all duration-700 group-hover:scale-110',
+            lit ? 'grayscale-0' : 'grayscale-[70%]',
+          )}
+        />
+      </span>
+      <div className="min-w-0 flex-1">
+        <h4 className="text-[17px] font-bold leading-snug tracking-tight text-ink sm:text-[18px]">{step.title}</h4>
+        <p className="mt-1.5 text-[14px] leading-[1.55] text-ink/65 sm:text-[14.5px]">{step.body}</p>
+        <span
+          className={clsx(
+            'mt-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold transition-opacity duration-500',
+            CHIP[t],
+            lit ? 'opacity-100' : 'opacity-0',
+          )}
+        >
+          <FiCheck className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
+          {step.chip}
+        </span>
+      </div>
+    </article>
+  )
+}
 
-      <ol className="relative grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-12 lg:grid-cols-4 lg:gap-6">
-        {FAMILY_JOURNEY.steps.map((step, i) => {
-          const photo = FAMILY_PHOTOS[i]
+/* --------------------------- Step marker --------------------------- */
+function StepMarker({ index, lit, size = 76 }: { index: number; lit: boolean; size?: number }) {
+  const t = tone(index)
+  return (
+    <motion.span
+      aria-hidden
+      className={clsx(
+        'relative z-10 flex shrink-0 flex-col items-center justify-center rounded-full ring-[6px] ring-white transition-colors duration-500',
+        lit ? clsx(CIRCLE[t], 'text-white shadow-[0_14px_28px_-12px_rgba(42,31,24,0.55)]') : 'bg-[#EFE8DD] text-ink/40',
+      )}
+      style={{ width: size, height: size }}
+      animate={{ scale: lit ? 1 : 0.9 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+    >
+      <span className="mb-1 font-hand text-[13px] leading-none">step</span>
+      <span className="text-[22px] font-extrabold leading-none">{index + 1}</span>
+    </motion.span>
+  )
+}
+
+function ColumnTitle({ kicker, title, align }: { kicker: string; title: string; align: 'left' | 'right' | 'center' }) {
+  return (
+    <div className={clsx(align === 'left' && 'text-left', align === 'right' && 'text-right', align === 'center' && 'text-center')}>
+      <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/45">{kicker}</p>
+      <h3 className="mt-1 font-hand text-[30px] leading-tight text-ink sm:text-[34px]">{title}</h3>
+    </div>
+  )
+}
+
+/* ------------------- Desktop: side by side on a spine ---------------- */
+const COLS = 'grid grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)] items-center'
+
+function ParallelSteps() {
+  const { ref, fill, lit } = useScrollSteps()
+  const left = KITCHEN_JOURNEY
+  const right = FAMILY_JOURNEY
+  return (
+    <div ref={ref} className="relative hidden lg:block">
+      {/* Spine */}
+      <span aria-hidden className="absolute bottom-[70px] left-1/2 top-[118px] w-[3px] -translate-x-1/2 rounded-full bg-ink/8">
+        <motion.span
+          className="block h-full w-full origin-top rounded-full bg-gradient-to-b from-verified via-customer to-partner"
+          style={{ scaleY: fill ?? 1 }}
+        />
+      </span>
+      <span aria-hidden className="absolute left-1/2 top-[100px] h-4 w-4 -translate-x-1/2 rounded-full border-[3px] border-white bg-verified shadow" />
+
+      <div className={clsx(COLS, 'pb-10')}>
+        <ColumnTitle kicker="How to" title="Open your kitchen" align="left" />
+        <span />
+        <ColumnTitle kicker="How to" title="Order home food" align="right" />
+      </div>
+
+      <ol className="space-y-8">
+        {left.steps.map((s, i) => {
           const isLit = i < lit
-          const isFocus = focus === i
           return (
-            <li key={step.title}>
-              <button
-                type="button"
-                onMouseEnter={() => setFocus(i)}
-                onMouseLeave={() => setFocus(null)}
-                onFocus={() => setFocus(i)}
-                onBlur={() => setFocus(null)}
-                onClick={() => setFocus((f) => (f === i ? null : i))}
-                aria-expanded={isFocus}
-                className="group flex w-full cursor-pointer items-start gap-5 rounded-[24px] text-left outline-none sm:flex-col sm:items-center sm:gap-0 sm:text-center"
-              >
-                <motion.div
-                  className="relative shrink-0"
-                  animate={{ y: isFocus ? -6 : 0, scale: isFocus ? 1.04 : 1 }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 22 }}
-                >
-                  <span
-                    className={clsx(
-                      'relative block h-28 w-28 overflow-hidden rounded-[30px] ring-4 ring-offset-4 ring-offset-white transition-all duration-500',
-                      isLit ? RING_LIT[i % 2] : 'ring-transparent',
-                      isLit || isFocus
-                        ? 'shadow-[0_22px_40px_-16px_rgba(42,31,24,0.55)]'
-                        : 'shadow-[0_12px_26px_-18px_rgba(42,31,24,0.4)]',
-                    )}
-                  >
-                    <Image
-                      src={photo.src}
-                      alt={photo.alt}
-                      fill
-                      sizes="112px"
-                      className={clsx(
-                        'object-cover transition-all duration-700',
-                        isLit ? 'grayscale-0' : 'opacity-75 grayscale-[70%]',
-                        isFocus ? 'scale-110' : 'scale-100',
-                      )}
-                    />
-                  </span>
-                  <span
-                    className={clsx(
-                      'absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-bold ring-4 ring-white transition-colors duration-500',
-                      isLit ? 'bg-ink text-white' : 'bg-[#EFE8DD] text-ink/50',
-                    )}
-                  >
-                    {isLit ? <FiCheck className="h-4 w-4" strokeWidth={3} aria-hidden /> : i + 1}
-                  </span>
-                </motion.div>
-
-                <div className="min-w-0 pt-2 sm:mt-6 sm:pt-0">
-                  <p className="text-[11.5px] font-semibold uppercase tracking-[0.16em] text-ink/40">Step {i + 1}</p>
-                  <h3
-                    className={clsx(
-                      'mt-1 text-[19px] font-bold leading-snug tracking-tight transition-colors duration-500',
-                      isLit ? 'text-ink' : 'text-ink/55',
-                    )}
-                  >
-                    {step.title}
-                  </h3>
-                  <p
-                    className={clsx(
-                      'mx-auto mt-2 max-w-[260px] text-[15px] leading-[1.55] transition-colors duration-500 sm:max-w-[240px]',
-                      isLit ? 'text-ink/70' : 'text-ink/45',
-                    )}
-                  >
-                    {step.body}
-                  </p>
-                  <AnimatePresence initial={false}>
-                    {isFocus ? (
-                      <motion.span
-                        key="chip"
-                        initial={{ opacity: 0, height: 0, y: -4 }}
-                        animate={{ opacity: 1, height: 'auto', y: 0 }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3, ease: EASE }}
-                        className="block overflow-hidden"
-                      >
-                        <span className={clsx('mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12.5px] font-semibold', CHIP_TONE[i % 2])}>
-                          <FiCheck className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
-                          {step.chip}
-                        </span>
-                      </motion.span>
-                    ) : null}
-                  </AnimatePresence>
-                </div>
-              </button>
+            <li key={s.title} className={COLS}>
+              <StepCard journey={left} index={i} lit={isLit} side="left" />
+              <div className="flex items-center">
+                <span aria-hidden className="relative h-[2px] flex-1 bg-ink/10">
+                  <motion.span
+                    className={clsx('absolute inset-0 origin-right', LINE[tone(i)])}
+                    initial={false}
+                    animate={{ scaleX: isLit ? 1 : 0 }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                  />
+                </span>
+                <StepMarker index={i} lit={isLit} />
+                <span aria-hidden className="relative h-[2px] flex-1 bg-ink/10">
+                  <motion.span
+                    className={clsx('absolute inset-0 origin-left', LINE[tone(i)])}
+                    initial={false}
+                    animate={{ scaleX: isLit ? 1 : 0 }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                  />
+                </span>
+              </div>
+              <StepCard journey={right} index={i} lit={isLit} side="right" />
             </li>
           )
         })}
@@ -187,192 +214,35 @@ function FamilySteps() {
   )
 }
 
-/* -------------------- Home cooks: steps + tracker -------------------- */
-const TRACKER_LABELS = ['Eligibility & OTP', 'Kitchen details & visit', 'Hygiene audit & cook test', 'FSSAI, KYC & welcome'] as const
-
-function KitchenJourney() {
-  const [open, setOpen] = useState(0)
-  const steps = KITCHEN_JOURNEY.steps
-  const live = open === steps.length - 1
-
+/* -------------- Phones/tablets: each step shows both sides ---------- */
+function StackedSteps() {
+  const { ref, fill, lit } = useScrollSteps()
   return (
-    <div className="relative mt-16 overflow-hidden rounded-[32px] bg-[#FBF3E8] ring-1 ring-[#EADFCF] lg:mt-20">
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-[radial-gradient(rgba(42,31,24,0.08)_1px,transparent_1.2px)] [background-size:20px_20px] [mask-image:linear-gradient(to_left,black,transparent_65%)]"
-      />
-      <div aria-hidden className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-verified/20 blur-3xl" />
-      <div aria-hidden className="absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-customer/10 blur-3xl" />
-
-      <div className="relative grid gap-10 p-6 sm:p-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-center lg:gap-14 lg:p-14">
-        {/* Left — clickable steps */}
-        <div>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-verified-text">For home cooks</p>
-          <h3 className="mt-2 font-hand text-[36px] leading-tight text-ink sm:text-[42px]">Want to cook from home?</h3>
-          <p className="mt-2 max-w-[440px] text-[15.5px] leading-[1.55] text-ink/65">
-            Open your kitchen in your own name. Tap a step to see what happens.
-          </p>
-
-          <ol className="mt-7 space-y-2.5">
-            {steps.map((s, i) => {
-              const photo = KITCHEN_PHOTOS[i]
-              const isOpen = open === i
-              const done = i < open
-              return (
-                <li key={s.title}>
-                  <button
-                    type="button"
-                    onClick={() => setOpen(i)}
-                    aria-expanded={isOpen}
-                    className={clsx(
-                      'w-full cursor-pointer rounded-[20px] px-4 py-3.5 text-left transition-all duration-300',
-                      isOpen
-                        ? 'bg-white shadow-[0_18px_36px_-22px_rgba(42,31,24,0.45)] ring-1 ring-ink/5'
-                        : 'hover:bg-white/60',
-                    )}
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <span
-                        className={clsx(
-                          'relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl ring-2 transition-all duration-300',
-                          isOpen ? 'ring-verified' : 'ring-white',
-                        )}
-                      >
-                        <Image
-                          src={photo.src}
-                          alt={photo.alt}
-                          fill
-                          sizes="56px"
-                          className={clsx('object-cover transition-all duration-500', !isOpen && !done && 'opacity-80 grayscale-[60%]')}
-                        />
-                        {done ? (
-                          <span className="absolute inset-0 flex items-center justify-center bg-verified/70 text-white">
-                            <FiCheck className="h-5 w-5" strokeWidth={3} aria-hidden />
-                          </span>
-                        ) : null}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-ink/40">Step {i + 1}</span>
-                        <span className={clsx('block text-[16.5px] font-bold leading-snug', isOpen ? 'text-ink' : 'text-ink/70')}>
-                          {s.title}
-                        </span>
-                      </span>
-                      <FiChevronDown
-                        aria-hidden
-                        className={clsx('h-5 w-5 shrink-0 text-ink/35 transition-transform duration-300', isOpen && 'rotate-180')}
-                      />
-                    </div>
-                    <AnimatePresence initial={false}>
-                      {isOpen ? (
-                        <motion.div
-                          key="body"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.35, ease: EASE }}
-                          className="overflow-hidden"
-                        >
-                          <p className="pl-[70px] pt-2 text-[14.5px] leading-[1.55] text-ink/65">{s.body}</p>
-                        </motion.div>
-                      ) : null}
-                    </AnimatePresence>
-                  </button>
-                </li>
-              )
-            })}
-          </ol>
-        </div>
-
-        {/* Right — journey tracker follows the selected step */}
-        <div className="relative mx-auto w-full max-w-[420px]">
-          <div className="rounded-[26px] bg-white p-6 shadow-[0_30px_60px_-30px_rgba(42,31,24,0.45)] ring-1 ring-ink/5 sm:p-7">
-            <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FBF3E8] text-ink-soft">
-                <LuChefHat className="h-5.5 w-5.5" aria-hidden />
-              </span>
-              <div>
-                <p className="text-[16px] font-bold text-ink">Your kitchen journey</p>
-                <p className="text-[12.5px] text-ink/50">
-                  Step {open + 1} of {steps.length}
-                </p>
+    <div ref={ref} className="relative lg:hidden">
+      <span aria-hidden className="absolute bottom-24 left-[25px] top-6 w-[3px] rounded-full bg-ink/8 sm:left-[33px]">
+        <motion.span
+          className="block h-full w-full origin-top rounded-full bg-gradient-to-b from-verified via-customer to-partner"
+          style={{ scaleY: fill ?? 1 }}
+        />
+      </span>
+      <ol className="space-y-8">
+        {KITCHEN_JOURNEY.steps.map((s, i) => {
+          const isLit = i < lit
+          return (
+            <li key={s.title} className="relative flex gap-3 sm:gap-5">
+              <div className="pt-1">
+                <StepMarker index={i} lit={isLit} size={54} />
               </div>
-            </div>
-
-            <div className="mt-5 h-2 overflow-hidden rounded-full bg-ink/8">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-verified to-verified-dark"
-                initial={false}
-                animate={{ width: `${((open + 1) / steps.length) * 100}%` }}
-                transition={{ duration: 0.6, ease: EASE }}
-              />
-            </div>
-
-            <ul className="mt-5 space-y-1">
-              {TRACKER_LABELS.map((label, i) => {
-                const done = i < open || (live && i === open)
-                const current = i === open && !live
-                return (
-                  <li key={label}>
-                    <button
-                      type="button"
-                      onClick={() => setOpen(i)}
-                      className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-[#FBF3E8]/70"
-                    >
-                      <span
-                        className={clsx(
-                          'relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300',
-                          done ? 'bg-verified text-white' : current ? 'bg-customer/10' : 'bg-ink/6',
-                        )}
-                      >
-                        {done ? (
-                          <FiCheck className="h-3.5 w-3.5" strokeWidth={3.5} aria-hidden />
-                        ) : current ? (
-                          <>
-                            <span className="absolute inset-0 animate-ping rounded-full bg-customer/25" />
-                            <span className="relative h-2.5 w-2.5 rounded-full bg-customer" />
-                          </>
-                        ) : (
-                          <span className="h-2 w-2 rounded-full bg-ink/20" />
-                        )}
-                      </span>
-                      <span className={clsx('flex-1 text-[14.5px] font-semibold', done || current ? 'text-ink' : 'text-ink/40')}>
-                        {label}
-                      </span>
-                      {current ? <span className="text-[11.5px] font-semibold text-customer">In progress</span> : null}
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={live ? 'live' : `next-${open}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.3, ease: EASE }}
-                className={clsx(
-                  'mt-5 flex items-center gap-3 rounded-2xl px-4 py-3.5',
-                  live ? 'bg-gradient-to-r from-verified to-verified-dark text-white' : 'bg-[#FBF3E8] text-ink',
-                )}
-              >
-                {live ? (
-                  <>
-                    <LuStore className="h-5 w-5 shrink-0" aria-hidden />
-                    <span className="text-[14px] font-bold">Verified · Live in your own name</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-ink/45">Next</span>
-                    <span className="text-[14px] font-semibold">{steps[open + 1].title}</span>
-                  </>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
+              <div className="min-w-0 flex-1 space-y-3">
+                <p className="text-[11.5px] font-semibold uppercase tracking-[0.16em] text-ink/45">Home cook</p>
+                <StepCard journey={KITCHEN_JOURNEY} index={i} lit={isLit} side="right" />
+                <p className="pt-1 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-ink/45">Family</p>
+                <StepCard journey={FAMILY_JOURNEY} index={i} lit={isLit} side="right" />
+              </div>
+            </li>
+          )
+        })}
+      </ol>
     </div>
   )
 }
@@ -391,19 +261,14 @@ export default function HowItWorks() {
         lines={[compactAccentLine({ text: 'How Mother Bhojan', accent: 'works.' })]}
       />
 
-      <p className="-mt-4 mb-12 text-center text-[15px] font-medium text-ink/55 lg:mb-14">
-        Home food in four simple steps
-      </p>
-
-      <FamilySteps />
+      <ParallelSteps />
+      <StackedSteps />
 
       <div className="mt-12 flex justify-center">
         <DownloadAppButton source="home-how-it-works" openLabel="Order now" variant="customer" size="md" className="px-8">
           Order now
         </DownloadAppButton>
       </div>
-
-      <KitchenJourney />
     </Section>
   )
 }
