@@ -19,10 +19,12 @@ export default function KitchenDetailLayout({
   store,
   design = 'classic',
   variant = 1,
+  isDemo = false,
 }: {
   store: ChefStoreDetail
   design?: 'classic' | 'v2'
   variant?: 1 | 2
+  isDemo?: boolean
 }) {
   const categories: StoreFrontCategory[] = store.menuCategories.map((c) => ({
     name: c.categoryName,
@@ -57,6 +59,7 @@ export default function KitchenDetailLayout({
             city={cityFromAddress(store.storeAddress)}
             categories={categories}
             backHref="/"
+            isDemo={isDemo}
           />
         ) : (
           <StoreFront
@@ -72,6 +75,7 @@ export default function KitchenDetailLayout({
             categories={categories}
             backHref="/homeV2"
             variant={variant}
+            isDemo={isDemo}
           />
         )}
         <VariantSwitch design={design} variant={variant} />

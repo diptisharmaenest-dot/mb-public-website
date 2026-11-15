@@ -5,10 +5,11 @@ import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
 import { LuArrowLeft, LuBell, LuCalendarDays, LuChefHat, LuMapPin, LuPlay, LuShare2, LuStar, LuTruck, LuUtensils } from 'react-icons/lu'
-import { mbLogoRed, mLogo } from '@/assets'
+import { mLogo } from '@/assets'
 import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
 import { ROUTES } from '@/shared/seo'
 import type { StoreFrontCategory } from './StoreFront'
+import { CartPill, QtyControl, useStoreCart } from './cart'
 
 /**
  * Kitchen page for the main Home ("first version") — Cookin-style layout:
@@ -28,13 +29,16 @@ export type StoreClassicPageProps = {
   city: string
   categories: StoreFrontCategory[]
   backHref?: string
+  /** Example store (Ananya Kitchen) — shows an 'Example store' label. */
+  isDemo?: boolean
 }
 
 const ROUND_BTN =
   'flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white shadow-[0_6px_18px_-8px_rgba(42,31,24,0.35)] transition hover:-translate-y-0.5'
 const CARD = 'rounded-[14px] bg-white ring-1 ring-ink/8 shadow-[0_10px_26px_-22px_rgba(42,31,24,0.45)]'
 
-export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref }: StoreClassicPageProps) {
+export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref, isDemo }: StoreClassicPageProps) {
+  const cart = useStoreCart()
   const cats = categories.filter((c) => c.dishes.length > 0)
   const [copied, setCopied] = useState(false)
 
@@ -54,21 +58,27 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
 
   return (
     <div className="font-jakarta text-ink">
-      {/* Top bar — back · Mother Bhojan logo · share */}
-      <div className="mb-5 flex items-center justify-between gap-3">
+      {/* Top bar — back · (cart appears once a dish is added) · share. No Mother Bhojan logo in version 1. */}
+      <div className="sticky top-3 z-30 mb-5 flex items-center justify-between gap-3">
         <Link href={backHref || '/'} aria-label="Back" className={ROUND_BTN}>
           <LuArrowLeft className="h-5 w-5" />
         </Link>
-        <Link href="/" aria-label="Mother Bhojan home" className="transition hover:opacity-85">
-          <Image src={mbLogoRed} alt="Mother Bhojan" priority className="h-10 w-auto sm:h-11" />
-        </Link>
-        <button type="button" onClick={share} aria-label="Share this kitchen" className={clsx(ROUND_BTN, 'relative')}>
-          <LuShare2 className="h-5 w-5" />
-          {copied ? (
-            <span className="absolute -bottom-8 right-0 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] text-white">Link copied</span>
-          ) : null}
-        </button>
+        <div className="flex items-center gap-2.5">
+          <CartPill cart={cart} />
+          <button type="button" onClick={share} aria-label="Share this kitchen" className={clsx(ROUND_BTN, 'relative')}>
+            <LuShare2 className="h-5 w-5" />
+            {copied ? (
+              <span className="absolute -bottom-8 right-0 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] text-white">Link copied</span>
+            ) : null}
+          </button>
+        </div>
       </div>
+
+      {isDemo ? (
+        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[13px] text-ink/75 ring-1 ring-yellow/40">
+          <b>Example store</b> — this is how a home kitchen looks on Mother Bhojan. Dishes and prices are samples.
+        </p>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-7">
         {/* ------------------------- Store profile ------------------------- */}
@@ -173,31 +183,31 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
               <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {c.dishes.map((d) => (
                   <li key={d.name}>
-                    <DownloadAppButton
-                      source="store-cookin-dish"
-                      openLabel="Open the app"
-                      variant="none"
-                      className={clsx(CARD, 'flex h-full w-full cursor-pointer gap-3 p-2.5 pl-3.5 text-left transition hover:-translate-y-0.5')}
-                    >
+                    <div className={clsx(CARD, 'flex h-full w-full gap-3 p-2.5 pl-3.5 text-left transition hover:-translate-y-0.5')}>
                       <span className="flex min-w-0 flex-1 flex-col py-1">
                         <span className="line-clamp-2 text-[14.5px] font-semibold leading-snug">{d.name}</span>
                         <span className="mt-1 text-[13px] font-medium text-ink/80">₹{d.price}</span>
                         {d.description ? (
                           <span className="mt-1.5 line-clamp-2 text-[12px] leading-snug text-ink/55">{d.description}</span>
                         ) : null}
-                        {typeof d.available === 'boolean' ? (
-                          <span className="mt-auto pt-2">
-                            <span className="block text-[10.5px] text-ink/45">Availability</span>
-                            <span
-                              className={clsx(
-                                'mt-0.5 inline-block rounded px-1.5 py-0.5 text-[10.5px] font-medium',
-                                d.available ? 'bg-verified-pill text-verified-text' : 'bg-[#F1ECE4] text-ink/55',
-                              )}
-                            >
-                              {d.available ? 'Available' : 'Not available'}
+                        <span className="mt-auto flex items-end justify-between gap-2 pt-2">
+                          {typeof d.available === 'boolean' ? (
+                            <span>
+                              <span className="block text-[10.5px] text-ink/45">Availability</span>
+                              <span
+                                className={clsx(
+                                  'mt-0.5 inline-block rounded px-1.5 py-0.5 text-[10.5px] font-medium',
+                                  d.available ? 'bg-verified-pill text-verified-text' : 'bg-[#F1ECE4] text-ink/55',
+                                )}
+                              >
+                                {d.available ? 'Available' : 'Not available'}
+                              </span>
                             </span>
-                          </span>
-                        ) : null}
+                          ) : (
+                            <span />
+                          )}
+                          {d.available === false ? null : <QtyControl cart={cart} name={d.name} price={d.price} size="sm" />}
+                        </span>
                       </span>
                       <span className="relative h-[110px] w-[80px] shrink-0 overflow-hidden rounded-[10px] bg-[#F4EDE4]">
                         {d.image ? (
@@ -208,7 +218,7 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
                           </span>
                         )}
                       </span>
-                    </DownloadAppButton>
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -23,6 +23,7 @@ import {
 import { MdDeliveryDining, MdVerified } from 'react-icons/md'
 import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
 import { mbLogoRed } from '@/assets'
+import { CartPill, QtyControl, useStoreCart } from './cart'
 
 /**
  * Kitchen store front (v2 design) — used by real kitchen pages (/kitchens/…)
@@ -65,6 +66,8 @@ export type StoreFrontProps = {
    * 2 = cook's brand first, "Powered by Mother Bhojan" logo at the bottom (Cookin-style).
    */
   variant?: 1 | 2
+  /** Example store — shows an 'Example store' label. */
+  isDemo?: boolean
 }
 
 const ROUND_BTN =
@@ -109,11 +112,13 @@ export default function StoreFront(props: StoreFrontProps) {
   const {
     mode, name, cuisine, avatar, cover, rating, city, deliveryLabel, preorderLabel, categories, nameCaret, backHref, shareUrl,
     variant = 1,
+    isDemo = false,
   } = props
   const cats = useMemo(() => categories.filter((c) => c.dishes.length > 0), [categories])
   const [active, setActive] = useState(0)
   const current = cats[Math.min(active, Math.max(cats.length - 1, 0))]
   const [copied, setCopied] = useState(false)
+  const cart = useStoreCart()
 
   const share = async () => {
     const url = shareUrl || (typeof window !== 'undefined' ? window.location.href : '')
@@ -133,7 +138,7 @@ export default function StoreFront(props: StoreFrontProps) {
     <div className="font-jakarta text-ink">
       {/* Top bar — back · (variation 1: Mother Bhojan logo) · share */}
       {mode === 'page' ? (
-        <div className="mb-5 flex items-center justify-between gap-3">
+        <div className="sticky top-3 z-30 mb-5 flex items-center justify-between gap-3">
           <Link href={backHref || '/'} aria-label="Back" className={ROUND_BTN}>
             <LuArrowLeft className="h-5 w-5" />
           </Link>
@@ -142,13 +147,22 @@ export default function StoreFront(props: StoreFrontProps) {
               <Image src={mbLogoRed} alt="Mother Bhojan" priority className="h-10 w-auto sm:h-12" />
             </Link>
           ) : null}
-          <button type="button" onClick={share} aria-label="Share this kitchen" className={clsx(ROUND_BTN, 'relative')}>
-            <LuShare2 className="h-5 w-5" />
-            {copied ? (
-              <span className="absolute -bottom-8 right-0 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] text-white">Link copied</span>
-            ) : null}
-          </button>
+          <div className="flex items-center gap-2.5">
+            <CartPill cart={cart} />
+            <button type="button" onClick={share} aria-label="Share this kitchen" className={clsx(ROUND_BTN, 'relative')}>
+              <LuShare2 className="h-5 w-5" />
+              {copied ? (
+                <span className="absolute -bottom-8 right-0 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] text-white">Link copied</span>
+              ) : null}
+            </button>
+          </div>
         </div>
+      ) : null}
+
+      {mode === 'page' && isDemo ? (
+        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[13px] text-ink/75 ring-1 ring-yellow/40">
+          <b>Example store</b> — this is how a home kitchen looks on Mother Bhojan. Dishes and prices are samples.
+        </p>
       ) : null}
 
       {/* Banner */}
@@ -210,7 +224,7 @@ export default function StoreFront(props: StoreFrontProps) {
       </div>
 
       {/* Menu */}
-      <div className="mt-8 flex flex-col gap-4 sm:mt-10 lg:flex-row lg:items-center lg:gap-10">
+      <div className={clsx('mt-8 flex flex-col gap-4 sm:mt-10 lg:flex-row lg:items-center lg:gap-10', mode === 'page' && 'sticky top-16 z-20 -mx-2 bg-[#FBF6F0]/95 px-2 py-2 backdrop-blur')}>
         <h2 className="relative w-fit pb-3 text-[28px] font-bold sm:text-[34px]">
           Our Menu
           <span className="absolute bottom-0 left-0 h-1 w-16 rounded-full bg-partner" aria-hidden />
@@ -257,14 +271,13 @@ export default function StoreFront(props: StoreFrontProps) {
                 ) : null}
                 <div className="mt-auto flex items-end justify-between pt-2">
                   <p className="text-[19px] font-bold text-partner sm:text-[22px]">₹{d.price}</p>
-                  <AppAction
-                    mode={mode}
-                    source="store-add-dish"
-                    label={`Add ${d.name}`}
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-verified-pill text-verified-dark transition hover:bg-verified hover:text-white"
-                  >
-                    <LuPlus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
-                  </AppAction>
+                  {mode === 'page' ? (
+                    <QtyControl cart={cart} name={d.name} price={d.price} disabled={d.available === false} />
+                  ) : (
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-verified-pill text-verified-dark">
+                      <LuPlus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
+                    </span>
+                  )}
                 </div>
               </div>
             </li>

@@ -1,6 +1,7 @@
 import { fetchChefsStores } from '@/features/chefData/services/stores.api'
 import { ROUTES } from '@/shared/seo'
 import YourNameOnTheDoor from './index'
+import { DEMO_STORE_SLUG } from '@/app/kitchens/demo-store'
 
 /**
  * Server gate: renders "Your kitchen, your name on the door" only when the
@@ -10,9 +11,10 @@ import YourNameOnTheDoor from './index'
  */
 export default async function LiveYourNameOnTheDoor({ design = 'classic' }: { design?: 'classic' | 'v2' }) {
   const stores = await fetchChefsStores()
-  const first = stores.find((s) => s.storeId.trim())
-  if (!first) return null
-  const href = `${ROUTES.kitchens}/${encodeURIComponent(first.storeId.trim())}${design === 'v2' ? '?design=v2' : ''}`
+  // Still shown only once a real kitchen is live.
+  if (!stores.some((s) => s.storeId.trim())) return null
+  // "See your store" opens the Ananya Kitchen example store in the matching design.
+  const href = `${ROUTES.kitchens}/${DEMO_STORE_SLUG}${design === 'v2' ? '?design=v2' : ''}`
   // The kitchen page opens in the same design as the home version it came from.
   return <YourNameOnTheDoor design={design} exampleStoreHref={href} />
 }

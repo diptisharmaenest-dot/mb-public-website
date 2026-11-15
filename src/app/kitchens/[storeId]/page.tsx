@@ -10,6 +10,7 @@ import {
   createPageMetadata,
 } from '@/shared/seo'
 import KitchenDetailLayout from './sections/KitchenDetailLayout'
+import { DEMO_STORE_SLUG, demoStoreDetail } from '../demo-store'
 
 const loadStoreDetail = cache(async (idOrSlug: string) => fetchChefStore(idOrSlug))
 
@@ -40,6 +41,8 @@ async function loadKitchenStaticParams(): Promise<{ storeId: string }[]> {
 }
 
 async function resolveStoreDetail(storeId: string): Promise<ChefStoreDetail | null> {
+  // Example store used as the live demo (clearly labelled on the page).
+  if (storeId === DEMO_STORE_SLUG) return demoStoreDetail
   // 1. Try fetching live store data from the API first (works for slugs like 'truffles' and store GUIDs)
   try {
     const store = await loadStoreDetail(storeId)
@@ -96,6 +99,8 @@ export async function generateMetadata({
       description: storeDescription(store.name, store.storeAddress, store.description),
       path,
       image: store.coverImageUrl || store.logoUrl || undefined,
+      // The example store must never appear in search results.
+      noIndex: id === DEMO_STORE_SLUG,
     })
   } catch {
     return createPageMetadata({
@@ -159,7 +164,7 @@ export default async function StoreDetail({
   return (
     <div>
       <JsonLd data={[breadcrumbJsonLd, restaurantJsonLd]} />
-      <KitchenDetailLayout store={store} design={design} variant={variant} />
+      <KitchenDetailLayout store={store} design={design} variant={variant} isDemo={id === DEMO_STORE_SLUG} />
     </div>
   )
 }
