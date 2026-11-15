@@ -32,7 +32,14 @@ import { mbLogoRed } from '@/assets'
 
 type Img = string | StaticImageData
 
-export type StoreFrontDish = { name: string; description: string; price: number; image?: Img | null }
+export type StoreFrontDish = {
+  name: string
+  description: string
+  price: number
+  image?: Img | null
+  /** From the back-end's inventory flag (real kitchen pages only). */
+  available?: boolean
+}
 export type StoreFrontCategory = { name: string; dishes: StoreFrontDish[] }
 
 export type StoreFrontProps = {

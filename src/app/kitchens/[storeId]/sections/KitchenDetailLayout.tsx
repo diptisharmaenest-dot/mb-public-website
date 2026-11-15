@@ -2,7 +2,7 @@
 
 import type { ChefStoreDetail } from '@/features'
 import StoreFront, { type StoreFrontCategory } from '@/shared/components/sections/StoreFront/StoreFront'
-import StoreClassic from '@/shared/components/sections/StoreFront/StoreClassic'
+import StoreClassicPage from '@/shared/components/sections/StoreFront/StoreClassicPage'
 import VariantSwitch from './VariantSwitch'
 
 /** "…, Sahibzada Ajit Singh Nagar" → "Mohali"; otherwise the last part of the address. */
@@ -31,6 +31,7 @@ export default function KitchenDetailLayout({
       description: d.description,
       price: d.price,
       image: d.dishImageUrl || null,
+      available: d.inventoryAvailable,
     })),
   }))
 
@@ -44,10 +45,9 @@ export default function KitchenDetailLayout({
 
   return (
     <section id="kitchen-detail-page" className="min-h-screen w-full bg-[#FBF6F0]">
-      <div className="mx-auto w-full max-w-[1240px] px-4 pb-10 pt-5 sm:px-6 sm:pt-7 lg:px-10">
+      <div className={design === 'classic' ? 'mx-auto w-full max-w-[1720px] px-4 pb-10 pt-5 sm:px-6 sm:pt-7 lg:px-8' : 'mx-auto w-full max-w-[1240px] px-4 pb-10 pt-5 sm:px-6 sm:pt-7 lg:px-10'}>
         {design === 'classic' ? (
-          <StoreClassic
-            mode="page"
+          <StoreClassicPage
             name={store.name}
             byLine={store.storeOwnerName ? `By ${store.storeOwnerName}` : ''}
             description={store.description}
