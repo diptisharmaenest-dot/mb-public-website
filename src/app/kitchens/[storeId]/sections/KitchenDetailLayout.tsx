@@ -76,6 +76,7 @@ export default function KitchenDetailLayout({
             backHref="/homeV2"
             variant={variant}
             isDemo={isDemo}
+            ownerName={store.storeOwnerName}
           />
         )}
         <VariantSwitch design={design} variant={variant} />

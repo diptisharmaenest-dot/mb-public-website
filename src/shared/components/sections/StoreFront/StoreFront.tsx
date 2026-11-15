@@ -66,8 +66,10 @@ export type StoreFrontProps = {
    * 2 = cook's brand first, "Powered by Mother Bhojan" logo at the bottom (Cookin-style).
    */
   variant?: 1 | 2
-  /** Example store — shows an 'Example store' label. */
+  /** Example store (Ananya's Kitchen) — shows the welcome banner. */
   isDemo?: boolean
+  /** Cook's first name, for the example store's welcome banner. */
+  ownerName?: string
 }
 
 const ROUND_BTN =
@@ -112,12 +114,14 @@ export default function StoreFront(props: StoreFrontProps) {
   const {
     mode, name, cuisine, avatar, cover, rating, city, deliveryLabel, preorderLabel, categories, nameCaret, backHref, shareUrl,
     isDemo = false,
+    ownerName,
   } = props
   const cats = useMemo(() => categories.filter((c) => c.dishes.length > 0), [categories])
   const [active, setActive] = useState(0)
   const current = cats[Math.min(active, Math.max(cats.length - 1, 0))]
   const [copied, setCopied] = useState(false)
   const cart = useStoreCart()
+  const welcome = `${ownerName || name}'s store welcomes you`
 
   const share = async () => {
     const url = shareUrl || (typeof window !== 'undefined' ? window.location.href : '')
@@ -154,8 +158,8 @@ export default function StoreFront(props: StoreFrontProps) {
       ) : null}
 
       {mode === 'page' && isDemo ? (
-        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[13px] text-ink/75 ring-1 ring-yellow/40">
-          <b>Example store</b> — this is how a home kitchen looks on Mother Bhojan. Dishes and prices are samples.
+        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[15px] font-semibold text-ink/80 ring-1 ring-yellow/40">
+          {welcome}
         </p>
       ) : null}
 

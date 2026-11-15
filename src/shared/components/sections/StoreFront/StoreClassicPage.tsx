@@ -29,7 +29,7 @@ export type StoreClassicPageProps = {
   city: string
   categories: StoreFrontCategory[]
   backHref?: string
-  /** Example store (Ananya Kitchen) — shows an 'Example store' label. */
+  /** Example store (Ananya's Kitchen) — shows the welcome banner. */
   isDemo?: boolean
 }
 
@@ -39,6 +39,7 @@ const CARD = 'rounded-[14px] bg-white ring-1 ring-ink/8 shadow-[0_10px_26px_-22p
 
 export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref, isDemo }: StoreClassicPageProps) {
   const cart = useStoreCart()
+  const welcome = `${byLine.replace(/^By\s+/, '') || name}'s store welcomes you`
   const cats = categories.filter((c) => c.dishes.length > 0)
   const [copied, setCopied] = useState(false)
 
@@ -75,8 +76,8 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
       </div>
 
       {isDemo ? (
-        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[13px] text-ink/75 ring-1 ring-yellow/40">
-          <b>Example store</b> — this is how a home kitchen looks on Mother Bhojan. Dishes and prices are samples.
+        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[15px] font-semibold text-ink/80 ring-1 ring-yellow/40">
+          {welcome}
         </p>
       ) : null}
 
