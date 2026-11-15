@@ -15,16 +15,16 @@ import {
 import { EASE } from '@/shared/lib/motion'
 import { FAMILY_JOURNEY, KITCHEN_JOURNEY, type HowItWorksJourney } from '@/app/home/data/how-it-works'
 
-// Realistic step photos (no people), cropped from our own kitchen videos.
+// Step images — no people. Food photos are cropped from our own kitchen videos;
+// app/brand images are rendered with the real Mother Bhojan logo and app QR code.
 import f1Kitchen from '@/assets/images/how-it-works/f1-kitchen.jpg'
 import f2Curry from '@/assets/images/how-it-works/f2-curry.jpg'
-import f3Dal from '@/assets/images/how-it-works/f3-dal.jpg'
-// Rendered with the real Mother Bhojan logo files (no people, no tiffin).
+import f3Pay from '@/assets/images/how-it-works/f3-pay.jpg'
 import f4Bag from '@/assets/images/how-it-works/f4-bag.jpg'
-import k1App from '@/assets/images/how-it-works/k1-app.jpg'
-import k2Verified from '@/assets/images/how-it-works/k2-verified.jpg'
-import k3Spices from '@/assets/images/how-it-works/k1-spices.jpg'
-import k4Call from '@/assets/images/how-it-works/k4-call.jpg'
+import k1Download from '@/assets/images/how-it-works/k1-download.jpg'
+import k2Verify from '@/assets/images/how-it-works/k2-verify.jpg'
+import k3Dal from '@/assets/images/how-it-works/f3-dal.jpg'
+import k4Connect from '@/assets/images/how-it-works/k4-connect.jpg'
 
 /**
  * "How Mother Bhojan works" — both journeys side by side (families left,
@@ -39,14 +39,14 @@ const PHOTOS: Record<JourneyId, StepPhoto[]> = {
   family: [
     { src: f1Kitchen, alt: 'A clean home kitchen with a stove, spices and fresh vegetables' },
     { src: f2Curry, alt: 'Kofta curry simmering in a pan' },
-    { src: f3Dal, alt: 'Fresh dal steaming in a brass pot' },
+    { src: f3Pay, alt: 'A phone showing a successful UPI payment to Mother Bhojan' },
     { src: f4Bag, alt: 'A kraft paper delivery bag with the Mother Bhojan logo' },
   ],
   kitchen: [
-    { src: k1App, alt: 'The Mother Bhojan app open on a phone' },
-    { src: k2Verified, alt: 'The Mother Bhojan app showing green check marks' },
-    { src: k3Spices, alt: 'A masala dabba spice box and rolled-out roti dough' },
-    { src: k4Call, alt: 'A phone showing an incoming call from the Mother Bhojan team' },
+    { src: k1Download, alt: 'A phone showing the Mother Bhojan logo and a QR code to download the app' },
+    { src: k2Verify, alt: 'A phone showing an OTP entered and the number verified' },
+    { src: k3Dal, alt: 'Fresh dal with tadka steaming in a brass pot' },
+    { src: k4Connect, alt: 'A Mother Bhojan welcome card: our team will get in touch with you soon' },
   ],
 }
 

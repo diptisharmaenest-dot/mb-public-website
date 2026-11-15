@@ -70,7 +70,7 @@ export const KITCHEN_JOURNEY: HowItWorksJourney = {
     },
     {
       title: 'Mother Bhojan will connect with you',
-      body: 'Our team will call you to guide you through the next steps.',
+      body: 'Our team will get in touch to guide you through the next steps.',
       chip: 'We’ll be in touch',
     },
   ],
