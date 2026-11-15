@@ -7,6 +7,11 @@ import {
   BuildsTrustAndIndependence,
 } from './sections'
 
+import LiveYourNameOnTheDoor from '@/app/home-shared/sections/YourNameOnTheDoor/LiveYourNameOnTheDoor'
+
+/** Re-check the live kitchen list every 10 minutes (matches STORES_REVALIDATE_SECONDS). */
+export const revalidate = 600
+
 export const metadata = createPageMetadata({
   title: 'Home',
   absoluteTitle: `${SITE_NAME} — Verified home food, delivered warm`,
@@ -23,10 +28,11 @@ export default function HomePage() {
           <WhyMotherBhojanExists />  (Sunita — "The hands behind your meal")
           <KitchenAudit />           ("Sunita's kitchen passed the audit")
           <FeaturedKitchens />       ("Cooking near you this week")
-          <YourNameOnTheDoor />      ("Your kitchen, your name on the door")
           <FamiliesReview />         ("Dinner tonight, from kitchen you can trust")
           <EveryOrderChangesLives /> ("Every order has two sides") */}
       <HowItWorks />
+      {/* Appears automatically once the back-end has a real kitchen. */}
+      <LiveYourNameOnTheDoor />
       <DaughtersPromise />
       <WeHandleEverythingElse />
       <BuildsTrustAndIndependence />

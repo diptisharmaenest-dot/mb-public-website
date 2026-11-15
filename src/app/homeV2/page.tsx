@@ -10,6 +10,11 @@ import { DaughtersPromise, WeHandleEverythingElse, BuildsTrustAndIndependence } 
  * history; its section files are kept because other pages still use them.
  */
 
+import LiveYourNameOnTheDoor from '@/app/home-shared/sections/YourNameOnTheDoor/LiveYourNameOnTheDoor'
+
+/** Re-check the live kitchen list every 10 minutes (matches STORES_REVALIDATE_SECONDS). */
+export const revalidate = 600
+
 export const metadata = createPageMetadata({
   title: 'Home v2',
   absoluteTitle: `${SITE_NAME} — Verified home food, delivered warm`,
@@ -23,6 +28,8 @@ export default function HomeV2() {
     <>
       <HeroV2 />
       <HowItWorksV2 />
+      {/* Appears automatically once the back-end has a real kitchen. */}
+      <LiveYourNameOnTheDoor />
       <DaughtersPromise />
       <WeHandleEverythingElse />
       <BuildsTrustAndIndependence />

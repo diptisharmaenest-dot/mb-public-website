@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import type { ChefStore } from '../models'
-import { dummyChefsStores } from '@/app/home/data/featured-kitchens'
 
 type UseChefsStoresResult = {
   stores: ChefStore[]
@@ -28,13 +27,10 @@ export function useChefsStores(initialStores: ChefStore[] = []): UseChefsStoresR
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Failed to load stores'
       setError(message)
-      if (stores.length === 0) {
-        setStores(dummyChefsStores)
-      }
     } finally {
       setLoading(false)
     }
-  }, [stores.length])
+  }, [])
 
   useEffect(() => {
     void load()

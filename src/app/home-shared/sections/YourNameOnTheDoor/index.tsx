@@ -1,7 +1,6 @@
 'use client'
 
 import { useId, useState } from 'react'
-import Image from 'next/image'
 import { FiArrowRight } from 'react-icons/fi'
 import {
   Button,
@@ -12,16 +11,19 @@ import {
   Section,
   SectionHeader,
 } from '@/components'
-import { kitchenStorefrontPreview } from '@/assets'
+import StorePreview from './StorePreview'
 import { ROUTES } from '@/shared/seo'
 
 const DEFAULT_KITCHEN_NAME = "Sunita's Rasoi"
 
-const YourNameOnTheDoor = () => {
+/**
+ * Shown only once a real kitchen is live (the page passes `exampleStoreHref`,
+ * the first real kitchen's page). "See your store" opens that real store.
+ */
+const YourNameOnTheDoor = ({ exampleStoreHref = ROUTES.join }: { exampleStoreHref?: string }) => {
   const inputId = useId()
   const [kitchenName, setKitchenName] = useState(DEFAULT_KITCHEN_NAME)
   const displayName = kitchenName.trim() || DEFAULT_KITCHEN_NAME
-  const joinHref = `${ROUTES.join}?kitchen=${encodeURIComponent(displayName)}`
 
   return (
     <Section
@@ -59,7 +61,7 @@ const YourNameOnTheDoor = () => {
               className="mt-8 sm:mt-9"
               onSubmit={(event) => {
                 event.preventDefault()
-                window.location.assign(joinHref)
+                window.location.assign(exampleStoreHref)
               }}
             >
               <label htmlFor={inputId} className="sr-only">
@@ -76,7 +78,7 @@ const YourNameOnTheDoor = () => {
                   className="min-w-0 flex-1 border-0 bg-transparent py-2.5 font-jakarta text-[15px] font-semibold text-ink outline-none placeholder:text-ink/35 sm:text-base"
                 />
                 <Button
-                  href={joinHref}
+                  href={exampleStoreHref}
                   variant="customer"
                   size="sm"
                   className={`shrink-0 !min-h-11 whitespace-nowrap px-4 ${RADIUS_BTN}`}
@@ -96,13 +98,7 @@ const YourNameOnTheDoor = () => {
           <div
             className={`mx-auto w-full max-w-[520px] overflow-hidden bg-white shadow-device-frame lg:mx-0 lg:ml-auto lg:max-w-[560px] border-1 border-partner ${RADIUS_CARD}`}
           >
-            <Image
-              src={kitchenStorefrontPreview}
-              alt="Sunita’s Rasoi kitchen store on Mother Bhojan — menu, cart, and verified profile"
-              className="h-auto w-full"
-              sizes="(max-width: 1024px) 100vw, 560px"
-              priority
-            />
+            <StorePreview kitchenName={displayName} />
           </div>
         </div>
       </div>

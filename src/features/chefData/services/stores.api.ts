@@ -1,21 +1,13 @@
 import type { ChefStore, ChefStoreDetail, StoreDish, StoreMenuCategory } from '../models'
-import {
-  dummyChefsStores,
-  featuredKitchens,
-  featuredKitchenToStoreDetail,
-  getFeaturedKitchenById,
-} from '@/app/home/data/featured-kitchens'
 import type { RequestOptions } from '@/shared/lib'
 import { apiRequest } from '@/shared/lib'
 import { ApiUrl } from '@/shared/lib'
 
 
-const DEFAULT_LOCAL_DEV_TOKEN =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJNb3RoZXJCaG9qYW4iLCJhdWQiOiJwdWJsaWMtd2Vic2l0ZSIsInNjb3BlIjoicHVibGljX2FwaSJ9.uN-EgXHK087McAzKAK2HbQOhAHsZUgkmVlVuo0uoq58'
 
 function bearerHeaders(): HeadersInit {
-  const token =
-    process.env.NEXT_PUBLIC_PUBLIC_WEBSITE_BEARER_TOKEN?.trim() || DEFAULT_LOCAL_DEV_TOKEN
+  // Token comes from env only (.env.development.local locally, Netlify env in production).
+  const token = process.env.NEXT_PUBLIC_PUBLIC_WEBSITE_BEARER_TOKEN?.trim()
   if (!token) return {}
   return { Authorization: `Bearer ${token}` }
 }
@@ -235,15 +227,22 @@ function parseStoreDetailPayload(item: unknown): ChefStoreDetail {
   }
 }
 
-/** `GET /api/public/stores` */
+/** How often (seconds) server-rendered pages re-check the live kitchen list. */
+export const STORES_REVALIDATE_SECONDS = 600
+
+/**
+ * `GET /api/public/stores` — only real kitchens from the configured back-end.
+ * Never falls back to sample kitchens: if the API is unreachable, returns [].
+ */
 export async function fetchChefsStores(): Promise<ChefStore[]> {
   try {
-    const raw = await storesRequest<unknown>(ApiUrl.publicStoresList)
-    const list = unwrapList(raw).map((row, i) => parseStoreRow(row, i))
-    return list
+    const raw = await storesRequest<unknown>(ApiUrl.publicStoresList, {
+      next: { revalidate: STORES_REVALIDATE_SECONDS },
+    })
+    return unwrapList(raw).map((row, i) => parseStoreRow(row, i))
   } catch (error) {
-    console.warn('[stores.api] Live store list fetch failed, falling back to dummy stores:', error)
-    return dummyChefsStores
+    console.warn('[stores.api] Live store list unavailable — showing no kitchens:', error)
+    return []
   }
 }
 

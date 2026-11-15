@@ -5,9 +5,6 @@ import type { ChefStoreDetail } from '@/features'
 import {
   DEFAULT_CHEF_STORY,
   buildKitchenGalleryImages,
-  featuredKitchens,
-  featuredKitchenToStoreDetail,
-  getFeaturedKitchenById,
 } from '@/app/home/data/featured-kitchens'
 import {
   JsonLd,
@@ -24,10 +21,7 @@ function mergeStaticStoreParams(apiParams: { storeId: string }[]): { storeId: st
   const ids = new Set<string>()
   const merged: { storeId: string }[] = []
 
-  for (const param of [
-    ...apiParams,
-    ...featuredKitchens.map((kitchen) => ({ storeId: kitchen.storeId })),
-  ]) {
+  for (const param of apiParams) {
     if (!param.storeId || ids.has(param.storeId)) continue
     ids.add(param.storeId)
     merged.push(param)
@@ -69,12 +63,7 @@ async function resolveStoreDetail(storeId: string): Promise<ChefStoreDetail | nu
     console.warn(`[resolveStoreDetail] Could not load store '${storeId}' from live API:`, err)
   }
 
-  // 2. Fallback to featured mock kitchens if ID matches demo items
-  const featured = getFeaturedKitchenById(storeId)
-  if (featured) {
-    return featuredKitchenToStoreDetail(featured)
-  }
-
+  // No sample-kitchen fallback — unknown or unreachable stores show "not found".
   return null
 }
 
