@@ -1,22 +1,18 @@
 import { createPageMetadata, ROUTES, SITE_NAME } from '@/shared/seo'
-import {
-  Hero,
-  WhyMotherBhojanExists,
-  MeetOurMothers,
-  FeaturedKitchens,
-  CareTimeline,
-  FamiliesReview,
-  DaughtersPromise,
-  EveryOrderChangesLives,
-  PartnerBanner,
-  KitchenDashboard,
-  HomeFAQ,
-  FloatingTrustBadge,
-} from './sections'
+import HeroV2 from './sections/HeroV2'
+import HowItWorksV2 from './sections/HowItWorksV2'
+// Same sections as the main Home page.
+import { DaughtersPromise, WeHandleEverythingElse, BuildsTrustAndIndependence } from '@/app/home/sections'
+
+/*
+ * Home — version 2 (new hero + "How it works" from the v2 mockups; the rest
+ * matches the main Home page). The previous /homeV2 composition is in git
+ * history; its section files are kept because other pages still use them.
+ */
 
 export const metadata = createPageMetadata({
   title: 'Home v2',
-  absoluteTitle: `${SITE_NAME} — Refined verified home food marketplace`,
+  absoluteTitle: `${SITE_NAME} — Verified home food, delivered warm`,
   description:
     'Real kitchens. Real cooks. Every one verified on Mother Bhojan — order maa ke haath ka khaana in Mohali.',
   path: ROUTES.homev2,
@@ -25,18 +21,11 @@ export const metadata = createPageMetadata({
 export default function HomeV2() {
   return (
     <>
-      <Hero />
-      <WhyMotherBhojanExists />
-      <MeetOurMothers />
-      <FeaturedKitchens />
-      <CareTimeline />
-      <FamiliesReview />
+      <HeroV2 />
+      <HowItWorksV2 />
       <DaughtersPromise />
-      <EveryOrderChangesLives />
-      <PartnerBanner />
-      <KitchenDashboard />
-      <HomeFAQ />
-      <FloatingTrustBadge />
+      <WeHandleEverythingElse />
+      <BuildsTrustAndIndependence />
     </>
   )
 }

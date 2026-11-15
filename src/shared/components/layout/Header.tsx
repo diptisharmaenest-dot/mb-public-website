@@ -35,8 +35,8 @@ function isNavActive(pathname: string, href: string) {
 /** Dark cover/video heroes need white nav text. */
 function isDarkHeroPath(pathname: string) {
   const path = normalizePath(pathname);
-  // Home now has a light hero (dark nav text); v2/v3 keep their dark video heroes.
-  if (path === ROUTES.homev2 || path === ROUTES.homev3) {
+  // Home and Home v2 have light heroes (dark nav text); v3 keeps its dark video hero.
+  if (path === ROUTES.homev3) {
     return true;
   }
   return path.startsWith(`${ROUTES.kitchens}/`);
