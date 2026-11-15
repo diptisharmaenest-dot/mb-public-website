@@ -39,7 +39,8 @@ function isDarkHeroPath(pathname: string) {
   if (path === ROUTES.homev3) {
     return true;
   }
-  return path.startsWith(`${ROUTES.kitchens}/`);
+  // Kitchen pages now use the light store design (dark nav text).
+  return false;
 }
 
 type NavLinkProps = {

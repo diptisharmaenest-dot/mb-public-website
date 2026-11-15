@@ -1,11 +1,7 @@
 import { cache } from 'react'
 import { notFound } from 'next/navigation'
-import { fetchChefStore, fetchChefStoreByGuid, fetchChefsStores } from '@/features/chefData/services/stores.api'
+import { fetchChefStore, fetchChefsStores } from '@/features/chefData/services/stores.api'
 import type { ChefStoreDetail } from '@/features'
-import {
-  DEFAULT_CHEF_STORY,
-  buildKitchenGalleryImages,
-} from '@/app/home/data/featured-kitchens'
 import {
   JsonLd,
   ROUTES,
@@ -48,16 +44,8 @@ async function resolveStoreDetail(storeId: string): Promise<ChefStoreDetail | nu
   try {
     const store = await loadStoreDetail(storeId)
     if (store) {
-      return {
-        ...store,
-        chefStory: store.chefStory || DEFAULT_CHEF_STORY,
-        cuisineLabel: store.cuisineLabel || 'North Indian · Pure Veg',
-        galleryImages: buildKitchenGalleryImages(store.galleryImages),
-        socialLinks: store.socialLinks || {
-          instagram: 'https://instagram.com',
-          facebook: 'https://facebook.com',
-        },
-      }
+      // Real data only — no made-up chef story, cuisine or social links.
+      return store
     }
   } catch (err) {
     console.warn(`[resolveStoreDetail] Could not load store '${storeId}' from live API:`, err)
