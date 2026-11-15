@@ -11,8 +11,8 @@ import { ROUTES } from "@/shared/seo";
 
 const navLinks = [
   { label: "Home", path: ROUTES.home },
+  { label: "Home v2", path: ROUTES.homev2 },
   // Hidden from nav (pages still reachable by URL) — uncomment to show again.
-  // { label: "Home v2", path: ROUTES.homev2 },
   // { label: "Home v3", path: ROUTES.homev3 },
   { label: "About", path: ROUTES.about },
   // { label: "Kitchens", path: ROUTES.kitchens },
