@@ -25,6 +25,7 @@ import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
 import { mbLogoRed, mLogo } from '@/assets'
 import { CartPill, QtyControl, useStoreCart } from './cart'
 import { ScheduleModal, type WeeklySchedule } from './schedule'
+import { StoreWelcome } from './welcome'
 
 /**
  * Kitchen store front (v2 design) — used by real kitchen pages (/kitchens/…)
@@ -127,7 +128,6 @@ export default function StoreFront(props: StoreFrontProps) {
   const [copied, setCopied] = useState(false)
   const cart = useStoreCart()
   const [scheduleOpen, setScheduleOpen] = useState(false)
-  const welcome = `${ownerName || name}'s store welcomes you`
 
   const share = async () => {
     const url = shareUrl || (typeof window !== 'undefined' ? window.location.href : '')
@@ -163,11 +163,7 @@ export default function StoreFront(props: StoreFrontProps) {
         </div>
       ) : null}
 
-      {mode === 'page' && isDemo ? (
-        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[15px] font-semibold text-ink/80 ring-1 ring-yellow/40">
-          {welcome}
-        </p>
-      ) : null}
+      {mode === 'page' && isDemo ? <StoreWelcome cookName={cookName || ownerName || name} avatar={avatar} city={city} /> : null}
 
       {/* Banner */}
       <div className="relative overflow-hidden rounded-[22px] bg-[#1d1611] sm:rounded-[26px]">
@@ -248,7 +244,10 @@ export default function StoreFront(props: StoreFrontProps) {
                   {c.name} ({c.dishes.length})
                 </span>
               ) : (
-                <button key={c.name} type="button" role="tab" aria-selected={selected} onClick={() => setActive(i)} className={clsx(cls, 'cursor-pointer')}>
+                <button key={c.name} type="button" role="tab" aria-selected={selected} onClick={() => {
+                    setActive(i)
+                    document.getElementById(`v2-cat-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }} className={clsx(cls, 'cursor-pointer')}>
                   {c.name} ({c.dishes.length})
                 </button>
               )
@@ -257,38 +256,43 @@ export default function StoreFront(props: StoreFrontProps) {
         ) : null}
       </div>
 
-      {current ? (
-        <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
-          {current.dishes.map((d) => (
-            <li key={d.name} className="flex gap-4 rounded-[18px] bg-white p-3.5 shadow-[0_12px_30px_-24px_rgba(42,31,24,0.5)] ring-1 ring-ink/5">
-              <span className="relative h-[110px] w-[130px] shrink-0 overflow-hidden rounded-[12px] bg-[#F4EDE4] sm:h-[150px] sm:w-[220px]">
-                {d.image ? (
-                  <Image src={d.image} alt={d.name} fill sizes="220px" className="object-cover" unoptimized={typeof d.image === 'string'} />
-                ) : (
-                  <span className="flex h-full w-full items-center justify-center">
-                    <LuUtensils className="h-8 w-8 text-ink/25" aria-hidden />
+      {cats.length > 0 ? (
+        cats.map((c, ci) => (
+          <section key={c.name} id={mode === 'page' ? `v2-cat-${ci}` : undefined} className="scroll-mt-40">
+            <h3 className="mb-3 mt-7 text-[21px] font-bold sm:text-[24px]">{c.name}</h3>
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+              {c.dishes.map((d) => (
+                <li key={d.name} className="flex gap-4 rounded-[18px] bg-white p-3.5 shadow-[0_12px_30px_-24px_rgba(42,31,24,0.5)] ring-1 ring-ink/5">
+                  <span className="relative h-[110px] w-[130px] shrink-0 overflow-hidden rounded-[12px] bg-[#F4EDE4] sm:h-[150px] sm:w-[220px]">
+                    {d.image ? (
+                      <Image src={d.image} alt={d.name} fill sizes="220px" className="object-cover" unoptimized={typeof d.image === 'string'} />
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center">
+                        <LuUtensils className="h-8 w-8 text-ink/25" aria-hidden />
+                      </span>
+                    )}
                   </span>
-                )}
-              </span>
-              <div className="flex min-w-0 flex-1 flex-col py-1">
-                <p className="text-[16px] font-bold leading-snug sm:text-[19px]">{d.name}</p>
-                {d.description ? (
-                  <p className="mt-1.5 line-clamp-3 text-[13.5px] leading-[1.5] text-ink/60 sm:text-[15px]">{d.description}</p>
-                ) : null}
-                <div className="mt-auto flex items-end justify-between pt-2">
-                  <p className="text-[19px] font-bold text-partner sm:text-[22px]">₹{d.price}</p>
-                  {mode === 'page' ? (
-                    <QtyControl cart={cart} name={d.name} price={d.price} disabled={d.available === false} />
-                  ) : (
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-verified-pill text-verified-dark">
-                      <LuPlus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
-                    </span>
-                  )}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+                  <div className="flex min-w-0 flex-1 flex-col py-1">
+                    <p className="text-[16px] font-bold leading-snug sm:text-[19px]">{d.name}</p>
+                    {d.description ? (
+                      <p className="mt-1.5 line-clamp-3 text-[13.5px] leading-[1.5] text-ink/60 sm:text-[15px]">{d.description}</p>
+                    ) : null}
+                    <div className="mt-auto flex items-end justify-between pt-2">
+                      <p className="text-[19px] font-bold text-partner sm:text-[22px]">₹{d.price}</p>
+                      {mode === 'page' ? (
+                        <QtyControl cart={cart} name={d.name} price={d.price} disabled={d.available === false} />
+                      ) : (
+                        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-verified-pill text-verified-dark">
+                          <LuPlus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
       ) : (
         <p className="mt-6 rounded-[18px] bg-white p-6 text-[15px] text-ink/60 ring-1 ring-ink/5">The menu is being prepared — check back soon.</p>
       )}

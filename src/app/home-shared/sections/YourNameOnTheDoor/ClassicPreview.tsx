@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import StoreClassic from '@/shared/components/sections/StoreFront/StoreClassic'
-import { demoStoreCategories, demoStoreDetail } from '@/app/kitchens/demo-store'
+import { demoPreviewMenu, demoStoreDetail } from '@/app/kitchens/demo-store'
 
 /**
  * Main Home "Your name on the door" preview — classic store card inside a
@@ -11,9 +11,6 @@ import { demoStoreCategories, demoStoreDetail } from '@/app/kitchens/demo-store'
  */
 const W = 855
 const H = 680
-
-/** Preview shows the first three categories, two dishes each. */
-const PREVIEW_MENU = demoStoreCategories.slice(0, 3).map((c) => ({ ...c, dishes: c.dishes.slice(0, 2) }))
 
 export function slugify(name: string) {
   return (
@@ -68,7 +65,7 @@ export default function ClassicPreview({ kitchenName }: { kitchenName: string })
           cover={demoStoreDetail.coverImageUrl}
           rating={null}
           city="Mohali"
-          categories={PREVIEW_MENU}
+          categories={demoPreviewMenu}
         />
       </div>
     </div>

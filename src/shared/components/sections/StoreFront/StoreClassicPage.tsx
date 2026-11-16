@@ -11,6 +11,7 @@ import { ROUTES } from '@/shared/seo'
 import type { StoreFrontCategory } from './StoreFront'
 import { CartPill, QtyControl, useStoreCart } from './cart'
 import { ScheduleModal, type WeeklySchedule } from './schedule'
+import { StoreWelcome } from './welcome'
 
 /**
  * Kitchen page for the main Home ("first version") — Cookin-style layout:
@@ -43,7 +44,6 @@ const CARD = 'rounded-[14px] bg-white ring-1 ring-ink/8 shadow-[0_10px_26px_-22p
 export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref, isDemo, schedule, cookName }: StoreClassicPageProps) {
   const cart = useStoreCart()
   const [scheduleOpen, setScheduleOpen] = useState(false)
-  const welcome = `${byLine.replace(/^By\s+/, '') || name}'s store welcomes you`
   const cats = categories.filter((c) => c.dishes.length > 0)
   const [copied, setCopied] = useState(false)
 
@@ -79,11 +79,7 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
         </div>
       </div>
 
-      {isDemo ? (
-        <p className="mb-5 rounded-[12px] bg-[#FFF1D6] px-4 py-2.5 text-center text-[15px] font-semibold text-ink/80 ring-1 ring-yellow/40">
-          {welcome}
-        </p>
-      ) : null}
+      {isDemo ? <StoreWelcome cookName={cookName || name} avatar={avatar} city={city} /> : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-7">
         {/* ------------------------- Store profile ------------------------- */}

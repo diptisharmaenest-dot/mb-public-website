@@ -1,5 +1,4 @@
 import localFont from 'next/font/local'
-import { Pacifico } from 'next/font/google'
 
 /** Self-hosted fonts — build works offline (no Google Fonts fetch at compile time). */
 export const jakarta = localFont({
@@ -23,10 +22,10 @@ export const aguafina = localFont({
   display: 'swap',
 })
 
-/** Handwritten script font — Pacifico font family globally for font-hand */
-export const pacifico = Pacifico({
-  subsets: ['latin'],
-  weight: '400',
+/** Handwritten script font (font-hand) — self-hosted Pacifico (from @fontsource/pacifico), so it never falls back offline. */
+export const pacifico = localFont({
+  src: '../../assets/fonts/pacifico-latin-400-normal.woff2',
   variable: '--font-pacifico',
+  weight: '400',
   display: 'swap',
 })

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import StoreFront from '@/shared/components/sections/StoreFront/StoreFront'
-import { demoStoreCategories, demoStoreDetail } from '@/app/kitchens/demo-store'
+import { demoPreviewMenu, demoStoreDetail } from '@/app/kitchens/demo-store'
 
 /**
  * Home v2 "Your name on the door" preview: the new store design with the same
@@ -47,7 +47,7 @@ export default function StorePreview({ kitchenName }: { kitchenName: string }) {
           city="Mohali"
           deliveryLabel="Home delivery"
           preorderLabel="Freshly cooked to order"
-          categories={demoStoreCategories}
+          categories={demoPreviewMenu}
         />
       </div>
     </div>

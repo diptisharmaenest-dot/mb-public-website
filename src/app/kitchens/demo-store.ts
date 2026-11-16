@@ -99,3 +99,8 @@ export const demoStoreSchedule: WeeklySchedule = [
   [LUNCH, DINNER],
   [LUNCH, DINNER],
 ]
+
+/** Both Home previews show exactly these dishes: first three categories, two dishes each. */
+export const demoPreviewMenu: StoreFrontCategory[] = demoStoreCategories
+  .slice(0, 3)
+  .map((c) => ({ ...c, dishes: c.dishes.slice(0, 2) }))
