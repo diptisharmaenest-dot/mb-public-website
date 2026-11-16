@@ -4,6 +4,7 @@ import type { ChefStoreDetail } from '@/features'
 import StoreFront, { type StoreFrontCategory } from '@/shared/components/sections/StoreFront/StoreFront'
 import StoreClassicPage from '@/shared/components/sections/StoreFront/StoreClassicPage'
 import VariantSwitch from './VariantSwitch'
+import { demoStoreSchedule } from '../../demo-store'
 
 /** "…, Sahibzada Ajit Singh Nagar" → "Mohali"; otherwise the last part of the address. */
 function cityFromAddress(address: string): string {
@@ -45,6 +46,10 @@ export default function KitchenDetailLayout({
       .map((c) => c.name)
       .join(' • ')
 
+  // Only the example store has a schedule; real kitchens: the back-end doesn't send one yet.
+  const schedule = isDemo ? demoStoreSchedule : undefined
+  const cookName = store.storeOwnerName?.split(' ')[0] || store.name
+
   return (
     <section id="kitchen-detail-page" className="min-h-screen w-full bg-[#FBF6F0]">
       <div className={design === 'classic' ? 'mx-auto w-full max-w-[1720px] px-4 pb-10 pt-5 sm:px-6 sm:pt-7 lg:px-8' : 'mx-auto w-full max-w-[1240px] px-4 pb-10 pt-5 sm:px-6 sm:pt-7 lg:px-10'}>
@@ -60,6 +65,8 @@ export default function KitchenDetailLayout({
             categories={categories}
             backHref="/"
             isDemo={isDemo}
+            schedule={schedule}
+            cookName={cookName}
           />
         ) : (
           <StoreFront
@@ -77,6 +84,8 @@ export default function KitchenDetailLayout({
             variant={variant}
             isDemo={isDemo}
             ownerName={store.storeOwnerName}
+            schedule={schedule}
+            cookName={cookName}
           />
         )}
         <VariantSwitch design={design} variant={variant} />

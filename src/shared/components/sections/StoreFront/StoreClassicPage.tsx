@@ -10,6 +10,7 @@ import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
 import { ROUTES } from '@/shared/seo'
 import type { StoreFrontCategory } from './StoreFront'
 import { CartPill, QtyControl, useStoreCart } from './cart'
+import { ScheduleModal, type WeeklySchedule } from './schedule'
 
 /**
  * Kitchen page for the main Home ("first version") — Cookin-style layout:
@@ -31,14 +32,17 @@ export type StoreClassicPageProps = {
   backHref?: string
   /** Example store (Ananya's Kitchen) — shows the welcome banner. */
   isDemo?: boolean
+  schedule?: WeeklySchedule
+  cookName?: string
 }
 
 const ROUND_BTN =
   'flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white shadow-[0_6px_18px_-8px_rgba(42,31,24,0.35)] transition hover:-translate-y-0.5'
 const CARD = 'rounded-[14px] bg-white ring-1 ring-ink/8 shadow-[0_10px_26px_-22px_rgba(42,31,24,0.45)]'
 
-export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref, isDemo }: StoreClassicPageProps) {
+export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref, isDemo, schedule, cookName }: StoreClassicPageProps) {
   const cart = useStoreCart()
+  const [scheduleOpen, setScheduleOpen] = useState(false)
   const welcome = `${byLine.replace(/^By\s+/, '') || name}'s store welcomes you`
   const cats = categories.filter((c) => c.dishes.length > 0)
   const [copied, setCopied] = useState(false)
@@ -134,14 +138,13 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
             <p className="flex items-center gap-2 text-[13px] font-semibold">
               <LuTruck className="h-4 w-4" aria-hidden /> Delivery
             </p>
-            <DownloadAppButton
-              source="store-cookin-schedule"
-              openLabel="Open the app"
-              variant="none"
+            <button
+              type="button"
+              onClick={() => setScheduleOpen(true)}
               className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] bg-ink py-2.5 text-[13px] font-semibold text-white transition hover:bg-ink/90"
             >
               <LuCalendarDays className="h-4 w-4" aria-hidden /> View Schedule
-            </DownloadAppButton>
+            </button>
             <div className="rounded-[10px] bg-[#F6F1EA] p-3">
               <p className="text-[12.5px] font-semibold">Get notified about new dishes</p>
               <DownloadAppButton
@@ -236,6 +239,7 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
           Privacy
         </Link>
       </p>
+      <ScheduleModal open={scheduleOpen} onClose={() => setScheduleOpen(false)} cookName={cookName || name} schedule={schedule} />
     </div>
   )
 }

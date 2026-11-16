@@ -24,6 +24,7 @@ import { MdDeliveryDining, MdVerified } from 'react-icons/md'
 import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
 import { mbLogoRed, mLogo } from '@/assets'
 import { CartPill, QtyControl, useStoreCart } from './cart'
+import { ScheduleModal, type WeeklySchedule } from './schedule'
 
 /**
  * Kitchen store front (v2 design) — used by real kitchen pages (/kitchens/…)
@@ -70,6 +71,8 @@ export type StoreFrontProps = {
   isDemo?: boolean
   /** Cook's first name, for the example store's welcome banner. */
   ownerName?: string
+  schedule?: WeeklySchedule
+  cookName?: string
 }
 
 const ROUND_BTN =
@@ -115,12 +118,15 @@ export default function StoreFront(props: StoreFrontProps) {
     mode, name, cuisine, avatar, cover, rating, city, deliveryLabel, preorderLabel, categories, nameCaret, backHref, shareUrl,
     isDemo = false,
     ownerName,
+    schedule,
+    cookName,
   } = props
   const cats = useMemo(() => categories.filter((c) => c.dishes.length > 0), [categories])
   const [active, setActive] = useState(0)
   const current = cats[Math.min(active, Math.max(cats.length - 1, 0))]
   const [copied, setCopied] = useState(false)
   const cart = useStoreCart()
+  const [scheduleOpen, setScheduleOpen] = useState(false)
   const welcome = `${ownerName || name}'s store welcomes you`
 
   const share = async () => {
@@ -212,13 +218,15 @@ export default function StoreFront(props: StoreFrontProps) {
         <p className="flex items-center gap-2.5 text-[15px] font-medium lg:flex-1 lg:px-8">
           <LuClock className="h-5 w-5 shrink-0 text-ink/70" aria-hidden /> {preorderLabel}
         </p>
-        <AppAction
-          mode={mode}
-          source="store-delivery-slots"
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-partner-tag px-5 py-2.5 text-[15px] font-semibold text-partner transition hover:bg-partner-muted lg:ml-6 lg:border-0"
-        >
+        {mode === 'page' ? (
+          <button type="button" onClick={() => setScheduleOpen(true)} className={clsx('cursor-pointer', 'inline-flex items-center justify-center gap-2 rounded-full bg-partner-tag px-5 py-2.5 text-[15px] font-semibold text-partner transition hover:bg-partner-muted lg:ml-6 lg:border-0')}>
           <LuCalendarDays className="h-5 w-5" aria-hidden /> View delivery slots <LuChevronRight className="h-4 w-4" aria-hidden />
-        </AppAction>
+          </button>
+        ) : (
+          <span className="inline-flex items-center justify-center gap-2 rounded-full bg-partner-tag px-5 py-2.5 text-[15px] font-semibold text-partner transition hover:bg-partner-muted lg:ml-6 lg:border-0">
+          <LuCalendarDays className="h-5 w-5" aria-hidden /> View delivery slots <LuChevronRight className="h-4 w-4" aria-hidden />
+          </span>
+        )}
       </div>
 
       {/* Menu */}
@@ -337,6 +345,9 @@ export default function StoreFront(props: StoreFrontProps) {
             <Link href="/privacy" className="hover:text-ink">Privacy</Link>
           </p>
         </div>
+      ) : null}
+      {mode === 'page' ? (
+        <ScheduleModal open={scheduleOpen} onClose={() => setScheduleOpen(false)} cookName={cookName || ownerName || name} schedule={schedule} />
       ) : null}
     </div>
   )

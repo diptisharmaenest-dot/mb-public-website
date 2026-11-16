@@ -1,5 +1,6 @@
 import type { ChefStoreDetail, StoreDish } from '@/features'
 import type { StoreFrontCategory } from '@/shared/components/sections/StoreFront/StoreFront'
+import type { WeeklySchedule } from '@/shared/components/sections/StoreFront/schedule'
 // Sample photos only (no people). Swap Ananya's profile photo in when the real one arrives.
 import cover from '@/assets/images/home-v2/hero-thali.jpg'
 import thali from '@/assets/images/home-v2/hero-thali.jpg'
@@ -85,3 +86,16 @@ export const demoStoreCategories: StoreFrontCategory[] = demoStoreDetail.menuCat
     available: d.inventoryAvailable,
   })),
 }))
+
+/** Sample weekly cooking schedule (Sun → Sat). Sunday lunch only. */
+const LUNCH = 'Lunch · 12:30–2:30 PM'
+const DINNER = 'Dinner · 7:30–9:30 PM'
+export const demoStoreSchedule: WeeklySchedule = [
+  [LUNCH],
+  [LUNCH, DINNER],
+  [LUNCH, DINNER],
+  [LUNCH, DINNER],
+  [LUNCH, DINNER],
+  [LUNCH, DINNER],
+  [LUNCH, DINNER],
+]
