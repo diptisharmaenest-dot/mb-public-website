@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { LuChefHat } from 'react-icons/lu'
 // Background video removed (plain light hero). Videos kept in assets: hero_light_kitchen.mp4, hero_kitchen_loop.mp4, hero_bg.mp4.
 import { EASE } from '@/shared/lib/motion'
 import { DownloadAppButton, Section } from '@/components'
@@ -138,15 +139,27 @@ const Hero = () => {
         </motion.p>
 
         <motion.div {...rise(4)} className="mt-8 flex w-full flex-col items-center">
-          <DownloadAppButton
-            source="home-hero"
-            openLabel="Order now"
-            variant="customer"
-            size="lg"
-            className="w-full max-w-[340px] justify-center !rounded-full py-4 text-[18px] shadow-[0_18px_36px_-14px_rgba(219,26,26,0.6)]"
-          >
-            Order now
-          </DownloadAppButton>
+          <div className="flex w-full max-w-[340px] flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:justify-center">
+            <DownloadAppButton
+              source="home-hero"
+              openLabel="Order now"
+              variant="customer"
+              size="lg"
+              className="justify-center !rounded-full py-4 text-[18px] shadow-[0_18px_36px_-14px_rgba(219,26,26,0.6)] sm:min-w-[240px]"
+            >
+              Order now
+            </DownloadAppButton>
+            {/* Kitchen-owner CTA — app popup until the kitchen app is live */}
+            <DownloadAppButton
+              source="home-hero-kitchen"
+              openLabel="Open the app"
+              variant="none"
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-verified bg-white/80 font-semibold text-ink transition hover:-translate-y-0.5 hover:bg-verified-pill px-7 py-[14px] text-[17px] sm:min-w-[240px]"
+            >
+              <LuChefHat className="h-5 w-5 text-verified-dark" aria-hidden />
+              Open your kitchen
+            </DownloadAppButton>
+          </div>
           {/* "Meet our cooks" hidden — #mothers anchor has no target on the page. */}
           <p className="mt-4 inline-flex items-center gap-2 text-[14px] font-medium text-ink/70">
             <span className="relative flex h-2 w-2" aria-hidden>

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { LuChefHat } from 'react-icons/lu'
 import { DownloadAppButton, Section, SectionHeader, compactAccentLine, HEADER_TO_SUBROW_GAP } from '@/components'
 import { EASE } from '@/shared/lib/motion'
 
@@ -42,14 +43,16 @@ export default function BuildsTrustAndIndependence() {
             Order now
           </DownloadAppButton>
 
-          {/* "Start your kitchen" hidden for now.
-          <Link
-            href={ROUTES.partners}
-            className="inline-flex items-center justify-center rounded-2xl border border-[#E02B2B] bg-transparent px-7 py-3 text-[15.5px] font-bold !text-[#E02B2B] visited:!text-[#E02B2B] transition-all hover:bg-[#E02B2B]/8 active:scale-95 no-underline"
+          {/* Kitchen-owner CTA — app popup until the kitchen app is live */}
+          <DownloadAppButton
+            source="home-bottom-banner-kitchen"
+            openLabel="Open the app"
+            variant="none"
+            className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-verified-dark bg-white/70 px-7 py-[10px] text-[15.5px] font-bold !text-ink transition-all hover:bg-white active:scale-95"
           >
-            Start your kitchen
-          </Link>
-          */}
+            <LuChefHat className="h-5 w-5 text-verified-dark" aria-hidden />
+            Open your kitchen
+          </DownloadAppButton>
         </div>
 
         <p className="mt-6 text-[14px] font-normal  tracking-tight">

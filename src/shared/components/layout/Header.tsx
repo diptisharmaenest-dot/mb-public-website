@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import clsx from "clsx";
+import { LuChefHat } from "react-icons/lu";
 import { DownloadAppButton, SECTION_PX, SectionContainer } from "@/components";
 import { mbLogoRed } from "@/assets";
 import { ROUTES } from "@/shared/seo";
@@ -142,11 +143,20 @@ const Header = () => {
               ))}
             </nav>
             <DownloadAppButton
+              source="header-kitchen"
+              openLabel="Open the app"
+              variant="none"
+              className="ml-3 inline-flex min-h-10 cursor-pointer items-center gap-1.5 rounded-[12px] border-2 border-verified bg-white/80 px-4 text-[13px] font-bold text-ink transition hover:bg-verified-pill"
+            >
+              <LuChefHat className="h-4 w-4 text-verified-dark" aria-hidden />
+              Open your kitchen
+            </DownloadAppButton>
+            <DownloadAppButton
               source="header"
               openLabel="Order now"
               variant="customer"
               size="sm"
-              className="ml-3 !min-h-10 rounded-[12px] px-5 text-[13px] font-bold"
+              className="ml-2 !min-h-10 rounded-[12px] px-5 text-[13px] font-bold"
             >
               Order now
             </DownloadAppButton>
@@ -181,6 +191,16 @@ const Header = () => {
                 onClick={() => setOpen(false)}
               />
             ))}
+            <DownloadAppButton
+              source="header-mobile-menu-kitchen"
+              openLabel="Open the app"
+              variant="none"
+              className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] border-2 border-verified py-2.5 text-[14px] font-bold text-ink"
+              onClick={() => setOpen(false)}
+            >
+              <LuChefHat className="h-4 w-4 text-verified-dark" aria-hidden />
+              Open your kitchen
+            </DownloadAppButton>
             <DownloadAppButton
               source="header-mobile-menu"
               openLabel="Order now"

@@ -5,6 +5,7 @@ import Image, { type StaticImageData } from 'next/image'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FiCheck } from 'react-icons/fi'
+import { LuChefHat } from 'react-icons/lu'
 import {
   compactAccentLine,
   DownloadAppButton,
@@ -315,9 +316,18 @@ export default function HowItWorks() {
         <SingleJourney key={focus} focus={focus} />
       </div>
 
-      <div className="mt-12 flex justify-center">
+      <div className="mt-12 flex flex-wrap justify-center gap-3">
         <DownloadAppButton source="home-how-it-works" openLabel="Order now" variant="customer" size="md" className="px-8">
           Order now
+        </DownloadAppButton>
+        <DownloadAppButton
+          source="home-how-it-works-kitchen"
+          openLabel="Open the app"
+          variant="none"
+          className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-verified bg-white/80 font-semibold text-ink transition hover:-translate-y-0.5 hover:bg-verified-pill px-6 py-3 text-[15px]"
+        >
+          <LuChefHat className="h-5 w-5 text-verified-dark" aria-hidden />
+          Open your kitchen
         </DownloadAppButton>
       </div>
     </Section>
