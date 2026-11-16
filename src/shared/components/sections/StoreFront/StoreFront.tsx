@@ -148,8 +148,13 @@ export default function StoreFront(props: StoreFrontProps) {
       {/* Top bar — back · cart · share (no Mother Bhojan logo: the cook's store comes first) */}
       {mode === 'page' ? (
         <div className="sticky top-3 z-30 mb-5 flex items-center justify-between gap-3">
-          <Link href={backHref || '/'} aria-label="Back" className={ROUND_BTN}>
-            <LuArrowLeft className="h-5 w-5" />
+          <Link
+            href={backHref || '/'}
+            aria-label="Back to Mother Bhojan home"
+            className="group inline-flex h-11 items-center gap-2 rounded-full bg-white pl-3 pr-4 shadow-[0_6px_18px_-8px_rgba(42,31,24,0.35)] transition hover:-translate-y-0.5 sm:h-12"
+          >
+            <LuArrowLeft className="h-5 w-5 transition group-hover:-translate-x-0.5" />
+            <Image src={mbLogoRed} alt="Mother Bhojan" className="h-6 w-auto sm:h-7" />
           </Link>
           <div className="flex items-center gap-2.5">
             <CartPill cart={cart} />

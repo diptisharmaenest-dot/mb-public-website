@@ -4,14 +4,14 @@ import { useState } from 'react'
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import clsx from 'clsx'
-import { LuArrowLeft, LuBell, LuCalendarDays, LuChefHat, LuMapPin, LuPlay, LuShare2, LuStar, LuTruck, LuUtensils } from 'react-icons/lu'
+import { LuArrowLeft, LuCalendarDays, LuChefHat, LuMapPin, LuPlay, LuShare2, LuStar, LuTruck, LuUtensils } from 'react-icons/lu'
 import { mLogo } from '@/assets'
-import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
 import { ROUTES } from '@/shared/seo'
 import type { StoreFrontCategory } from './StoreFront'
 import { CartPill, QtyControl, useStoreCart } from './cart'
 import { ScheduleModal, type WeeklySchedule } from './schedule'
 import { StoreWelcome } from './welcome'
+import { StoreNotifyForm } from './notify'
 
 /**
  * Kitchen page for the main Home ("first version") — Cookin-style layout:
@@ -143,14 +143,7 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
             </button>
             <div className="rounded-[10px] bg-[#F6F1EA] p-3">
               <p className="text-[12.5px] font-semibold">Get notified about new dishes</p>
-              <DownloadAppButton
-                source="store-cookin-notify"
-                openLabel="Open the app"
-                variant="none"
-                className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-[8px] bg-white py-2 text-[13px] font-semibold text-ink ring-1 ring-ink/10 transition hover:bg-[#FBF7F2]"
-              >
-                <LuBell className="h-4 w-4" aria-hidden /> Notify me
-              </DownloadAppButton>
+              <StoreNotifyForm cookName={cookName || name} source="store-new-dishes" />
             </div>
           </div>
 

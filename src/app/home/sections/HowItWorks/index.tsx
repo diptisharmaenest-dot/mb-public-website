@@ -1,9 +1,9 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Image, { type StaticImageData } from 'next/image'
 import clsx from 'clsx'
-import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { FiCheck } from 'react-icons/fi'
 import {
   compactAccentLine,
@@ -28,9 +28,9 @@ import k4Connect from '@/assets/images/how-it-works/k4-connect.jpg'
 
 /**
  * "How Mother Bhojan works" — both journeys side by side (families left,
- * home cooks right) on a centre spine. Only ONE journey is in focus at a time:
- * pick it with the switch (or click the faded column). The focused journey
- * lights up step by step as you scroll; the other stays faded. No auto-play.
+ * home cooks right) on a centre spine. Nothing lights up on its own: a step is
+ * highlighted only while you hover it (tap on phones). Phones show one journey
+ * at a time via the switch.
  */
 
 type JourneyId = HowItWorksJourney['id']
@@ -52,38 +52,26 @@ const PHOTOS: Record<JourneyId, StepPhoto[]> = {
 
 const JOURNEYS: Record<JourneyId, HowItWorksJourney> = { family: FAMILY_JOURNEY, kitchen: KITCHEN_JOURNEY }
 const ORDER: JourneyId[] = ['family', 'kitchen']
-const STEPS = 4
 
-/** Each journey has one accent colour, so the focused side reads as one story. */
+/** Each journey has one accent colour (families red, home cooks green). */
 const ACCENT = {
   family: {
     circle: 'bg-gradient-to-br from-customer to-partner',
     line: 'bg-partner',
-    spine: 'from-customer to-partner',
     chip: 'bg-partner-tag text-partner',
+    border: 'border-customer/40',
   },
   kitchen: {
     circle: 'bg-gradient-to-br from-verified to-verified-dark',
     line: 'bg-verified',
-    spine: 'from-verified to-verified-dark',
     chip: 'bg-verified-pill text-verified-text',
+    border: 'border-verified/50',
   },
 } as const
 
-/** Lit-row count for the focused journey, driven by scroll. */
-function useScrollSteps() {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduceMotion = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 75%', 'end 60%'] })
-  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.4 })
-  const [lit, setLit] = useState(reduceMotion ? STEPS : 0)
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    if (!reduceMotion) setLit(Math.min(STEPS, Math.floor(v * (STEPS - 1) + 1.05)))
-  })
-  return { ref, fill: reduceMotion ? null : fill, lit }
-}
+type Hover = { id: JourneyId; index: number } | null
 
-/* ------------------------------ Switch ------------------------------ */
+/* ------------------------------ Switch (phones) ------------------------------ */
 function JourneySwitch({ value, onChange }: { value: JourneyId; onChange: (id: JourneyId) => void }) {
   return (
     <div
@@ -113,8 +101,7 @@ function JourneySwitch({ value, onChange }: { value: JourneyId; onChange: (id: J
                 transition={{ type: 'spring', stiffness: 400, damping: 34 }}
               />
             ) : null}
-            <span className="relative sm:hidden">{j.tabShort}</span>
-            <span className="relative hidden sm:inline">{j.tabLabel}</span>
+            <span className="relative">{j.tabShort}</span>
           </button>
         )
       })}
@@ -126,36 +113,35 @@ function JourneySwitch({ value, onChange }: { value: JourneyId; onChange: (id: J
 function StepCard({
   id,
   index,
-  focused,
-  lit,
+  on,
   mirrored,
-  onFocusJourney,
+  onEnter,
+  onLeave,
+  onTap,
 }: {
   id: JourneyId
   index: number
-  /** This card's journey is the one in focus. */
-  focused: boolean
-  /** Step reached while scrolling (only matters when focused). */
-  lit: boolean
+  /** Highlighted (hovered on desktop, tapped on phones). */
+  on: boolean
   mirrored?: boolean
-  onFocusJourney?: () => void
+  onEnter?: () => void
+  onLeave?: () => void
+  onTap?: () => void
 }) {
   const step = JOURNEYS[id].steps[index]
   const photo = PHOTOS[id][index]
-  const on = focused && lit
-  const Tag = focused ? 'div' : 'button'
   return (
-    <Tag
-      {...(focused ? {} : { type: 'button' as const, onClick: onFocusJourney, 'aria-label': `Show steps: ${JOURNEYS[id].title}` })}
+    <div
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onClick={onTap}
       className={clsx(
-        'group relative flex w-full items-start gap-3.5 rounded-[22px] border bg-white p-4 text-left transition-all duration-500 sm:items-center sm:gap-5 sm:p-5',
+        'group relative flex w-full items-start gap-3.5 rounded-[22px] border bg-white p-4 text-left transition-all duration-300 sm:items-center sm:gap-5 sm:p-5',
         mirrored && 'lg:flex-row-reverse lg:text-right',
-        !focused && 'cursor-pointer',
+        onTap && 'cursor-pointer',
         on
-          ? 'border-border-card shadow-[0_22px_44px_-28px_rgba(42,31,24,0.5)]'
-          : focused
-            ? 'border-ink/8 opacity-75'
-            : 'border-ink/5 opacity-40 hover:opacity-70',
+          ? clsx('-translate-y-1 shadow-[0_24px_46px_-26px_rgba(42,31,24,0.55)]', ACCENT[id].border)
+          : 'border-ink/8 shadow-[0_10px_26px_-24px_rgba(42,31,24,0.35)]',
       )}
     >
       <span className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[14px] sm:h-28 sm:w-28 sm:rounded-[18px]">
@@ -164,7 +150,7 @@ function StepCard({
           alt={photo.alt}
           fill
           sizes="112px"
-          className={clsx('object-cover transition-all duration-700 group-hover:scale-105', on ? 'grayscale-0' : 'grayscale')}
+          className={clsx('object-cover transition-transform duration-500', on && 'scale-105')}
         />
       </span>
       <span className="block min-w-0 flex-1">
@@ -177,7 +163,7 @@ function StepCard({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.35, ease: EASE }}
+              transition={{ duration: 0.25, ease: EASE }}
               className="block overflow-hidden"
             >
               <span className={clsx('mt-2.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold', ACCENT[id].chip)}>
@@ -188,21 +174,21 @@ function StepCard({
           ) : null}
         </AnimatePresence>
       </span>
-    </Tag>
+    </div>
   )
 }
 
 /* --------------------------- Step marker --------------------------- */
-function StepMarker({ index, lit, focus, size = 76 }: { index: number; lit: boolean; focus: JourneyId; size?: number }) {
+function StepMarker({ index, tone, size = 76 }: { index: number; tone: JourneyId | null; size?: number }) {
   return (
     <motion.span
       aria-hidden
       className={clsx(
-        'relative z-10 flex shrink-0 flex-col items-center justify-center rounded-full ring-[6px] ring-white transition-colors duration-500',
-        lit ? clsx(ACCENT[focus].circle, 'text-white shadow-[0_14px_28px_-12px_rgba(42,31,24,0.55)]') : 'bg-[#EFE8DD] text-ink/40',
+        'relative z-10 flex shrink-0 flex-col items-center justify-center rounded-full ring-[6px] ring-white transition-colors duration-300',
+        tone ? clsx(ACCENT[tone].circle, 'text-white shadow-[0_14px_28px_-12px_rgba(42,31,24,0.55)]') : 'bg-[#EFE8DD] text-ink/55',
       )}
       style={{ width: size, height: size }}
-      animate={{ scale: lit ? 1 : 0.9 }}
+      animate={{ scale: tone ? 1.06 : 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
       <span className={clsx('font-hand leading-none', size > 60 ? 'mb-1 text-[13px]' : 'mb-0.5 text-[10px]')}>step</span>
@@ -211,81 +197,69 @@ function StepMarker({ index, lit, focus, size = 76 }: { index: number; lit: bool
   )
 }
 
-/** Connector between a card and the spine — drawn only on the focused side. */
-function Connector({ active, focus, from }: { active: boolean; focus: JourneyId; from: 'left' | 'right' }) {
+/** Connector between a card and the spine — drawn while that card is hovered. */
+function Connector({ tone, from }: { tone: JourneyId | null; from: 'left' | 'right' }) {
   return (
-    <span aria-hidden className="relative h-[2px] flex-1 bg-ink/8">
+    <span aria-hidden className="relative h-[2px] flex-1 bg-ink/10">
       <motion.span
-        className={clsx('absolute inset-0', ACCENT[focus].line, from === 'left' ? 'origin-left' : 'origin-right')}
+        className={clsx('absolute inset-0', tone ? ACCENT[tone].line : 'bg-transparent', from === 'left' ? 'origin-left' : 'origin-right')}
         initial={false}
-        animate={{ scaleX: active ? 1 : 0 }}
-        transition={{ duration: 0.5, ease: EASE }}
+        animate={{ scaleX: tone ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: EASE }}
       />
     </span>
   )
 }
 
-function ColumnTitle({ id, focused, align, onClick }: { id: JourneyId; focused: boolean; align: 'left' | 'right'; onClick: () => void }) {
+function ColumnTitle({ id, align }: { id: JourneyId; align: 'left' | 'right' }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={clsx(
-        'cursor-pointer transition-opacity duration-500',
-        align === 'right' ? 'text-right' : 'text-left',
-        focused ? 'opacity-100' : 'opacity-40 hover:opacity-70',
-      )}
-    >
+    <div className={align === 'right' ? 'text-right' : 'text-left'}>
       <span className="block text-[12px] font-semibold uppercase tracking-[0.18em] text-ink/45">How to</span>
       <span className="mt-1 block font-hand text-[30px] leading-tight text-ink sm:text-[34px]">{JOURNEYS[id].title}</span>
-    </button>
+    </div>
   )
 }
 
 /* ------------------- Desktop: side by side on a spine ---------------- */
 const COLS = 'grid grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)] items-center'
 
-function ParallelSteps({ focus, setFocus }: { focus: JourneyId; setFocus: (id: JourneyId) => void }) {
-  const { ref, fill, lit } = useScrollSteps()
+function ParallelSteps() {
+  const [hover, setHover] = useState<Hover>(null)
+  const isOn = (id: JourneyId, i: number) => hover?.id === id && hover.index === i
   return (
-    <div ref={ref} className="relative mt-12 hidden lg:block">
-      <span aria-hidden className="absolute bottom-[70px] left-1/2 top-[118px] w-[3px] -translate-x-1/2 rounded-full bg-ink/8">
-        <motion.span
-          className={clsx('block h-full w-full origin-top rounded-full bg-gradient-to-b', ACCENT[focus].spine)}
-          style={{ scaleY: fill ?? 1 }}
-        />
-      </span>
+    <div className="relative mt-4 hidden lg:block" onMouseLeave={() => setHover(null)}>
+      <span aria-hidden className="absolute bottom-[70px] left-1/2 top-[118px] w-[3px] -translate-x-1/2 rounded-full bg-ink/8" />
 
       <div className={clsx(COLS, 'pb-10')}>
-        <ColumnTitle id="family" focused={focus === 'family'} align="left" onClick={() => setFocus('family')} />
+        <ColumnTitle id="family" align="left" />
         <span />
-        <ColumnTitle id="kitchen" focused={focus === 'kitchen'} align="right" onClick={() => setFocus('kitchen')} />
+        <ColumnTitle id="kitchen" align="right" />
       </div>
 
       <ol className="space-y-8">
         {FAMILY_JOURNEY.steps.map((s, i) => {
-          const isLit = i < lit
+          const rowTone = hover && hover.index === i ? hover.id : null
           return (
             <li key={s.title} className={COLS}>
               <StepCard
                 id="family"
                 index={i}
-                focused={focus === 'family'}
-                lit={isLit}
+                on={isOn('family', i)}
                 mirrored
-                onFocusJourney={() => setFocus('family')}
+                onEnter={() => setHover({ id: 'family', index: i })}
+                onLeave={() => setHover(null)}
               />
               <div className="flex items-center">
-                <Connector active={isLit && focus === 'family'} focus={focus} from="right" />
-                <StepMarker index={i} lit={isLit} focus={focus} />
-                <Connector active={isLit && focus === 'kitchen'} focus={focus} from="left" />
+                <Connector tone={rowTone === 'family' ? 'family' : null} from="right" />
+                <StepMarker index={i} tone={rowTone} />
+                <Connector tone={rowTone === 'kitchen' ? 'kitchen' : null} from="left" />
               </div>
               <StepCard
                 id="kitchen"
                 index={i}
-                focused={focus === 'kitchen'}
-                lit={isLit}
-                onFocusJourney={() => setFocus('kitchen')}
+                on={isOn('kitchen', i)}
+                onEnter={() => setHover({ id: 'kitchen', index: i })}
+                onLeave={() => setHover(null)}
               />
             </li>
           )
@@ -297,23 +271,18 @@ function ParallelSteps({ focus, setFocus }: { focus: JourneyId; setFocus: (id: J
 
 /* ------------------ Phones/tablets: one journey at a time ------------ */
 function SingleJourney({ focus }: { focus: JourneyId }) {
-  const { ref, fill, lit } = useScrollSteps()
+  const [tapped, setTapped] = useState<number | null>(null)
   return (
-    <div ref={ref} className="relative mt-8 lg:hidden">
-      <span aria-hidden className="absolute bottom-10 left-[26px] top-6 w-[3px] rounded-full bg-ink/8">
-        <motion.span
-          className={clsx('block h-full w-full origin-top rounded-full bg-gradient-to-b', ACCENT[focus].spine)}
-          style={{ scaleY: fill ?? 1 }}
-        />
-      </span>
+    <div className="relative mt-8 lg:hidden">
+      <span aria-hidden className="absolute bottom-10 left-[26px] top-6 w-[3px] rounded-full bg-ink/8" />
       <ol className="space-y-5">
         {JOURNEYS[focus].steps.map((s, i) => (
           <li key={s.title} className="relative flex gap-3 sm:gap-5">
             <div className="pt-3">
-              <StepMarker index={i} lit={i < lit} focus={focus} size={54} />
+              <StepMarker index={i} tone={tapped === i ? focus : null} size={54} />
             </div>
             <div className="min-w-0 flex-1">
-              <StepCard id={focus} index={i} focused lit={i < lit} />
+              <StepCard id={focus} index={i} on={tapped === i} onTap={() => setTapped((t) => (t === i ? null : i))} />
             </div>
           </li>
         ))}
@@ -338,19 +307,19 @@ export default function HowItWorks() {
         lines={[compactAccentLine({ text: 'How Mother Bhojan', accent: 'works.' })]}
       />
 
-      <JourneySwitch value={focus} onChange={setFocus} />
+      <ParallelSteps />
 
-      <ParallelSteps focus={focus} setFocus={setFocus} />
-      {/* key restarts the phone timeline when the journey changes */}
-      <SingleJourney key={focus} focus={focus} />
+      <div className="lg:hidden">
+        <JourneySwitch value={focus} onChange={setFocus} />
+        {/* key resets the tapped step when the journey changes */}
+        <SingleJourney key={focus} focus={focus} />
+      </div>
 
-      {focus === 'family' ? (
-        <div className="mt-12 flex justify-center">
-          <DownloadAppButton source="home-how-it-works" openLabel="Order now" variant="customer" size="md" className="px-8">
-            Order now
-          </DownloadAppButton>
-        </div>
-      ) : null}
+      <div className="mt-12 flex justify-center">
+        <DownloadAppButton source="home-how-it-works" openLabel="Order now" variant="customer" size="md" className="px-8">
+          Order now
+        </DownloadAppButton>
+      </div>
     </Section>
   )
 }
