@@ -4,12 +4,11 @@ import { useRef } from 'react'
 import Image from 'next/image'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import {
-  Button,
   compactAccentLine,
+  DownloadAppButton,
   Section,
   SectionHeader,
 } from '@/components'
-import { ROUTES } from '@/shared/seo'
 import { kitchenStorefrontPreview } from '@/assets'
 
 const KitchenDashboard = () => {
@@ -48,9 +47,9 @@ const KitchenDashboard = () => {
             }),
           ]}
           action={
-            <Button href={ROUTES.join} variant="partner" className="mt-8">
+            <DownloadAppButton source="home-v2-kitchen-dashboard" openLabel="Open the app" variant="partner" className="mt-8">
               See your kitchen store
-            </Button>
+            </DownloadAppButton>
           }
           description="From your own kitchen, with your name on every order. We handle customers, packaging, FSSAI registration and delivery — you cook."
         />

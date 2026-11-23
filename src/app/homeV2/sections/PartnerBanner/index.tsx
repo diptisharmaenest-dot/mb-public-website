@@ -1,5 +1,4 @@
-import { Button, Section, SectionHeader } from '@/components'
-import { ROUTES } from '@/shared/seo'
+import { DownloadAppButton, Section, SectionHeader } from '@/components'
 
 const PartnerBanner = () => {
   return (
@@ -30,13 +29,14 @@ const PartnerBanner = () => {
         </div>
 
         <div className="flex shrink-0 items-center justify-start md:justify-end">
-          <Button
-            href={ROUTES.join}
+          <DownloadAppButton
+            source="home-v2-partner-banner"
+            openLabel="Open the app"
             variant="none"
             className="whitespace-nowrap sm:min-w-[220px] bg-paper hover:bg-white text-partner hover:text-partner-hover active:scale-[0.98] transition-all font-bold px-7 py-4 rounded-[12px] shadow-[0_4px_16px_rgba(0,0,0,0.06)]"
           >
             Become a Kitchen Partner
-          </Button>
+          </DownloadAppButton>
         </div>
       </div>
     </Section>

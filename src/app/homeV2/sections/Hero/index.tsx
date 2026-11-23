@@ -2,6 +2,7 @@
 
 import {
   Button,
+  DownloadAppButton,
   Section,
   SectionHeader,
 } from '@/components'
@@ -71,9 +72,9 @@ const Hero = () => {
             <Button href={ROUTES.kitchens} variant="customer" className="sm:min-w-[200px]">
               Order now
             </Button>
-            <Button href={ROUTES.join} variant="partnerOutline">
+            <DownloadAppButton source="home-v2-hero-partner" openLabel="Open the app" variant="partnerOutline">
               Become a Partner
-            </Button>
+            </DownloadAppButton>
           </div>
 
           <div className="mt-8 lg:mt-12 inline-flex flex-wrap items-center justify-center gap-y-2.5 gap-x-5 px-5 py-3 rounded-full bg-paper/75 backdrop-blur-md border border-border/60 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">

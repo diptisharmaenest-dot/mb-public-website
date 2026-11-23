@@ -6,10 +6,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 import clsx from 'clsx'
 import { FiArrowRight, FiCheck, FiSend } from 'react-icons/fi'
 import { LuChefHat, LuMessageCircle, LuPackage, LuUtensils } from 'react-icons/lu'
-import { Button, CARD_PADDING, FEATURE_CARD } from '@/components'
+import { Button, CARD_PADDING, DownloadAppButton, FEATURE_CARD } from '@/components'
 import { submitContactMessage, type ContactTopic } from '@/features/contact'
 import { EASE } from '@/shared/lib/motion'
-import { ROUTES } from '@/shared/seo'
 
 const MESSAGE_MAX = 1000
 const MESSAGE_MIN = 10
@@ -275,12 +274,12 @@ const ContactForm = () => {
                 >
                   <div className="flex flex-col gap-3 rounded-xl border border-verified-pill-border bg-verified-pill px-4 py-3.5 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-[13.5px] font-medium text-ink/80">
-                      Ready to start? The quickest way is our short kitchen application.
+                      Ready to start? Download the Mother Bhojan app to set up your kitchen.
                     </p>
-                    <Button href={ROUTES.join} variant="verified" size="sm" className="shrink-0">
+                    <DownloadAppButton source="contact-kitchen" openLabel="Open the app" variant="verified" size="sm" className="shrink-0">
                       Open your kitchen
                       <FiArrowRight className="h-4 w-4" aria-hidden />
-                    </Button>
+                    </DownloadAppButton>
                   </div>
                 </motion.div>
               ) : null}

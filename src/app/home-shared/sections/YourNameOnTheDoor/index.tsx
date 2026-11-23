@@ -5,6 +5,7 @@ import { FiArrowRight } from 'react-icons/fi'
 import {
   Button,
   compactAccentLine,
+  DownloadAppButton,
   RADIUS_BTN,
   RADIUS_CARD,
   RADIUS_PANEL,
@@ -13,16 +14,17 @@ import {
 } from '@/components'
 import StorePreview from './StorePreview'
 import ClassicPreview from './ClassicPreview'
-import { ROUTES } from '@/shared/seo'
+import { useAppDownload } from '@/providers'
 
 const DEFAULT_KITCHEN_NAME = "Ananya's Kitchen"
 
 /**
  * Shown only once a real kitchen is live (the page passes `exampleStoreHref`,
  * the first real kitchen's page). "See your store" opens that real store.
+ * Without `exampleStoreHref` it opens the app download popup instead.
  */
 const YourNameOnTheDoor = ({
-  exampleStoreHref = ROUTES.join,
+  exampleStoreHref,
   design = 'classic',
 }: {
   exampleStoreHref?: string
@@ -30,6 +32,7 @@ const YourNameOnTheDoor = ({
   design?: 'classic' | 'v2'
 }) => {
   const inputId = useId()
+  const { openDownload } = useAppDownload()
   const [kitchenName, setKitchenName] = useState(DEFAULT_KITCHEN_NAME)
   const displayName = kitchenName.trim() || DEFAULT_KITCHEN_NAME
 
@@ -69,7 +72,8 @@ const YourNameOnTheDoor = ({
               className="mt-8 sm:mt-9"
               onSubmit={(event) => {
                 event.preventDefault()
-                window.location.assign(exampleStoreHref)
+                if (exampleStoreHref) window.location.assign(exampleStoreHref)
+                else openDownload('your-name-on-the-door')
               }}
             >
               <label htmlFor={inputId} className="sr-only">
@@ -85,15 +89,28 @@ const YourNameOnTheDoor = ({
                   autoComplete="organization"
                   className="min-w-0 flex-1 border-0 bg-transparent py-2.5 font-jakarta text-[15px] font-semibold text-ink outline-none placeholder:text-ink/35 sm:text-base"
                 />
-                <Button
-                  href={exampleStoreHref}
-                  variant="customer"
-                  size="sm"
-                  className={`shrink-0 !min-h-11 whitespace-nowrap px-4 ${RADIUS_BTN}`}
-                >
-                  See your store
-                  <FiArrowRight className="h-4 w-4" aria-hidden />
-                </Button>
+                {exampleStoreHref ? (
+                  <Button
+                    href={exampleStoreHref}
+                    variant="customer"
+                    size="sm"
+                    className={`shrink-0 !min-h-11 whitespace-nowrap px-4 ${RADIUS_BTN}`}
+                  >
+                    See your store
+                    <FiArrowRight className="h-4 w-4" aria-hidden />
+                  </Button>
+                ) : (
+                  <DownloadAppButton
+                    source="your-name-on-the-door"
+                    openLabel="Open the app"
+                    variant="customer"
+                    size="sm"
+                    className={`shrink-0 !min-h-11 whitespace-nowrap px-4 ${RADIUS_BTN}`}
+                  >
+                    See your store
+                    <FiArrowRight className="h-4 w-4" aria-hidden />
+                  </DownloadAppButton>
+                )}
               </div>
             </form>
 

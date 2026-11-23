@@ -4,9 +4,8 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { FiArrowRight } from 'react-icons/fi'
-import { Button, DISPLAY_HEADER_CLASS_PARTNERS_HERO, Section, SectionContainer, SectionHeader } from '@/components'
+import { Button, DISPLAY_HEADER_CLASS_PARTNERS_HERO, DownloadAppButton, Section, SectionContainer, SectionHeader } from '@/components'
 import { differenceLeftPlant } from '@/assets'
-import { ROUTES } from '@/shared/seo'
 
 const heroNavItems = [
   { label: 'Independent chefs', href: '#independent-chefs' },
@@ -176,10 +175,10 @@ const SolutionsHero = () => {
           }}
           className="mt-8 flex flex-col items-center gap-3 px-2 md:mt-10"
         >
-          <Button href={ROUTES.join} variant="partner" size="md" className="inline-flex items-center gap-2">
+          <DownloadAppButton source="partners-hero" openLabel="Open the app" variant="partner" size="md" className="inline-flex items-center gap-2">
             Apply now
             <FiArrowRight className="h-4 w-4" aria-hidden />
-          </Button>
+          </DownloadAppButton>
         </motion.div>
       </SectionContainer>
     </Section>
