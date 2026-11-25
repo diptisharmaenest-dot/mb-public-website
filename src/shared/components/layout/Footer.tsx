@@ -10,8 +10,8 @@ import { VERIFIED_TRUST_SECTION_PROPS } from "@/shared/data/verified-kitchen";
 const companyLinks = [
   { label: "Home", href: ROUTES.home },
   { label: "About", href: ROUTES.about },
-  // Hidden from nav (pages still reachable by URL) — uncomment to show again.
-  // { label: "Kitchens", href: ROUTES.kitchens },
+  { label: "All Kitchens", href: ROUTES.kitchens },
+  // Hidden from nav (page still reachable by URL) — uncomment to show again.
   // { label: "For Partners", href: ROUTES.partners },
   { label: "FAQ", href: ROUTES.faq },
 ] as const;
