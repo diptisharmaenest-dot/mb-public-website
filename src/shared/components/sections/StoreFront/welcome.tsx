@@ -13,8 +13,11 @@ export function StoreWelcome({
   cookName,
   avatar,
   city,
+  storeName,
 }: {
   cookName: string
+  /** Store name — used as the title when the cook's own name isn't known. */
+  storeName?: string
   avatar?: string | StaticImageData | null
   city: string
 }) {
@@ -40,7 +43,7 @@ export function StoreWelcome({
 
         <div className="min-w-0 flex-1">
           <p className="text-[11.5px] font-semibold uppercase tracking-[0.2em] text-[#FFE9B8]">Namaste!</p>
-          <p className="font-hand text-[24px] leading-[1.3] sm:text-[32px]">{cookName}&apos;s store welcomes you</p>
+          <p className="font-hand text-[24px] leading-[1.3] sm:text-[32px]">{storeName && cookName === storeName ? `${storeName} welcomes you` : `${cookName}’s store welcomes you`}</p>
           <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-white/85 sm:text-[14px]">
             <span>Freshly cooked in her home kitchen, for every order</span>
             <span className="inline-flex items-center gap-1">

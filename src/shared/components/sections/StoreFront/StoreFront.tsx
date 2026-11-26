@@ -117,7 +117,6 @@ function Avatar({ src, mode }: { src?: Img | null; mode: StoreFrontProps['mode']
 export default function StoreFront(props: StoreFrontProps) {
   const {
     mode, name, cuisine, avatar, cover, rating, city, deliveryLabel, preorderLabel, categories, nameCaret, backHref, shareUrl,
-    isDemo = false,
     ownerName,
     schedule,
     cookName,
@@ -168,7 +167,7 @@ export default function StoreFront(props: StoreFrontProps) {
         </div>
       ) : null}
 
-      {mode === 'page' && isDemo ? <StoreWelcome cookName={cookName || ownerName || name} avatar={avatar} city={city} /> : null}
+      {mode === 'page' ? <StoreWelcome cookName={cookName || ownerName || name} storeName={name} avatar={avatar} city={city} /> : null}
 
       {/* Banner */}
       <div className="relative overflow-hidden rounded-[22px] bg-[#1d1611] sm:rounded-[26px]">

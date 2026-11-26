@@ -41,7 +41,7 @@ const ROUND_BTN =
   'flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-white shadow-[0_6px_18px_-8px_rgba(42,31,24,0.35)] transition hover:-translate-y-0.5'
 const CARD = 'rounded-[14px] bg-white ring-1 ring-ink/8 shadow-[0_10px_26px_-22px_rgba(42,31,24,0.45)]'
 
-export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref, isDemo, schedule, cookName }: StoreClassicPageProps) {
+export default function StoreClassicPage({ name, byLine, description, avatar, cover, rating, city, categories, backHref, schedule, cookName }: StoreClassicPageProps) {
   const cart = useStoreCart()
   const [scheduleOpen, setScheduleOpen] = useState(false)
   const cats = categories.filter((c) => c.dishes.length > 0)
@@ -79,7 +79,7 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
         </div>
       </div>
 
-      {isDemo ? <StoreWelcome cookName={cookName || name} avatar={avatar} city={city} /> : null}
+      <StoreWelcome cookName={cookName || name} storeName={name} avatar={avatar} city={city} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-7">
         {/* ------------------------- Store profile ------------------------- */}
