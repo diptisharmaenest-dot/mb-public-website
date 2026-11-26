@@ -31,8 +31,8 @@ const TEAM = [
   {
     name: 'Ops lead',
     role: 'Kitchen verification',
-    tag: '80-Point Audit',
-    bio: 'Conducting in-person kitchen safety audits.',
+    tag: 'Kitchen Visits',
+    bio: 'Visiting every kitchen in person before it goes live.',
     image: pardeep,
   },
   {

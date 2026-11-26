@@ -1,6 +1,6 @@
 'use client'
 
-import { FiCheckCircle, FiHeart, FiUserCheck } from 'react-icons/fi'
+import { FiHeart, FiHome, FiUserCheck } from 'react-icons/fi'
 import { motion } from 'framer-motion'
 import {
   CARD_GRID_GAP,
@@ -16,10 +16,10 @@ import {
 
 const BELIEFS = [
   {
-    id: 'audit',
-    title: 'An 80-point audit',
-    body: 'Only verified kitchens cook for you. Every one passes the full check — and only about 1 in 20 applicants makes it.',
-    icon: FiCheckCircle,
+    id: 'store',
+    title: 'Her own store',
+    body: 'Every cook on Mother Bhojan runs her own store — her name on the door, her menu, her prices.',
+    icon: FiHome,
     tone: 'verified' as const,
   },
   {
