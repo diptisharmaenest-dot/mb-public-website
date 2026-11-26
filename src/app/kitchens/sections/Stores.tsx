@@ -1,19 +1,19 @@
 "use client";
 
-import {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { FiArrowRight, FiChevronLeft, FiChevronRight, FiMapPin, FiStar } from "react-icons/fi";
-import { mLogo, mLogoMainBlack } from "@/assets";
-import { Button, Loader, RADIUS_CARD, Section } from "@/components";
+import {
+  FiArrowRight,
+  FiChevronLeft,
+  FiChevronRight,
+  FiMapPin,
+  FiSearch,
+  FiStar,
+} from "react-icons/fi";
+import { mLogo } from "@/assets";
+import { Button, DownloadAppButton, Section } from "@/components";
 import {
   useChefsStores,
   type ChefStore,
@@ -22,107 +22,66 @@ import {
 import { ROUTES } from "@/shared/seo";
 import { isRemoteImageUrl } from "@/shared/lib";
 import { getFeaturedKitchenById } from "@/app/home/data/featured-kitchens";
-import type { KitchenFiltersState } from "./KitchenFilters";
-import KitchenFilters from "./KitchenFilters";
+import KitchenFilters, {
+  ALL_CUISINES,
+  DEFAULT_KITCHEN_FILTERS,
+  type KitchenFiltersState,
+} from "./KitchenFilters";
 
 const ITEMS_PER_PAGE = 12;
 const HEADER_SCROLL_OFFSET = 96;
-const COVER_SIZES = "(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw";
+const MAX_CUISINE_CHIPS = 10;
+const COVER_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
-const DIET_TAGS = new Set(["veg", "non-veg", "nonveg", "non veg"]);
-const CUISINE_TAGS = new Set([
-  "north indian",
-  "south indian",
-  "punjabi",
-  "bengali",
-  "gujarati",
-  "bakery",
-  "healthy",
-]);
+const DIET_TAGS = new Set(["veg", "non-veg", "nonveg", "non veg", "pure veg"]);
 
 function storeDetailHref(storeId: string) {
   return `${ROUTES.kitchens}/${encodeURIComponent(storeId)}`;
 }
 
-function storeCardImages(store: ChefStore): {
-  cover: ChefStoreImage;
-  avatar: ChefStoreImage;
-} {
-  const { coverImageUrl: cover, logoUrl: logo } = store;
-  return {
-    cover: cover || logo || mLogoMainBlack,
-    avatar: logo || cover || mLogoMainBlack,
-  };
-}
-
-function storeDietLabel(store: ChefStore): "Veg" | "Non-Veg" {
+function isVegStore(store: ChefStore) {
   const blob = store.categories.join(" ").toLowerCase();
-  if (
+  return !(
     blob.includes("non-veg") ||
     blob.includes("nonveg") ||
     blob.includes("non veg")
-  ) {
-    return "Non-Veg";
-  }
-  return "Veg";
+  );
 }
 
-/** Short place label for the card (e.g. "Mohali" from a longer address). */
+/** Short place label for the card (e.g. "Sector 17" from a longer address). */
 function storeAreaLabel(address: string): string {
-  const trimmed = address.trim();
-  if (!trimmed) return "";
-  const first = trimmed.split(",")[0]?.trim() ?? trimmed;
-  return first.length > 22 ? `${first.slice(0, 20)}…` : first;
+  const first = address.trim().split(",")[0]?.trim() ?? "";
+  return first.length > 24 ? `${first.slice(0, 22)}…` : first;
 }
 
-type StoreCardContent = {
+function cleanCategories(store: ChefStore): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of store.categories) {
+    const c = raw.trim();
+    const key = c.toLowerCase();
+    if (!c || DIET_TAGS.has(key) || seen.has(key)) continue;
+    seen.add(key);
+    out.push(c);
+  }
+  return out;
+}
+
+type CardContent = {
   cookName?: string;
-  quote?: string;
   rating?: number;
-  signatureDish?: string;
-  alsoServingPrefix: string;
-  alsoServingItems: string[];
-  cuisineTags: string[];
   area: string;
+  tags: string[];
 };
 
-function buildStoreCardContent(store: ChefStore): StoreCardContent {
+function buildCardContent(store: ChefStore): CardContent {
   const featured = getFeaturedKitchenById(store.storeId);
-  const area = storeAreaLabel(featured?.area || store.address);
-
-  if (featured) {
-    return {
-      cookName: featured.cookName,
-      quote: featured.quote,
-      rating: featured.rating,
-      signatureDish: featured.signatureDish,
-      alsoServingPrefix: featured.alsoServingPrefix,
-      alsoServingItems: featured.alsoServingItems.slice(0, 3),
-      cuisineTags: (featured.tags ?? []).slice(0, 3),
-      area,
-    };
-  }
-
-  const cuisineTags: string[] = [];
-  const dishes: string[] = [];
-  for (const cat of store.categories) {
-    const key = cat.toLowerCase().trim();
-    if (!key || DIET_TAGS.has(key)) continue;
-    if (CUISINE_TAGS.has(key)) {
-      if (cuisineTags.length < 3) cuisineTags.push(cat);
-      continue;
-    }
-    dishes.push(cat);
-  }
-
+  const tags = cleanCategories(store);
   return {
-    cookName: store.storeOwnerName,
-    rating: store.overallRating,
-    signatureDish: dishes[0],
-    alsoServingPrefix: "Also serving —",
-    alsoServingItems: dishes.slice(1, 4),
-    cuisineTags,
-    area,
+    cookName: featured?.cookName ?? store.storeOwnerName,
+    rating: featured?.rating ?? store.overallRating,
+    area: storeAreaLabel(featured?.area || store.address),
+    tags: tags.length ? tags : (featured?.tags ?? []),
   };
 }
 
@@ -130,355 +89,474 @@ function storeMatchesFilters(
   store: ChefStore,
   filters: KitchenFiltersState,
 ): boolean {
-  const categoriesBlob = store.categories.join(" ").toLowerCase();
-  const cuisineNeedle = (filters.cuisine || "")
-    .replace(/^all cuisines$/i, "")
-    .trim();
-  const cuisineMatch =
-    !cuisineNeedle ||
-    categoriesBlob.includes(cuisineNeedle.toLowerCase()) ||
-    store.storeName.toLowerCase().includes(cuisineNeedle.toLowerCase()) ||
-    store.address.toLowerCase().includes(cuisineNeedle.toLowerCase());
+  const cats = store.categories.map((c) => c.toLowerCase().trim());
 
-  const dietMatch =
-    filters.diet === "all" ||
-    (filters.diet === "veg" &&
-      (categoriesBlob.includes("veg") || !categoriesBlob.includes("non"))) ||
-    (filters.diet === "nonveg" && categoriesBlob.includes("non"));
+  if (
+    filters.cuisine !== ALL_CUISINES &&
+    !cats.includes(filters.cuisine.toLowerCase())
+  )
+    return false;
 
-  return cuisineMatch && dietMatch;
+  const veg = isVegStore(store);
+  if (filters.diet === "veg" && !veg) return false;
+  if (filters.diet === "nonveg" && veg) return false;
+
+  const q = filters.query.trim().toLowerCase();
+  if (q) {
+    const hay = [
+      store.storeName,
+      store.storeOwnerName ?? "",
+      store.address,
+      ...store.categories,
+    ]
+      .join(" ")
+      .toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
 }
 
-function StoreMediaImage({
+function StoreImage({
   src,
   alt,
   sizes,
-  containerClassName,
-  imageClassName,
+  className,
 }: {
   src: ChefStoreImage;
   alt: string;
   sizes: string;
-  containerClassName: string;
-  imageClassName: string;
+  className: string;
 }) {
   const remote = typeof src === "string" && isRemoteImageUrl(src);
-
   return (
-    <div className={containerClassName}>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className={imageClassName}
-        sizes={sizes}
-        unoptimized={remote}
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={className}
+      sizes={sizes}
+      unoptimized={remote}
+    />
+  );
+}
+
+function initials(name: string) {
+  return name
+    .replace(/[^A-Za-z\s]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]!.toUpperCase())
+    .join("");
+}
+
+/** Cover: her photo when she has one; otherwise a branded panel with her logo (never a stretched logo). */
+function CardCover({ store }: { store: ChefStore }) {
+  if (store.coverImageUrl) {
+    return (
+      <StoreImage
+        src={store.coverImageUrl}
+        alt=""
+        sizes={COVER_SIZES}
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
       />
+    );
+  }
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_30%_20%,#FBE3DA,transparent_60%),radial-gradient(circle_at_80%_90%,#FFF0C7,transparent_55%)] bg-paper">
+      <span className="relative h-20 w-20 overflow-hidden rounded-2xl bg-white shadow-[0_10px_24px_-12px_rgba(42,31,24,0.35)] transition-transform duration-500 group-hover:scale-105">
+        {store.logoUrl ? (
+          <StoreImage
+            src={store.logoUrl}
+            alt=""
+            sizes="80px"
+            className="object-contain p-2"
+          />
+        ) : (
+          <span className="flex h-full w-full items-center justify-center font-jakarta text-[24px] font-extrabold text-customer">
+            {initials(store.storeName) || "MB"}
+          </span>
+        )}
+      </span>
     </div>
   );
 }
 
-const StoreGridCard = memo(function StoreGridCard({ store }: { store: ChefStore }) {
-  const { cover, avatar } = storeCardImages(store);
-  const diet = storeDietLabel(store);
-  const isVeg = diet === "Veg";
-  const content = buildStoreCardContent(store);
-
-  const menuLine = content.signatureDish ? [content.signatureDish] : [];
+const StoreCard = memo(function StoreCard({ store }: { store: ChefStore }) {
+  const content = buildCardContent(store);
+  const veg = isVegStore(store);
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-ink/[0.08] bg-white text-left shadow-[0_4px_18px_-6px_rgba(42,31,24,0.1)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-10px_rgba(42,31,24,0.14)]">
-      <div className="relative shrink-0">
-        <div className="relative aspect-[2.4/1] w-full overflow-hidden bg-stone-100">
-          <StoreMediaImage
-            src={cover}
-            alt={store.storeName}
-            sizes={COVER_SIZES}
-            containerClassName="relative h-full w-full"
-            imageClassName="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          />
-          <span className="absolute right-2.5 top-2.5 z-[3] inline-flex items-center gap-1 rounded-full bg-verified py-0.5 pl-0.5 pr-2 shadow-[0_2px_8px_rgba(111,138,62,0.3)]">
-            <span className="relative flex h-4 w-4 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white">
-              <Image
-                src={mLogo}
-                alt=""
-                width={12}
-                height={12}
-                className="h-3 w-3 object-contain"
-              />
-            </span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.08em] text-white">
-              VERIFIED
-            </span>
+    <Link
+      href={storeDetailHref(store.storeId)}
+      className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-ink/[0.07] bg-white no-underline shadow-[0_2px_10px_-4px_rgba(42,31,24,0.08)] outline-none transition-all duration-300 hover:-translate-y-1 hover:border-ink/[0.12] hover:shadow-[0_22px_44px_-22px_rgba(42,31,24,0.35)] focus-visible:ring-2 focus-visible:ring-customer/50 focus-visible:ring-offset-2"
+      aria-label={`${store.storeName}${content.cookName ? `, by ${content.cookName}` : ""}`}
+    >
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-100">
+        <CardCover store={store} />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/25 to-transparent"
+        />
+        <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 py-1 pl-1 pr-2.5 text-[11px] font-bold text-verified-text shadow-sm backdrop-blur">
+          <span className="relative flex h-[18px] w-[18px] items-center justify-center overflow-hidden rounded-full bg-verified-pill">
+            <Image
+              src={mLogo}
+              alt=""
+              width={12}
+              height={12}
+              className="h-3 w-3 object-contain"
+            />
           </span>
-        </div>
-
-        <span className="absolute bottom-0 left-3.5 z-[4] h-9 w-9 translate-y-1/2 overflow-hidden rounded-full border-2 border-white bg-paper shadow-[0_4px_12px_rgba(42,31,24,0.18)]">
-          <StoreMediaImage
-            src={avatar}
-            alt=""
-            sizes="36px"
-            containerClassName="relative h-full w-full"
-            imageClassName="object-cover object-center"
-          />
+          Verified
         </span>
+        {content.rating != null && content.rating > 0 ? (
+          <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[12px] font-bold text-ink shadow-sm backdrop-blur">
+            <FiStar
+              className="h-3.5 w-3.5 fill-amber-400 text-amber-400"
+              aria-hidden
+            />
+            {content.rating.toFixed(1)}
+          </span>
+        ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col px-4 pb-3.5 pt-6">
-        <div className="flex min-w-0 items-center justify-between gap-2">
-          <h3 className="m-0 min-w-0 flex-1 line-clamp-1 font-jakarta text-[16px] font-bold tracking-tight text-ink">
+      <div
+        className={clsx(
+          "relative flex flex-1 flex-col px-5 pb-5",
+          store.coverImageUrl ? "pt-9" : "pt-5",
+        )}
+      >
+        {store.coverImageUrl ? (
+          <span className="absolute -top-7 left-5 h-14 w-14 overflow-hidden rounded-2xl border-[3px] border-white bg-paper shadow-[0_8px_18px_-8px_rgba(42,31,24,0.4)]">
+            {store.logoUrl || store.coverImageUrl ? (
+              <StoreImage
+                src={store.logoUrl || store.coverImageUrl}
+                alt=""
+                sizes="56px"
+                className="object-cover"
+              />
+            ) : (
+              <span className="flex h-full w-full items-center justify-center font-jakarta text-[16px] font-extrabold text-customer">
+                {initials(store.storeName) || "MB"}
+              </span>
+            )}
+          </span>
+        ) : null}
+
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="m-0 line-clamp-1 font-jakarta text-[17px] font-bold tracking-tight text-ink">
             {store.storeName}
           </h3>
           <span
+            title={veg ? "Pure veg" : "Serves non-veg"}
             className={clsx(
-              "shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold",
-              isVeg
-                ? "border-verified-pill-border bg-verified-pill text-verified-text"
-                : "border-partner-muted-border bg-partner-muted text-partner",
+              "mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border-[1.5px]",
+              veg ? "border-verified" : "border-partner",
             )}
           >
-            {diet}
+            <span
+              className={clsx(
+                "h-2 w-2 rounded-full",
+                veg ? "bg-verified" : "bg-partner",
+              )}
+            />
+            <span className="sr-only">
+              {veg ? "Pure veg" : "Serves non-veg"}
+            </span>
           </span>
         </div>
 
-        <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 text-[12px] text-muted">
+        <p className="m-0 mt-1 flex min-w-0 items-center gap-1.5 text-[13px] text-ink/55">
           {content.cookName ? (
-            <span className="truncate font-medium text-ink/65">by {content.cookName}</span>
+            <span className="truncate font-medium text-ink/70">
+              by {content.cookName}
+            </span>
           ) : null}
-          {content.rating != null ? (
-            <span className="inline-flex items-center gap-0.5 font-semibold text-ink/70">
-              <FiStar className="h-3 w-3 fill-current text-amber-500" aria-hidden />
-              {content.rating.toFixed(1)}
+          {content.cookName && content.area ? (
+            <span aria-hidden className="text-ink/25">
+              ·
             </span>
           ) : null}
           {content.area ? (
-            <span className="inline-flex min-w-0 items-center gap-0.5">
-              <FiMapPin className="h-3 w-3 shrink-0 text-ink/30" aria-hidden />
+            <span className="inline-flex min-w-0 items-center gap-1">
+              <FiMapPin className="h-3 w-3 shrink-0 text-ink/35" aria-hidden />
               <span className="truncate">{content.area}</span>
             </span>
           ) : null}
-        </div>
+        </p>
 
-        {content.quote ? (
-          <p className="mt-2 m-0 line-clamp-1 text-[12.5px] leading-snug text-ink/55">
-            {content.quote}
-          </p>
+        {content.tags.length ? (
+          <ul className="m-0 mt-3.5 flex list-none flex-wrap gap-1.5 p-0">
+            {content.tags.slice(0, 3).map((t) => (
+              <li
+                key={t}
+                className="rounded-full bg-paper px-2.5 py-1 text-[11.5px] font-semibold text-ink/65"
+              >
+                {t}
+              </li>
+            ))}
+          </ul>
         ) : null}
 
-        {content.signatureDish ? (
-          <div className="mt-2.5">
-            <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink/40">
-              Her signature
-            </p>
-            <p className="m-0 mt-1 line-clamp-1 border-l-2 border-customer/70 pl-2.5 font-jakarta text-[14px] font-bold tracking-tight text-ink">
-              {content.signatureDish}
-            </p>
-          </div>
-        ) : menuLine.length > 0 ? (
-          <p className="mt-2 m-0 line-clamp-1 border-l-2 border-customer/70 pl-2.5 text-[12.5px] leading-snug text-ink/60">
-            {menuLine[0]}
-          </p>
-        ) : null}
-
-        {content.cuisineTags.length > 0 ? (
-          <p className="mt-1.5 m-0 line-clamp-1 text-[11px] font-medium text-ink/40">
-            {content.cuisineTags.slice(0, 2).join(" · ")}
-          </p>
-        ) : null}
-
-        <div className="mt-auto pt-3">
-          <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-customer px-3 py-2.5 font-jakarta text-[13px] font-semibold text-white transition-all duration-200 group-hover:gap-2 group-hover:bg-customer-hover">
-            View Kitchen
-            <FiArrowRight className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
+        <div className="mt-auto pt-4" />
+        <div className="flex items-center justify-between border-t border-ink/[0.06] pt-4">
+          <span className="text-[12.5px] font-medium text-ink/45">
+            See her menu
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-[13.5px] font-bold text-customer">
+            View store
+            <FiArrowRight
+              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+              aria-hidden
+            />
           </span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 });
+
+function CardSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-[22px] border border-ink/[0.07] bg-white">
+      <div className="aspect-[16/10] animate-pulse bg-stone-100" />
+      <div className="space-y-3 px-5 pb-5 pt-9">
+        <div className="h-4 w-2/3 animate-pulse rounded bg-stone-100" />
+        <div className="h-3 w-1/2 animate-pulse rounded bg-stone-100" />
+        <div className="h-6 w-3/4 animate-pulse rounded-full bg-stone-100" />
+      </div>
+    </div>
+  );
+}
+
+function OpenYourStoreBand() {
+  return (
+    <div className="mt-14 flex flex-col items-start gap-5 rounded-[26px] bg-mb-ink-panel px-6 py-8 text-white sm:flex-row sm:items-center sm:justify-between sm:px-10">
+      <div>
+        <p className="m-0 font-hand text-[22px] text-yellow">
+          you cook at home?
+        </p>
+        <p className="m-0 mt-1 font-jakarta text-[22px] font-bold tracking-tight sm:text-[26px]">
+          Open your own store on Mother Bhojan.
+        </p>
+        <p className="m-0 mt-1.5 text-[14.5px] text-white/65">
+          Your name on the door, your menu, your prices.
+        </p>
+      </div>
+      <DownloadAppButton
+        source="kitchens-list-band"
+        openLabel="Open the app"
+        variant="customer"
+        size="md"
+        className="shrink-0 px-6"
+      >
+        Open your kitchen
+      </DownloadAppButton>
+    </div>
+  );
+}
 
 type StoresSectionProps = {
   initialStores?: ChefStore[];
   filters?: KitchenFiltersState;
   onFiltersChange?: (next: KitchenFiltersState) => void;
-  onFilteredCountChange?: (count: number) => void;
 };
 
 const StoresSection = ({
   initialStores = [],
-  filters = { cuisine: "All cuisines", diet: "all" },
+  filters = DEFAULT_KITCHEN_FILTERS,
   onFiltersChange,
-  onFilteredCountChange,
 }: StoresSectionProps) => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const { stores, loading, error, refetch } = useChefsStores(initialStores);
-  const filterKey = `${filters.cuisine}|${filters.diet}`;
+  const filterKey = `${filters.query}|${filters.cuisine}|${filters.diet}`;
   const [pageByFilter, setPageByFilter] = useState<Record<string, number>>({});
   const page = pageByFilter[filterKey] ?? 1;
 
-  const filteredStores = useMemo(() => {
-    return stores.filter((store) => storeMatchesFilters(store, filters));
-  }, [stores, filters]);
+  /** Cuisine chips from the kitchens' real categories, most common first. */
+  const cuisines = useMemo(() => {
+    const counts = new Map<string, { label: string; n: number }>();
+    for (const s of stores) {
+      for (const c of cleanCategories(s)) {
+        const key = c.toLowerCase();
+        const cur = counts.get(key);
+        counts.set(key, { label: cur?.label ?? c, n: (cur?.n ?? 0) + 1 });
+      }
+    }
+    return [...counts.values()]
+      .sort((a, b) => b.n - a.n || a.label.localeCompare(b.label))
+      .slice(0, MAX_CUISINE_CHIPS)
+      .map((c) => c.label);
+  }, [stores]);
 
-  const filteredCount = filteredStores.length;
-
-  useEffect(() => {
-    onFilteredCountChange?.(filteredCount);
-  }, [filteredCount, onFilteredCountChange]);
+  const filteredStores = useMemo(
+    () => stores.filter((s) => storeMatchesFilters(s, filters)),
+    [stores, filters],
+  );
 
   const totalPages = Math.max(
     1,
     Math.ceil(filteredStores.length / ITEMS_PER_PAGE),
   );
   const currentPage = Math.min(page, totalPages);
-
   const pageStores = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredStores.slice(start, start + ITEMS_PER_PAGE);
   }, [currentPage, filteredStores]);
 
-  const pageNumbers = useMemo(
-    () => Array.from({ length: totalPages }, (_, i) => i + 1),
-    [totalPages],
-  );
-
-  const scrollToSectionTop = useCallback(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const top =
-      el.getBoundingClientRect().top + window.scrollY - HEADER_SCROLL_OFFSET;
-    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
-  }, []);
-
   const handlePageChange = useCallback(
     (nextPage: number) => {
       if (nextPage === currentPage) return;
       setPageByFilter((prev) => ({ ...prev, [filterKey]: nextPage }));
-      requestAnimationFrame(scrollToSectionTop);
+      requestAnimationFrame(() => {
+        const el = sectionRef.current;
+        if (!el) return;
+        const top =
+          el.getBoundingClientRect().top +
+          window.scrollY -
+          HEADER_SCROLL_OFFSET;
+        window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+      });
     },
-    [currentPage, filterKey, scrollToSectionTop],
+    [currentPage, filterKey],
   );
 
-  const goPrev = useCallback(
-    () => handlePageChange(Math.max(1, currentPage - 1)),
-    [currentPage, handlePageChange],
-  );
-  const goNext = useCallback(
-    () => handlePageChange(Math.min(totalPages, currentPage + 1)),
-    [currentPage, handlePageChange, totalPages],
-  );
-
-  const onRetry = useCallback(() => {
-    void refetch();
-  }, [refetch]);
+  const hasActiveFilters =
+    filters.query.trim() !== "" ||
+    filters.cuisine !== ALL_CUISINES ||
+    filters.diet !== "all";
 
   return (
     <div ref={sectionRef}>
-      <Section>
+      <Section className="bg-paper" flushTop innerClassName="pb-16 md:pb-20">
         {onFiltersChange ? (
           <KitchenFilters
             filters={filters}
             onChange={onFiltersChange}
-            resultCount={filteredCount}
+            cuisines={cuisines}
+            resultCount={filteredStores.length}
             className="mb-8"
           />
         ) : null}
-        {loading ? null : error ? (
-          <div className="py-16 text-center">
-            <p className="text-sm text-red-600">{error}</p>
-            <Button type="button" onClick={onRetry} variant="customerOutline" size="sm" className="mt-4">
+
+        {loading ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }, (_, i) => (
+              <CardSkeleton key={i} />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="rounded-[22px] border border-ink/[0.07] bg-white py-16 text-center">
+            <p className="text-[15px] font-semibold text-ink">
+              We couldn&apos;t load the kitchens just now.
+            </p>
+            <p className="mt-1 text-[13.5px] text-ink/55">
+              Please check your connection and try again.
+            </p>
+            <Button
+              type="button"
+              onClick={() => void refetch()}
+              variant="customerOutline"
+              size="sm"
+              className="mt-5"
+            >
               Try again
             </Button>
           </div>
-        ) : stores.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="body-copy-compact text-muted">
-              No stores were returned from the API.
-            </p>
-            <Button type="button" onClick={onRetry} variant="customerOutline" size="sm" className="mt-4">
-              Refresh
-            </Button>
-          </div>
         ) : filteredStores.length === 0 ? (
-          <p className="body-copy-compact py-12 text-center text-muted">
-            No verified kitchens match this cuisine or diet filter.
-          </p>
+          <div className="rounded-[22px] border border-dashed border-ink/15 bg-white px-6 py-16 text-center">
+            <span
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-paper text-ink/40"
+              aria-hidden
+            >
+              <FiSearch className="h-6 w-6" />
+            </span>
+            <p className="mt-4 font-jakarta text-[17px] font-bold text-ink">
+              {stores.length === 0
+                ? "New kitchens are opening soon"
+                : "No kitchens match that"}
+            </p>
+            <p className="mx-auto mt-1 max-w-sm text-[14px] text-ink/55">
+              {stores.length === 0
+                ? "Check back in a little while to see who is cooking near you."
+                : "Try another cuisine, or clear the filters to see every kitchen."}
+            </p>
+            {hasActiveFilters && onFiltersChange ? (
+              <Button
+                type="button"
+                onClick={() => onFiltersChange(DEFAULT_KITCHEN_FILTERS)}
+                variant="customerOutline"
+                size="sm"
+                className="mt-5"
+              >
+                Clear filters
+              </Button>
+            ) : null}
+          </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-[26px] sm:grid-cols-2 lg:grid-cols-3">
-              {pageStores.map((store) => {
-                const href = storeDetailHref(store.storeId);
-                return (
-                  <Link
-                    key={store.storeId}
-                    href={href}
-                    className={clsx(
-                      `block ${RADIUS_CARD} no-underline outline-none transition focus-visible:ring-2 focus-visible:ring-customer/50 focus-visible:ring-offset-2`,
-                    )}
-                  >
-                    <StoreGridCard store={store} />
-                  </Link>
-                );
-              })}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {pageStores.map((store) => (
+                <StoreCard key={store.storeId} store={store} />
+              ))}
             </div>
 
             {totalPages > 1 ? (
-              <div className="mt-8 flex items-center justify-center gap-2 text-sm">
+              <nav
+                className="mt-10 flex items-center justify-center gap-2 text-sm"
+                aria-label="Pages"
+              >
                 <Button
                   type="button"
-                  onClick={goPrev}
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
                   aria-label="Previous page"
                   variant="none"
                   size="sm"
-                  className="h-8 w-8 rounded-full border border-ink/10 p-0 text-ink/50 disabled:opacity-40"
+                  className="h-10 w-10 rounded-full border border-ink/10 bg-white p-0 text-ink/60 disabled:opacity-40"
                 >
                   <FiChevronLeft className="h-4 w-4" />
                 </Button>
-
-                {pageNumbers.map((pageNumber) => (
-                  <Button
-                    key={pageNumber}
-                    type="button"
-                    onClick={() => handlePageChange(pageNumber)}
-                    variant="none"
-                    size="sm"
-                    className={clsx(
-                      "h-8 w-8 rounded-full p-0 text-xs",
-                      pageNumber === currentPage
-                        ? "bg-customer/10 font-semibold text-customer"
-                        : "text-ink/60 hover:bg-ink/5",
-                    )}
-                  >
-                    {pageNumber}
-                  </Button>
-                ))}
-
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (n) => (
+                    <Button
+                      key={n}
+                      type="button"
+                      onClick={() => handlePageChange(n)}
+                      aria-current={n === currentPage ? "page" : undefined}
+                      variant="none"
+                      size="sm"
+                      className={clsx(
+                        "h-10 w-10 rounded-full p-0 text-[13px] font-semibold",
+                        n === currentPage
+                          ? "bg-ink text-white"
+                          : "text-ink/60 hover:bg-ink/5",
+                      )}
+                    >
+                      {n}
+                    </Button>
+                  ),
+                )}
                 <Button
                   type="button"
-                  onClick={goNext}
+                  onClick={() =>
+                    handlePageChange(Math.min(totalPages, currentPage + 1))
+                  }
                   disabled={currentPage === totalPages}
                   aria-label="Next page"
                   variant="none"
                   size="sm"
-                  className="h-8 w-8 rounded-full border border-ink/10 p-0 text-ink/50 disabled:opacity-40"
+                  className="h-10 w-10 rounded-full border border-ink/10 bg-white p-0 text-ink/60 disabled:opacity-40"
                 >
                   <FiChevronRight className="h-4 w-4" />
                 </Button>
-              </div>
+              </nav>
             ) : null}
-
-            {/* <p className="mt-[30px] text-center text-[14px] text-muted">
-              Not in your city yet?{" "}
-              <Link
-                href={ROUTES.contact}
-                className="font-bold text-customer no-underline hover:underline"
-              >
-                Join the waitlist →
-              </Link>
-            </p> */}
           </>
         )}
+
+        <OpenYourStoreBand />
       </Section>
     </div>
   );
