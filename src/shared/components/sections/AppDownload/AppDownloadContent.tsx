@@ -186,12 +186,12 @@ export default function AppDownloadContent({ platform, source, showQr, headingId
           ) : null}
         </div>
 
-        <h2 id={headingId} className="mt-3 text-[28px] font-extrabold leading-[1.1] tracking-tight text-ink sm:text-[32px]">
+        <h2 id={headingId} className="mt-3 text-[28px] font-extrabold leading-[1.1] tracking-tight text-ink sm:text-[32px] [@media(max-height:700px)]:mt-2 [@media(max-height:700px)]:text-[24px]">
           Home food, <span className="text-partner">one tap away.</span>
         </h2>
         <p className="mt-2 font-hand text-[19px] text-customer">माँ के हाथ का खाना — now on your phone</p>
 
-        <ul className="mt-5 space-y-2.5">
+        <ul className="mt-5 space-y-2.5 [@media(max-height:700px)]:mt-4 [@media(max-height:700px)]:space-y-1.5">
           {BENEFITS.map((b) => (
             <li key={b} className="flex items-start gap-2.5 text-[14.5px] leading-snug text-ink/80">
               <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-verified-pill text-verified-text">
@@ -202,14 +202,14 @@ export default function AppDownloadContent({ platform, source, showQr, headingId
           ))}
         </ul>
 
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap gap-3 [@media(max-height:700px)]:mt-4">
           {stores.map((s) => (
             <StoreBadge key={s} store={s} compact={!showQr} />
           ))}
         </div>
 
         {!live ? (
-          <div className="mt-6 border-t border-border-subtle pt-5">
+          <div className="mt-6 border-t border-border-subtle pt-5 [@media(max-height:700px)]:mt-4 [@media(max-height:700px)]:pt-4">
             <NotifyForm platform={platform} source={source} />
           </div>
         ) : null}
