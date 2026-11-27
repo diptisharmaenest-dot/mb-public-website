@@ -164,6 +164,7 @@ export const ABOUT_PORTAL_CTAS: [PortalCtaItem, PortalCtaItem] = [
     ctaLabel: 'Open a Kitchen',
     href: ROUTES.partners,
     variant: 'partner',
+    appDownload: true,
   },
 ]
 
@@ -184,6 +185,7 @@ export const FAQ_PORTAL_CTAS: [PortalCtaItem, PortalCtaItem] = [
     ctaLabel: 'Open a Kitchen',
     href: ROUTES.partners,
     variant: 'partner',
+    appDownload: true,
   },
 ]
 
