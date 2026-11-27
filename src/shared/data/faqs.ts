@@ -3,46 +3,46 @@ export type FAQItem = {
   answer: string
 }
 
-/** Shared FAQs for marketing pages — replace with legal-approved copy before launch. */
+/** FAQ page copy — written from Mother Bhojan's real ordering and kitchen-onboarding flows. */
 export const platformFaqs: FAQItem[] = [
   {
     question: 'What is Mother Bhojan?',
     answer:
-      'Mother Bhojan is a platform for home cooks and small food businesses to publish a storefront, accept orders, and manage pickup or delivery — without stitching together separate tools.',
-  },
-  {
-    question: 'How do I start selling on Mother Bhojan?',
-    answer:
-      'Create your store profile, add your menu, set your availability, and choose how customers can order. Once your setup is complete, you can share your storefront link and start taking orders.',
-  },
-  {
-    question: 'What does it cost to use Mother Bhojan?',
-    answer:
-      'You only pay when you make a sale. There are no monthly storefront fees on our standard plan — see the pricing section for current rates and what is included.',
-  },
-  {
-    question: 'Can I offer pickup, delivery, or both?',
-    answer:
-      'Yes. You control how customers receive orders. Configure pickup windows, delivery zones, and fees in your store settings so fulfillment matches how you already operate.',
-  },
-  {
-    question: 'Is my business and customer data secure?',
-    answer:
-      'We use secure connections for account access and order data, and we treat seller and customer information with care. Contact us if you need details about data handling for your region.',
-  },
-  {
-    question: 'Are the kitchens FSSAI-compliant?',
-    answer:
-      'Yes. Every partner kitchen is FSSAI-registered and hygiene-checked before it ever appears on Mother Bhojan.',
-  },
-  {
-    question: 'Which areas do you deliver to?',
-    answer:
-      'We currently deliver across Mohali, with more neighbourhoods opening soon.',
+      "Mother Bhojan brings you ghar ka khaana from real home cooks near you. Every kitchen belongs to a named cook, cooking in her own home — and every one is visited and checked by our team before it goes live.",
   },
   {
     question: 'How do I order?',
     answer:
-      'Browse verified chefs near you in the app, place your order, and track delivery from your phone.',
+      'Find a verified kitchen within 5 km of you, choose from her menu, confirm your number with a quick OTP and pay securely by UPI, card or net banking. You can follow your order as it is accepted, picked up and delivered.',
+  },
+  {
+    question: 'Is there a minimum order?',
+    answer:
+      'Yes — the minimum order is ₹199, so every meal is worth her while to cook fresh for you.',
+  },
+  {
+    question: 'Which areas do you deliver to?',
+    answer:
+      'We are serving Mohali first, with the rest of the Tricity coming next. You will see the kitchens that can deliver to you once you share your location.',
+  },
+  {
+    question: 'How do you check a kitchen before it goes live?',
+    answer:
+      'Our team visits every kitchen in person for a detailed hygiene check, tastes her cooking at home, and helps her complete FSSAI registration and KYC. Only then does her store open on Mother Bhojan.',
+  },
+  {
+    question: 'What if something is wrong with my order?',
+    answer:
+      "That's our Daughter's Promise. If a meal arrives cold, late or not as it should be, just tell us — a real person from our team will look into it and make it right, quickly and fairly.",
+  },
+  {
+    question: 'I cook at home. How do I open my kitchen?',
+    answer:
+      'Download the Mother Bhojan app, verify your mobile number, and tell us about yourself, your kitchen and the dishes you love to cook. Our team will call you and guide you through every step until your store is live.',
+  },
+  {
+    question: 'Do I need a commercial kitchen?',
+    answer:
+      'No. You cook in your own home kitchen. It just needs to be clean and well kept — our team will visit, check it with you and help you with anything that needs fixing.',
   },
 ]

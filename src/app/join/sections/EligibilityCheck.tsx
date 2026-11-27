@@ -75,8 +75,8 @@ const EligibilityCheck = ({ onNext }: EligibilityCheckProps) => {
           <div>
             <h3 className="text-[15px] font-bold text-ink">Answered “No” to one?</h3>
             <p className="body-copy mt-1 !text-text-500">
-              That’s okay — we’ll show an encouraging “not yet, here’s what helps” note and a way to stay in
-              touch. No one is turned away at a wall.
+              That’s okay. It may just be “not yet” — continue, and our team will tell you what helps and
+              stay in touch until you’re ready.
             </p>
           </div>
         </div>

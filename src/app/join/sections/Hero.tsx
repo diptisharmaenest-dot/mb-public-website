@@ -15,7 +15,7 @@ const JoinHero = () => {
           animated={false}
           marginBottom="mb-0"
           className={DISPLAY_HEADER_CLASS_PARTNERS_HERO}
-          description="Five to eight minutes, four simple steps, and no phone call. We screen for capability — never your age or background."
+          description="Four simple steps to start. We look at your cooking and your kitchen — never your age or background."
           lines={[compactAccentLine({ text: "Let's get your kitchen", accent: 'verified.' })]}
         />
       </div>

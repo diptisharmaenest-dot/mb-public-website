@@ -119,7 +119,7 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
           <Link href={ROUTES.faq} className={clsx(CARD, 'flex items-center justify-between gap-3 p-4 transition hover:-translate-y-0.5')}>
             <span>
               <span className="block text-[14px] font-semibold">How to order</span>
-              <span className="block text-[12.5px] text-ink/55">All your questions answered!</span>
+              <span className="block text-[12.5px] text-ink/55">A quick guide to placing your order</span>
             </span>
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-customer to-partner text-white">
               <LuPlay className="ml-0.5 h-4 w-4 fill-white" aria-hidden />

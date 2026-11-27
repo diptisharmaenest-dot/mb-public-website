@@ -18,7 +18,7 @@ const TEAM = [
     name: 'Jagdeep Chawla',
     role: 'Co-founder',
     tag: 'Vision & Product',
-    bio: 'Building tech platforms that empower home cooks.',
+    bio: 'Building the tools that put home cooks on the map.',
     image: jagdeep,
   },
   {

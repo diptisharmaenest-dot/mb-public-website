@@ -67,7 +67,7 @@ const CompanyClosing = () => {
             className="flex flex-col space-y-7"
           >
             {/* Registered Office */}
-            <div className="border-b border-[#E6DDD0] pb-6">
+            <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-ink/50 mb-2">
                 Registered Office
               </p>
@@ -78,25 +78,8 @@ const CompanyClosing = () => {
               </p>
             </div>
 
-            {/* CIN */}
-            <div className="border-b border-[#E6DDD0] pb-6">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-ink/50 mb-2">
-                CIN
-              </p>
-              <p className="text-[14.5px] sm:text-[15px] font-semibold text-ink">
-                U72900PB2025PTC000000
-              </p>
-            </div>
-
-            {/* GSTIN */}
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-ink/50 mb-2">
-                GSTIN
-              </p>
-              <p className="text-[14.5px] sm:text-[15px] font-semibold text-ink">
-                03ABCDE1234F1Z5
-              </p>
-            </div>
+            {/* CIN and GSTIN rows hidden until the real numbers are confirmed —
+                the previous values (U72900PB2025PTC000000 / 03ABCDE1234F1Z5) were placeholders. */}
           </motion.div>
 
           {/* Right Column */}
@@ -107,15 +90,8 @@ const CompanyClosing = () => {
             transition={{ duration: 0.7, delay: 0.4, ease: EASE }}
             className="flex flex-col space-y-7"
           >
-            {/* FSSAI License */}
-            <div className="border-b border-[#E6DDD0] pb-6">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-ink/50 mb-2">
-                FSSAI Aggregator License
-              </p>
-              <p className="text-[14.5px] sm:text-[15px] font-semibold text-ink">
-                12345678900000 <span className="font-normal text-ink/70">(to be issued — Q1 2026)</span>
-              </p>
-            </div>
+            {/* FSSAI aggregator licence row hidden until the licence is issued —
+                the previous value (12345678900000, "to be issued — Q1 2026") was a placeholder. */}
 
             {/* Trademark */}
             <div className="border-b border-[#E6DDD0] pb-6">
@@ -123,10 +99,10 @@ const CompanyClosing = () => {
                 Trademark
               </p>
               <p className="text-[14.5px] sm:text-[15px] font-semibold text-ink leading-snug">
-                &quot;Mother Bhojan&quot; is a registered trademark of Womro Solutions Pvt Ltd
+                &quot;Mother Bhojan&quot; is a trademark of Womro Solutions Pvt Ltd
               </p>
               <p className="text-[13.5px] font-normal text-ink/70 mt-1">
-                (filed under classes 9, 35, 42, 43)
+                (application filed under classes 9, 35, 42, 43)
               </p>
             </div>
 

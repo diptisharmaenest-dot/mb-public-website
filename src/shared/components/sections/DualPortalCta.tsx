@@ -160,7 +160,7 @@ export const ABOUT_PORTAL_CTAS: [PortalCtaItem, PortalCtaItem] = [
   {
     eyebrow: 'For cooks',
     title: 'Cook from home?',
-    body: 'Earn with dignity. Take the quiz, book an interview.',
+    body: 'Get the app, tell us about your kitchen — our team will guide you from there.',
     ctaLabel: 'Open a Kitchen',
     href: ROUTES.partners,
     variant: 'partner',
@@ -181,7 +181,7 @@ export const FAQ_PORTAL_CTAS: [PortalCtaItem, PortalCtaItem] = [
   {
     eyebrow: 'For cooks',
     title: 'Cook from home?',
-    body: 'Become a Kitchen Partner and earn with dignity.',
+    body: 'Open your own store — your name, your menu, your prices.',
     ctaLabel: 'Open a Kitchen',
     href: ROUTES.partners,
     variant: 'partner',

@@ -335,7 +335,7 @@ function OpenYourStoreBand() {
     <div className="mt-14 flex flex-col items-start gap-5 rounded-[26px] bg-mb-ink-panel px-6 py-8 text-white sm:flex-row sm:items-center sm:justify-between sm:px-10">
       <div>
         <p className="m-0 font-hand text-[22px] text-yellow">
-          you cook at home?
+          Do you cook at home?
         </p>
         <p className="m-0 mt-1 font-jakarta text-[22px] font-bold tracking-tight sm:text-[26px]">
           Open your own store on Mother Bhojan.
