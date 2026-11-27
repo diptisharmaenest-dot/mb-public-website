@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { fetchChefsStores } from '@/features/chefData/services/stores.api'
 import { ROUTES, absoluteUrl, getSiteUrl } from '@/shared/seo'
+import { SHOW_LIVE_KITCHENS } from '@/shared/data/kitchens-launch'
 
 const STATIC_PATHS: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
   { path: ROUTES.home, changeFrequency: 'weekly', priority: 1 },
@@ -28,7 +29,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }))
 
-  try {
+  // Real kitchen pages are listed only once kitchens are live (see kitchens-launch.ts).
+  if (SHOW_LIVE_KITCHENS) try {
     const stores = await fetchChefsStores()
     for (const store of stores) {
       const storeId = store.storeId.trim()

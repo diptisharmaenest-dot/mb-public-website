@@ -11,6 +11,7 @@ import {
 } from '@/shared/seo'
 import KitchenDetailLayout from './sections/KitchenDetailLayout'
 import { DEMO_STORE_SLUG, demoStoreDetail } from '../demo-store'
+import { SHOW_LIVE_KITCHENS } from '@/shared/data/kitchens-launch'
 
 const loadStoreDetail = cache(async (idOrSlug: string) => fetchChefStore(idOrSlug))
 
@@ -28,6 +29,8 @@ function mergeStaticStoreParams(apiParams: { storeId: string }[]): { storeId: st
 }
 
 async function loadKitchenStaticParams(): Promise<{ storeId: string }[]> {
+  // Real kitchens hidden for now — pre-render the example store only.
+  if (!SHOW_LIVE_KITCHENS) return [{ storeId: DEMO_STORE_SLUG }]
   try {
     const stores = await fetchChefsStores()
     const params = stores
@@ -43,6 +46,8 @@ async function loadKitchenStaticParams(): Promise<{ storeId: string }[]> {
 async function resolveStoreDetail(storeId: string): Promise<ChefStoreDetail | null> {
   // Example store used as the live demo (clearly labelled on the page).
   if (storeId === DEMO_STORE_SLUG) return demoStoreDetail
+  // Real kitchens hidden for now (see kitchens-launch.ts) — their pages show "not found".
+  if (!SHOW_LIVE_KITCHENS) return null
   // 1. Try fetching live store data from the API first (works for slugs like 'truffles' and store GUIDs)
   try {
     const store = await loadStoreDetail(storeId)

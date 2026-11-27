@@ -130,7 +130,7 @@ export default function FloatingTrustBadge() {
         {/* Drawer Content */}
         <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
           <p className="font-jakarta text-[13.5px] leading-relaxed text-text-700">
-            We are dedicated to bringing you the absolute safest, healthiest, and most authentic home-cooked meals. Here is how we guarantee our promise:
+            We work hard to bring you honest, home-cooked meals from kitchens we have checked ourselves. Here is how we keep our promise:
           </p>
 
           {/* Pillar 1: Verified Kitchens */}
@@ -205,7 +205,7 @@ export default function FloatingTrustBadge() {
                 Daughter&apos;s Promise
               </h3>
               <p className="font-jakarta text-[12.5px] leading-relaxed text-text-500">
-                Pristine hygiene and quality, guaranteed. Like cooking for our own family. If anything is wrong with your meal, we promise a full refund.
+                Clean kitchens and careful cooking, like cooking for our own family. If anything is wrong with your meal, just tell us — we will make it right.
               </p>
             </div>
           </div>

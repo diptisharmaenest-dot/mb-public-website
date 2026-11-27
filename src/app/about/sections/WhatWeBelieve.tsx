@@ -38,7 +38,7 @@ const BELIEFS = [
   {
     id: 'promise',
     title: "The Daughter's Promise",
-    body: "Anything wrong with an order — a full refund, no questions asked. The way you'd want your own daughter treated.",
+    body: "Anything wrong with an order? A real person on our team makes it right — quickly and fairly. The way you'd want your own daughter treated.",
     icon: FiHeart,
     tone: 'customer' as const,
   },

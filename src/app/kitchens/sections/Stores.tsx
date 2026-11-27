@@ -22,6 +22,8 @@ import {
 import { ROUTES } from "@/shared/seo";
 import { isRemoteImageUrl } from "@/shared/lib";
 import { getFeaturedKitchenById } from "@/app/home/data/featured-kitchens";
+import { demoStoreCard } from "@/app/kitchens/demo-store";
+import { SHOW_LIVE_KITCHENS } from "@/shared/data/kitchens-launch";
 import KitchenFilters, {
   ALL_CUISINES,
   DEFAULT_KITCHEN_FILTERS,
@@ -182,7 +184,14 @@ function CardCover({ store }: { store: ChefStore }) {
   );
 }
 
-const StoreCard = memo(function StoreCard({ store }: { store: ChefStore }) {
+const StoreCard = memo(function StoreCard({
+  store,
+  example = false,
+}: {
+  store: ChefStore;
+  /** The example store: labelled "Example store" instead of "Verified". */
+  example?: boolean;
+}) {
   const content = buildCardContent(store);
   const veg = isVegStore(store);
 
@@ -208,7 +217,7 @@ const StoreCard = memo(function StoreCard({ store }: { store: ChefStore }) {
               className="h-3 w-3 object-contain"
             />
           </span>
-          Verified
+          {example ? "Example store" : "Verified"}
         </span>
         {content.rating != null && content.rating > 0 ? (
           <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[12px] font-bold text-ink shadow-sm backdrop-blur">
@@ -357,6 +366,54 @@ function OpenYourStoreBand() {
   );
 }
 
+/** Shown instead of the kitchen list while real kitchens are hidden (SHOW_LIVE_KITCHENS = false). */
+function ComingSoonKitchens() {
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <StoreCard store={demoStoreCard} example />
+      <div className="relative flex flex-col justify-center overflow-hidden rounded-[22px] border border-dashed border-ink/15 bg-white px-7 py-10 sm:px-10 lg:col-span-2">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,#FFF0C7,transparent_70%)]"
+        />
+        <span className="relative inline-flex w-fit items-center gap-2 rounded-full bg-verified-pill px-3 py-1 text-[11.5px] font-bold uppercase tracking-wider text-verified-text">
+          <span className="h-1.5 w-1.5 rounded-full bg-verified" aria-hidden />
+          Coming soon · Mohali
+        </span>
+        <p className="relative m-0 mt-4 font-hand text-[22px] text-customer">
+          Kitchens opening soon
+        </p>
+        <h3 className="relative m-0 mt-1 font-jakarta text-[22px] font-bold tracking-tight text-ink sm:text-[26px]">
+          Our first home kitchens are being verified.
+        </h3>
+        <p className="relative m-0 mt-2 max-w-lg text-[14.5px] leading-relaxed text-ink/60">
+          Every cook is visited in person and her kitchen checked before her
+          store opens. Until then, take a look at an example store — and get
+          the app to hear the day kitchens near you go live.
+        </p>
+        <div className="relative mt-6 flex flex-wrap items-center gap-3">
+          <DownloadAppButton
+            source="kitchens-coming-soon"
+            openLabel="Open the app"
+            variant="customer"
+            size="md"
+            className="px-6"
+          >
+            Get notified
+          </DownloadAppButton>
+          <Link
+            href={storeDetailHref(demoStoreCard.storeId)}
+            className="inline-flex items-center gap-1.5 text-[14px] font-bold text-customer no-underline hover:underline"
+          >
+            See the example store
+            <FiArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 type StoresSectionProps = {
   initialStores?: ChefStore[];
   filters?: KitchenFiltersState;
@@ -426,6 +483,17 @@ const StoresSection = ({
     filters.query.trim() !== "" ||
     filters.cuisine !== ALL_CUISINES ||
     filters.diet !== "all";
+
+  if (!SHOW_LIVE_KITCHENS) {
+    return (
+      <div ref={sectionRef}>
+        <Section className="bg-paper" flushTop innerClassName="pb-16 md:pb-20">
+          <ComingSoonKitchens />
+          <OpenYourStoreBand />
+        </Section>
+      </div>
+    );
+  }
 
   return (
     <div ref={sectionRef}>

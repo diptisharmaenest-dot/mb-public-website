@@ -1,6 +1,7 @@
 import { fetchChefsStores } from '@/features/chefData/services/stores.api'
 import type { ChefStore } from '@/features'
 import { JsonLd, ROUTES, absoluteUrl, createPageMetadata } from '@/shared/seo'
+import { SHOW_LIVE_KITCHENS } from '@/shared/data/kitchens-launch'
 import KitchensPageClient from './KitchensPageClient'
 
 export const metadata = createPageMetadata({
@@ -14,7 +15,7 @@ export default async function KitchensPage() {
   let itemListJsonLd: Record<string, unknown> | null = null
   let stores: ChefStore[] = []
 
-  try {
+  if (SHOW_LIVE_KITCHENS) try {
     stores = await fetchChefsStores()
     const items = stores
       .map((store, index) => {

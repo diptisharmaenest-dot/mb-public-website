@@ -18,12 +18,12 @@ export const homeFaqGroups: HomeFaqGroup[] = [
       {
         question: 'How do you verify a kitchen?',
         answer:
-          'Every kitchen passes an 80-point audit covering hygiene, ingredients and cooking practices, checked in person. Roughly 1 in 20 applicants pass.',
+          'Every kitchen passes an 80-point audit covering hygiene, ingredients and cooking practices, checked in person.',
       },
       {
         question: 'What if something is wrong with my order?',
         answer:
-          "The Daughter's Promise: anything wrong — cold, late, or not as it should be — gets a full refund, no questions asked.",
+          "The Daughter's Promise: anything wrong — cold, late, or not as it should be — — just tell us, and a real person on our team will make it right, quickly and fairly.",
       },
     ],
   },

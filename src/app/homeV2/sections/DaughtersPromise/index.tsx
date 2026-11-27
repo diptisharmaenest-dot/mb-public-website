@@ -123,9 +123,9 @@ const DaughtersPromise = () => {
             />
 
             <p className="body-copy mt-4 max-w-[460px]">
-              Full refund, no questions. If a meal ever arrives cold, late, or
-              not as it should be, we make it right — instantly, no forms, no
-              arguments.
+              If a meal ever arrives cold, late, or not as it should be, just
+              tell us. A real person from our team will look into it and make it
+              right — quickly and fairly.
             </p>
 
             <blockquote className="font-hand mt-6 max-w-[460px] border-l-[3px] border-verified pl-4 text-[19px] italic leading-snug text-ink">

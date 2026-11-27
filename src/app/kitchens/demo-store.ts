@@ -1,4 +1,4 @@
-import type { ChefStoreDetail, StoreDish } from '@/features'
+import type { ChefStore, ChefStoreDetail, StoreDish } from '@/features'
 import type { StoreFrontCategory } from '@/shared/components/sections/StoreFront/StoreFront'
 import type { WeeklySchedule } from '@/shared/components/sections/StoreFront/schedule'
 // Sample photos only (no people). Swap Ananya's profile photo in when the real one arrives.
@@ -73,6 +73,18 @@ export const demoStoreDetail: ChefStoreDetail = {
       ],
     },
   ],
+}
+
+/** The example store as a card on the All Kitchens page (shown while real kitchens are hidden). */
+export const demoStoreCard: ChefStore = {
+  storeId: DEMO_STORE_SLUG,
+  storeName: demoStoreDetail.name,
+  address: 'Mohali',
+  logoUrl: '',
+  coverImageUrl: cover.src,
+  categories: ['North Indian', 'Thalis', 'Pure veg'],
+  overallRating: 0,
+  storeOwnerName: 'Ananya',
 }
 
 /** The same menu in the store components' shape — used by the Home previews so they match the page. */
