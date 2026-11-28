@@ -7,6 +7,7 @@ import clsx from 'clsx'
 import { LuArrowLeft, LuCalendarDays, LuChefHat, LuMapPin, LuPlay, LuShare2, LuStar, LuTruck, LuUtensils } from 'react-icons/lu'
 import { mLogo } from '@/assets'
 import { ROUTES } from '@/shared/seo'
+import DownloadAppButton from '@/shared/components/ui/DownloadAppButton'
 import type { StoreFrontCategory } from './StoreFront'
 import { CartPill, QtyControl, useStoreCart } from './cart'
 import { ScheduleModal, type WeeklySchedule } from './schedule'
@@ -154,12 +155,14 @@ export default function StoreClassicPage({ name, byLine, description, avatar, co
               <br />
               home kitchen?
             </p>
-            <Link
-              href="/"
-              className="mt-2 inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-b from-customer to-partner px-4 py-2.5 text-[13px] font-semibold !text-white shadow-[0_10px_20px_-10px_rgba(219,26,26,0.7)] transition hover:-translate-y-0.5"
+            {/* Same as every "Open your kitchen" CTA: opens the app download popup. */}
+            <DownloadAppButton
+              source="store-start-your-kitchen"
+              variant="none"
+              className="mt-2 inline-flex cursor-pointer items-center gap-2 rounded-[10px] bg-gradient-to-b from-customer to-partner px-4 py-2.5 text-[13px] font-semibold !text-white shadow-[0_10px_20px_-10px_rgba(219,26,26,0.7)] transition hover:-translate-y-0.5"
             >
               Let&apos;s get <span className="font-hand text-[17px] font-normal leading-none">Mother Bhojan</span>
-            </Link>
+            </DownloadAppButton>
           </div>
         </aside>
 

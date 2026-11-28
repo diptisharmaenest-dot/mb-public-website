@@ -4,7 +4,8 @@ import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import clsx from 'clsx'
 import { FiArrowDown, FiMail } from 'react-icons/fi'
-import { expertSupport } from '@/assets/images'
+// General kitchen scene, no people (contact page should not show a person).
+import kitchenCounter from '@/assets/images/hero-light-kitchen-poster.jpg'
 import { Button, DISPLAY_HEADER_CLASS_ABOUT_HERO, Section, SectionHeader, compactAccentLine } from '@/components'
 import { CONTACT_EMAIL, SUPPORT_HOURS } from '@/shared/data/contact'
 import { EASE } from '@/shared/lib/motion'
@@ -104,10 +105,10 @@ const ContactHero = () => {
           <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[28px] bg-customer/15" aria-hidden />
           <div className="relative overflow-hidden rounded-[28px] border-4 border-white shadow-surface-lg">
             <Image
-              src={expertSupport}
-              alt="A Mother Bhojan home cook smiling on a video call with our support team"
+              src={kitchenCounter}
+              alt="A warm home kitchen counter with fresh vegetables, a spice box and dal on the stove"
               sizes="(max-width: 1024px) 100vw, 560px"
-              className="h-auto w-full object-cover"
+              className="aspect-[5/4] h-auto w-full object-cover object-[50%_100%]"
               priority
             />
           </div>
